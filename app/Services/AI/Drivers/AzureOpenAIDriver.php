@@ -103,7 +103,8 @@ class AzureOpenAIDriver implements AIDriverInterface
             'Content-Type: application/json',
             'api-key: ' . $this->apiKey,
         ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout ?: 45);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result = curl_exec($ch);

@@ -108,7 +108,8 @@ class ClaudeDriver implements AIDriverInterface
             'x-api-key: ' . $this->apiKey,
             'anthropic-version: 2023-06-01',
         ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout ?: 45);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result = curl_exec($ch);

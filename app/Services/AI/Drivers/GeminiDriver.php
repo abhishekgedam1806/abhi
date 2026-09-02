@@ -75,7 +75,7 @@ class GeminiDriver implements AIDriverInterface
         $startTime = microtime(true);
 
         // Vision/image calls get extra time — override timeout if images present
-        $effectiveTimeout = !empty($options['images']) ? max($this->timeout, 120) : $this->timeout;
+        $effectiveTimeout = !empty($options['images']) ? max($this->timeout ?: 45, 120) : ($this->timeout ?: 45);
 
         // Also raise PHP execution time for vision calls
         if (!empty($options['images'])) {
@@ -133,9 +133,10 @@ class GeminiDriver implements AIDriverInterface
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        $actualTimeout = $timeout ?: ($this->timeout ?: 45);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout ?? ($this->timeout > 10 ? 6 : $this->timeout));
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $actualTimeout);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $responseBody = curl_exec($ch);
