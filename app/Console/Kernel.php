@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Console;
+
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+class Kernel extends ConsoleKernel
+{
+
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        'App\Console\Commands\CallRoute',
+        'App\Console\Commands\FetchAdzunaJobs',
+    ];
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        // $schedule->command('inspire')
+        //          ->hourly();
+        $schedule->command('queue:work --stop-when-empty')->everyFiveMinutes()->withoutOverlapping(5)->sendOutputTo(storage_path() . '/logs/queue-jobs.log');
+        $schedule->command('route:call check-package-validity')->daily()->withoutOverlapping(5)->sendOutputTo(storage_path() . '/logs/queue-jobs.log');
+        
+        // Automated Adzuna Live Job Ingestion (Runs twice daily at 8 AM and 4 PM)
+        $schedule->command('jobs:fetch-adzuna')->dailyAt('08:00')->withoutOverlapping(10)->sendOutputTo(storage_path() . '/logs/adzuna-fetch.log');
+        $schedule->command('jobs:fetch-adzuna')->dailyAt('16:00')->withoutOverlapping(10)->sendOutputTo(storage_path() . '/logs/adzuna-fetch.log');
+    }
+
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__ . '/Commands');
+        require base_path('routes/console.php');
+    }
+
+}

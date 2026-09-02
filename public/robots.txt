@@ -1,0 +1,34 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /company-login
+Disallow: /company-register
+Disallow: /my-profile
+Disallow: /my-businesses
+Disallow: /my-job-applications
+Disallow: /my-favourite-jobs
+Disallow: /business/dashboard
+Disallow: /business/leads
+Disallow: /password/
+Disallow: /email-verification/
+Disallow: /company-email-verification/
+
+# Allow all public crawlable sections
+Allow: /
+Allow: /jobs
+Allow: /job/
+Allow: /companies
+Allow: /company/
+Allow: /businesses
+Allow: /business/
+Allow: /cms/
+Allow: /blogs
+Allow: /blog/
+Allow: /contact-us
+Allow: /faq
+Allow: /terms-of-use
+
+Sitemap: {{ url('/sitemap.xml') }}
+

@@ -1,0 +1,140 @@
+{
+  "qualifications": {
+    "Doctorate": {
+      "label": "Doctorate",
+      "courses": [
+        "Ph.D.",
+        "D.Sc.",
+        "D.Litt.",
+        "D.Phil.",
+        "D.Tech.",
+        "M.D. (Doctor of Medicine)",
+        "D.D.S."
+      ],
+      "course_types": [
+        "Full Time",
+        "Part Time"
+      ]
+    },
+    "Post Graduate": {
+      "label": "Post Graduate",
+      "courses": [
+        "M.Tech / M.E.",
+        "MCA",
+        "MBA",
+        "M.Com",
+        "M.Sc",
+        "M.A.",
+        "M.S.",
+        "M.Ed",
+        "M.Pharm",
+        "M.Des",
+        "LLM",
+        "MSW",
+        "MHM",
+        "MPH",
+        "M.Arch",
+        "M.Plan",
+        "M.P.Ed",
+        "M.D. / MS (Medical)",
+        "MDS (Dental)",
+        "PGDM",
+        "PG Diploma",
+        "Others"
+      ],
+      "course_types": [
+        "Full Time",
+        "Part Time",
+        "Distance Learning",
+        "Correspondence"
+      ]
+    },
+    "Graduate": {
+      "label": "Graduate",
+      "courses": [
+        "B.Tech / B.E.",
+        "B.Sc",
+        "B.Com",
+        "B.A.",
+        "BBA / BMS",
+        "BCA",
+        "LLB",
+        "B.Ed",
+        "MBBS",
+        "BDS",
+        "B.Pharm",
+        "B.Arch",
+        "B.Des",
+        "BHM",
+        "B.P.Ed",
+        "B.Sc Nursing",
+        "BSW",
+        "B.Sc Agriculture",
+        "B.Voc",
+        "Others"
+      ],
+      "course_types": [
+        "Full Time",
+        "Part Time",
+        "Distance Learning",
+        "Correspondence"
+      ]
+    },
+    "Diploma": {
+      "label": "Diploma",
+      "courses": [
+        "Polytechnic Diploma (Engineering)",
+        "Diploma in Computer Application (DCA)",
+        "Diploma in Business Administration",
+        "Diploma in Pharmacy",
+        "Diploma in Hotel Management",
+        "Diploma in Education (D.Ed)",
+        "Diploma in Nursing",
+        "Diploma in Fashion Design",
+        "ITI Certificate",
+        "Post Graduate Diploma",
+        "Others"
+      ],
+      "course_types": [
+        "Full Time",
+        "Part Time",
+        "Distance Learning"
+      ]
+    },
+    "Class XII": {
+      "label": "Class XII / HSC",
+      "courses": [
+        "Science Stream",
+        "Commerce Stream",
+        "Arts / Humanities",
+        "Vocational",
+        "Other"
+      ],
+      "course_types": [
+        "Regular",
+        "Distance / NIOS"
+      ]
+    },
+    "Class X": {
+      "label": "Class X / SSC",
+      "courses": [
+        "Secondary Education (Class X)"
+      ],
+      "course_types": [
+        "Regular",
+        "Distance / NIOS"
+      ]
+    },
+    "Below Class X": {
+      "label": "Below Class X",
+      "courses": [
+        "Primary Education",
+        "Upper Primary",
+        "Other"
+      ],
+      "course_types": [
+        "Regular"
+      ]
+    }
+  }
+}

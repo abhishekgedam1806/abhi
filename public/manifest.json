@@ -1,0 +1,54 @@
+{
+  "name": "Jobs Portal - Career & Recruitment Platform",
+  "short_name": "JobsPortal",
+  "description": "Find verified jobs, connect directly with HR recruiters, and apply for career opportunities across India.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2563EB",
+  "categories": ["business", "productivity", "career"],
+  "icons": [
+    {
+      "src": "/images/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/pwa/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Jobs",
+      "short_name": "Jobs",
+      "description": "Browse and search latest jobs",
+      "url": "/jobs?source=pwa_shortcut",
+      "icons": [{ "src": "/images/pwa/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Help & Support",
+      "short_name": "Support",
+      "description": "Contact support team",
+      "url": "/contact-us?source=pwa_shortcut",
+      "icons": [{ "src": "/images/pwa/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
