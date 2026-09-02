@@ -1220,9 +1220,6 @@ if (!empty(Request::get('search'))) {
                                     <div class="apna-job-meta-line">
                                         <span class="apna-meta-loc">
                                             <i class="fa fa-map-marker text-danger"></i> {{ $locationText }}
-                                            @if(isset($job->distance_km) && $job->distance_km !== null)
-                                                <span style="color: #2563EB; font-weight: 700; margin-left: 3px;">• {{ $job->distance_km }} km away</span>
-                                            @endif
                                         </span>
                                         <span class="apna-meta-sal">
                                             <i class="fa fa-inr"></i>

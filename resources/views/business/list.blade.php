@@ -493,11 +493,6 @@
                             <div class="biz-card-address">
                                 <i class="fa fa-map-marker" style="color: #64748B;"></i>
                                 <span>{{ $biz->getLocationLabel() }}</span>
-                                @if(isset($biz->distance))
-                                <span style="background: #EFF6FF; color: #2563EB; font-weight: 700; font-size: 11px; padding: 1px 6px; border-radius: 4px;">
-                                    {{ number_format($biz->distance, 1) }} km away
-                                </span>
-                                @endif
                             </div>
 
                             @if(!empty($biz->short_description))
