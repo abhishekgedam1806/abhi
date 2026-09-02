@@ -20,7 +20,7 @@ class ClaudeDriver implements AIDriverInterface
         $this->apiKey = $provider->getDecryptedApiKey();
         $this->model = $provider->model ?: 'claude-3-5-haiku-20241022';
         $this->baseUrl = rtrim($provider->base_url ?: 'https://api.anthropic.com/v1', '/');
-        $this->timeout = $provider->timeout_sec ?: 35;
+        $this->timeout = max(45, (int)($provider->timeout_sec ?: 45));
     }
 
     public function generateText(string $prompt, array $options = []): array

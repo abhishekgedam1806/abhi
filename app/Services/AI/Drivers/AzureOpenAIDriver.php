@@ -20,7 +20,7 @@ class AzureOpenAIDriver implements AIDriverInterface
         $this->apiKey = $provider->getDecryptedApiKey();
         $this->model = $provider->model ?: 'gpt-4o-mini';
         $this->baseUrl = rtrim($provider->base_url ?: '', '/');
-        $this->timeout = $provider->timeout_sec ?: 45;
+        $this->timeout = max(45, (int)($provider->timeout_sec ?: 45));
     }
 
     public function generateText(string $prompt, array $options = []): array

@@ -20,8 +20,8 @@ class GeminiDriver implements AIDriverInterface
         $this->apiKey = $provider->getDecryptedApiKey();
         $this->model = $provider->model ?: 'gemini-1.5-flash';
         $this->baseUrl = rtrim($provider->base_url ?: 'https://generativelanguage.googleapis.com', '/');
-        // Default 30s for text, but vision/image calls may override to 120s
-        $this->timeout = $provider->timeout_sec ?: 30;
+        // Enforce minimum 45s timeout for resilient AI completions on shared hosts
+        $this->timeout = max(45, (int)($provider->timeout_sec ?: 45));
     }
 
     public function generateText(string $prompt, array $options = []): array
