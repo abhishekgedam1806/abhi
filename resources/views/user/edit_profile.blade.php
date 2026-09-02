@@ -124,6 +124,13 @@
     }
 
     /* Elegant + Add Button (Compact Pill) */
+    .profile-section-actions {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
+    }
+
     .btn-add-section {
         display: inline-flex !important;
         align-items: center !important;
@@ -152,6 +159,35 @@
         box-shadow: 0 4px 12px rgba(3, 133, 92, 0.25) !important;
         transform: translateY(-1px) !important;
         text-decoration: none !important;
+    }
+
+    .btn-ai-suggest {
+        background: #EFF6FF !important;
+        color: #1D4ED8 !important;
+        border: 1.5px solid #BFDBFE !important;
+        font-weight: 700 !important;
+    }
+    .btn-ai-suggest:hover,
+    .btn-ai-suggest:focus {
+        background: #2563EB !important;
+        color: #FFFFFF !important;
+        border-color: #2563EB !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+    }
+    .btn-ai-suggest i {
+        color: #2563EB !important;
+        transition: color 0.15s ease !important;
+    }
+    .btn-ai-suggest:hover i,
+    .btn-ai-suggest:focus i {
+        color: #FFFFFF !important;
+    }
+
+    .btn-add-primary {
+        background: #ECFDF5 !important;
+        color: #03855c !important;
+        border: 1.5px solid #A7F3D0 !important;
+        font-weight: 700 !important;
     }
 
     /* Modern Minimalist Empty State Card */
@@ -741,12 +777,34 @@
     @media (max-width: 767px) {
         .profile-section-header {
             flex-direction: column !important;
-            align-items: flex-start !important;
+            align-items: stretch !important;
             gap: 12px !important;
         }
-        .btn-add-section {
+        .profile-section-title-wrap {
+            width: 100% !important;
+        }
+        .profile-section-actions {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+        }
+        .profile-section-actions .btn-add-section {
             width: 100% !important;
             justify-content: center !important;
+            padding: 8px 10px !important;
+            font-size: 12.5px !important;
+            white-space: nowrap !important;
+        }
+        .profile-section-header > .btn-add-section {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .profile-section-actions {
+            grid-template-columns: 1fr !important;
         }
     }
 
@@ -832,19 +890,7 @@
         }
     }
 
-    function togglePasswordVisibility() {
-        var pass = document.getElementById('password_field');
-        var icon = document.getElementById('password_toggle_icon');
-        if (pass) {
-            if (pass.type === 'password') {
-                pass.type = 'text';
-                if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
-            } else {
-                pass.type = 'password';
-                if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
-            }
-        }
-    }
+
 
     window.openProfileModal = function(modalSelector) {
         var $modal = $(modalSelector);

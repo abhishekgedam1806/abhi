@@ -18,10 +18,10 @@
         <div class="col-md-6 col-12">
             <div class="formrow {!! APFrmErrHelp::hasError($errors, 'password') !!}" style="margin-bottom: 16px;">
                 <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">{{__('Password')}} <span style="font-size: 11.5px; font-weight: 500; color: #94A3B8;">({{__('Leave blank to keep unchanged')}})</span></label>
-                <div style="position: relative;">
-                    {!! Form::password('password', array('class'=>'form-control modern-form-control', 'id'=>'password_field', 'placeholder'=>__('New Password'), 'style'=>'padding-right: 42px;')) !!}
-                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; color: #94A3B8; cursor: pointer; outline: none;" title="{{__('Show/Hide password')}}">
-                        <i class="fa fa-eye-slash" id="password_toggle_icon" style="font-size: 15px;"></i>
+                <div class="pwd-field-wrap" style="position: relative;">
+                    {!! Form::password('password', array('class'=>'form-control modern-form-control', 'id'=>'password_field', 'placeholder'=>__('New Password'), 'style'=>'padding-right: 44px;')) !!}
+                    <button type="button" class="btn-pwd-eye" onclick="togglePasswordVisibility(this)" tabindex="-1" title="{{__('Show/Hide password')}}">
+                        <i class="fa fa-eye-slash" style="font-size: 15px;"></i>
                     </button>
                 </div>
                 {!! APFrmErrHelp::showErrors($errors, 'password') !!}

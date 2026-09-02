@@ -192,6 +192,20 @@ if (!isset($seo)) {
     .pwd-field-wrap input.form-control {
         padding-right: 44px !important;
     }
+    /* Hide native browser password reveal eye icon (Edge, Chrome, Safari) */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+        display: none !important;
+    }
+    input[type="password"]::-webkit-contacts-auto-fill-button,
+    input[type="password"]::-webkit-credentials-auto-fill-button {
+        visibility: hidden !important;
+        display: none !important;
+        pointer-events: none !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+    }
     .btn-pwd-eye {
         position: absolute !important;
         right: 12px !important;
@@ -200,13 +214,16 @@ if (!isset($seo)) {
         background: transparent !important;
         border: none !important;
         padding: 6px !important;
-        color: #64748B !important;
+        color: #94A3B8 !important;
         cursor: pointer !important;
         font-size: 16px !important;
         line-height: 1 !important;
         outline: none !important;
         z-index: 10 !important;
         transition: color 0.15s ease, transform 0.15s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     .btn-pwd-eye:hover {
         color: #2563EB !important;
@@ -219,20 +236,22 @@ if (!isset($seo)) {
 
     <script type="text/JavaScript">
         function togglePasswordVisibility(btn) {
-            var wrapper = $(btn).closest('.pwd-field-wrap');
-            if (!wrapper.length) wrapper = $(btn).parent();
+            var $btn = btn ? $(btn) : $('.btn-pwd-eye, #password_toggle_icon').first();
+            var wrapper = $btn.closest('.pwd-field-wrap');
+            if (!wrapper.length) wrapper = $btn.parent();
             var input = wrapper.find('input').first();
-            var icon = $(btn).find('i');
+            if (!input.length) input = $('#password_field, input[type="password"], input[type="text"]').first();
+            var icon = $btn.is('i') ? $btn : $btn.find('i');
             
             if (input.length) {
                 if (input.attr('type') === 'password') {
                     input.attr('type', 'text');
                     icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                    $(btn).addClass('active').attr('title', 'Hide Password');
+                    $btn.addClass('active').attr('title', 'Hide Password');
                 } else {
                     input.attr('type', 'password');
                     icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                    $(btn).removeClass('active').attr('title', 'Show Password');
+                    $btn.removeClass('active').attr('title', 'Show Password');
                 }
             }
         }
@@ -240,8 +259,10 @@ if (!isset($seo)) {
         function initPasswordToggles() {
             $('input[type="password"]').each(function() {
                 var $input = $(this);
-                // Avoid double wrapping
-                if ($input.parent().hasClass('pwd-field-wrap') || $input.siblings('.btn-pwd-eye').length > 0) {
+                // Avoid double wrapping if already wrapped or already has any eye button
+                if ($input.parent().hasClass('pwd-field-wrap') || 
+                    $input.siblings('.btn-pwd-eye').length > 0 || 
+                    $input.parent().find('button, i.fa-eye, i.fa-eye-slash').length > 0) {
                     return;
                 }
                 $input.wrap('<div class="pwd-field-wrap"></div>');

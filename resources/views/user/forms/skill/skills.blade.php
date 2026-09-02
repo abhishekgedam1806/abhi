@@ -9,12 +9,12 @@
                 <p class="profile-section-subtitle">Add technical, functional and domain skills</p>
             </div>
         </div>
-        <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn-add-section" onclick="loadAISkillRecommendations();" style="background: #EFF6FF; border: 1.5px solid #BFDBFE; color: #1D4ED8; font-weight: 700;">
-                <i class="fa fa-magic" style="color: #2563EB;"></i> {{__('✨ AI Suggestions')}}
+        <div class="profile-section-actions">
+            <button type="button" class="btn-add-section btn-ai-suggest" onclick="loadAISkillRecommendations();" title="{{__('Get AI Skill Suggestions')}}">
+                <i class="fa fa-magic"></i> <span>{{__('AI Suggestions')}}</span>
             </button>
-            <button type="button" class="btn-add-section" onclick="showProfileSkillModal();">
-                <i class="fa fa-plus"></i> {{__('Add Skill')}}
+            <button type="button" class="btn-add-section btn-add-primary" onclick="showProfileSkillModal();">
+                <i class="fa fa-plus"></i> <span>{{__('Add Skill')}}</span>
             </button>
         </div>
     </div>
