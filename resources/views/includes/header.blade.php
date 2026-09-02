@@ -243,7 +243,7 @@
                         </li>
 
                         {{-- 📱 MOBILE PWA INSTALL BUTTON IN DRAWER --}}
-                        <li class="nav-item d-lg-none" id="pwaMobileDrawerBtn" style="margin: 8px 0 6px 0; width: 100%;">
+                        <li class="nav-item d-lg-none" id="pwaMobileDrawerBtn" style="margin: 6px 0 6px 0; width: 100%;">
                             <a href="javascript:void(0);" onclick="installPwaApp()" class="nav-link" style="background: #EFF6FF !important; border: 1.5px solid #BFDBFE !important; border-radius: 10px !important; font-weight: 700 !important; color: #2563EB !important; padding: 10px 14px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important;">
                                 <span class="nav-link-content" style="display: flex; align-items: center; gap: 8px;">
                                     <i class="fa fa-download" style="color: #2563EB; font-size: 15px;"></i>
@@ -253,15 +253,50 @@
                             </a>
                         </li>
 
-                        {{-- 🔔 NOTIFICATION BELL DROPDOWN (Logged In Users & Employers) --}}
+                        {{-- 📱 MOBILE DEDICATED LANGUAGE ACCORDION --}}
+                        @php
+                            $activeLangObj = isset($siteLanguages) ? $siteLanguages->firstWhere('iso_code', App::getLocale()) : null;
+                            $activeLangLabel = $activeLangObj ? $activeLangObj->native : 'English';
+                        @endphp
+                        <li class="nav-item d-lg-none" style="margin: 4px 0 0 0; width: 100%; border-top: 1px solid #F1F5F9; padding-top: 8px;">
+                            <button type="button" class="btn-mob-lang-toggle" onclick="toggleMobLanguageAccordion(event)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px 14px; cursor: pointer; color: #1E293B; font-family: inherit; font-size: 13.5px; font-weight: 700;">
+                                <span style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 28px; height: 28px; border-radius: 50%; background: #EFF6FF; border: 1px solid #BFDBFE; display: inline-flex; align-items: center; justify-content: center; color: #2563EB;">
+                                        <i class="fa fa-globe"></i>
+                                    </span>
+                                    <span>{{ __('Language') }}: <span style="color: #2563EB;">{{ $activeLangLabel }}</span></span>
+                                </span>
+                                <i class="fa fa-chevron-down" id="mobLangArrow" style="color: #94A3B8; font-size: 12px; transition: transform 0.2s ease;"></i>
+                            </button>
+                            <div id="mobLangDrawerList" style="display: none; margin-top: 8px; background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 6px; max-height: 220px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                                @foreach($siteLanguages as $siteLang)
+                                <a href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('locale-form-mob-{{$siteLang->iso_code}}').submit();" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 600; color: {{ App::getLocale() == $siteLang->iso_code ? '#2563EB' : '#1E293B' }}; background: {{ App::getLocale() == $siteLang->iso_code ? '#EFF6FF' : 'transparent' }}; text-decoration: none; margin-bottom: 2px;">
+                                    <span style="display: flex; align-items: center; gap: 8px;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ App::getLocale() == $siteLang->iso_code ? '#2563EB' : '#CBD5E1' }};"></span>
+                                        <span>{{ $siteLang->native }}</span>
+                                    </span>
+                                    @if(App::getLocale() == $siteLang->iso_code)
+                                        <i class="fa fa-check text-primary"></i>
+                                    @endif
+                                </a>
+                                <form id="locale-form-mob-{{$siteLang->iso_code}}" action="{{ route('set.locale') }}" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="locale" value="{{$siteLang->iso_code}}"/>
+                                    <input type="hidden" name="return_url" value="{{url()->full()}}"/>
+                                    <input type="hidden" name="is_rtl" value="{{$siteLang->is_rtl}}"/>
+                                </form>
+                                @endforeach
+                            </div>
+                        </li>
+
+                        {{-- 🔔 DESKTOP ONLY NOTIFICATION BELL --}}
                         @if(Auth::check() || Auth::guard('company')->check())
-                        <li class="nav-item dropdown notif-dropdown-nav">
+                        <li class="nav-item dropdown notif-dropdown-nav d-none d-lg-block">
                             <a href="javascript:void(0);" class="nav-link notif-toggle-btn" id="notifDropdownBtn" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="{{ __('Notifications') }}">
                                 <div class="notif-bell-wrap">
                                     <i class="fa fa-bell-o"></i>
                                     <span class="notif-badge-count d-none" id="notif_badge_count">0</span>
                                 </div>
-                                <span class="d-lg-none mobile-notif-label">{{ __('Notifications') }}</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right notif-dropdown-panel" aria-labelledby="notifDropdownBtn">
                                 <div class="notif-panel-header">
@@ -287,16 +322,14 @@
                         </li>
                         @endif
 
-                        {{-- SLEEK LANGUAGE DROPDOWN --}}
-                        <li class="nav-item dropdown lang-dropdown-item">
+                        {{-- 💻 DESKTOP ONLY SLEEK LANGUAGE DROPDOWN --}}
+                        <li class="nav-item dropdown lang-dropdown-item d-none d-lg-block">
                             <a href="javascript:void(0);" class="nav-link dropdown-toggle lang-toggle-btn" id="langDropdownBtn" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="{{ __('Change Language') }}">
                                 <div class="d-flex align-items-center">
                                     <span class="lang-pill-wrap">
                                         <i class="fa fa-globe"></i>
                                     </span>
-                                    <span class="d-lg-none mobile-lang-label">{{ __('Select Language') }}</span>
                                 </div>
-                                <i class="fa fa-angle-down d-lg-none lang-caret-icon" style="color: #94A3B8; font-size: 14px;"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right lang-dropdown-menu" aria-labelledby="langDropdownBtn" style="max-height: 320px; overflow-y: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E2E8F0; padding: 6px 0;">
                                 @foreach($siteLanguages as $siteLang)
@@ -665,7 +698,7 @@
         width: auto !important;
         background: #FFFFFF !important;
         border-radius: 16px !important;
-        padding: 16px 14px 24px 14px !important;
+        padding: 16px 14px 60px 14px !important;
         box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35) !important;
         border: 1.5px solid #E2E8F0 !important;
         max-height: calc(100vh - 74px) !important;
@@ -1323,23 +1356,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, { passive: true });
 
-    // Mobile Language dropdown toggle click handler
-    var langBtn = document.getElementById('langDropdownBtn');
-    if (langBtn) {
-        langBtn.addEventListener('click', function(e) {
-            if (window.innerWidth <= 991) {
-                e.preventDefault();
-                e.stopPropagation();
-                var parentItem = this.closest('.lang-dropdown-item');
-                if (parentItem) {
-                    var menu = parentItem.querySelector('.lang-dropdown-menu');
-                    if (menu) {
-                        menu.classList.toggle('show');
-                        parentItem.classList.toggle('show');
-                    }
-                }
+    // Mobile Language accordion toggle
+    window.toggleMobLanguageAccordion = function(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        var list = document.getElementById('mobLangDrawerList');
+        var arrow = document.getElementById('mobLangArrow');
+        if (list) {
+            if (list.style.display === 'none' || list.style.display === '') {
+                list.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+            } else {
+                list.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
             }
-        });
-    }
+        }
+    };
 });
 </script>
