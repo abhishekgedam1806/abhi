@@ -323,6 +323,8 @@
 {!! Form::close() !!}
 
 @push('styles')
+<link href="{{ asset('admin_assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('admin_assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
     .datepicker>div {
         display: block;
@@ -330,6 +332,7 @@
 </style>
 @endpush
 @push('scripts')
+<script src="{{ asset('admin_assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
 @include('includes.tinyMCEFront')
 <script type="text/javascript">
     $(document).ready(function () {

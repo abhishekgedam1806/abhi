@@ -117,7 +117,7 @@
             autoclose: true,
             format:'yyyy-m-d'
         });
-        if ($('.select2-multiple').length > 0) {
+        if (typeof $.fn.select2 === 'function' && $('.select2-multiple').length > 0) {
             $('.select2-multiple').select2({
                 placeholder: "{{__('Select Major Subjects')}}",
                 allowClear: true

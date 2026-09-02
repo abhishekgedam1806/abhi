@@ -269,7 +269,7 @@ function selectCollegeName(name) {
 }
 
 $(document).ready(function() {
-    if ($('.select2-multiple').length > 0) {
+    if (typeof $.fn.select2 === 'function' && $('.select2-multiple').length > 0) {
         $('.select2-multiple').select2({
             placeholder: "Select an option",
             allowClear: true

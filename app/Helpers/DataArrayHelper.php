@@ -173,85 +173,105 @@ class DataArrayHelper
 
     public static function defaultCountriesArray()
     {
-        $array = Country::select('countries.country', 'countries.country_id')->isDefault()->active()->sorted()->pluck('countries.country', 'countries.country_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_countries', 3600, function () {
+            return Country::select('countries.country', 'countries.country_id')->isDefault()->active()->sorted()->pluck('countries.country', 'countries.country_id')->toArray();
+        });
     }
 
     public static function langCountriesArray()
     {
-        $array = Country::select('countries.country', 'countries.country_id')->lang()->active()->sorted()->pluck('countries.country', 'countries.country_id')->toArray();
-        if ((int) count($array) === 0) {
-            $array = self::defaultCountriesArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_countries_{$locale}", 3600, function () {
+            $array = Country::select('countries.country', 'countries.country_id')->lang()->active()->sorted()->pluck('countries.country', 'countries.country_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultCountriesArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultCareerLevelsArray()
     {
-        $array = CareerLevel::select('career_levels.career_level', 'career_levels.career_level_id')->isDefault()->active()->sorted()->pluck('career_levels.career_level', 'career_levels.career_level_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_career_levels', 3600, function () {
+            return CareerLevel::select('career_levels.career_level', 'career_levels.career_level_id')->isDefault()->active()->sorted()->pluck('career_levels.career_level', 'career_levels.career_level_id')->toArray();
+        });
     }
 
     public static function langCareerLevelsArray()
     {
-        $array = CareerLevel::select('career_levels.career_level', 'career_levels.career_level_id')->lang()->active()->sorted()->pluck('career_levels.career_level', 'career_levels.career_level_id')->toArray();
-        if ((int) count($array) === 0) {
-            $array = self::defaultCareerLevelsArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_career_levels_{$locale}", 3600, function () {
+            $array = CareerLevel::select('career_levels.career_level', 'career_levels.career_level_id')->lang()->active()->sorted()->pluck('career_levels.career_level', 'career_levels.career_level_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultCareerLevelsArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultIndustriesArray()
     {
-        $array = Industry::select('industries.industry', 'industries.industry_id')->isDefault()->active()->sorted()->pluck('industries.industry', 'industries.industry_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_industries', 3600, function () {
+            return Industry::select('industries.industry', 'industries.industry_id')->isDefault()->active()->sorted()->pluck('industries.industry', 'industries.industry_id')->toArray();
+        });
     }
 
     public static function langIndustriesArray()
     {
-        $array = Industry::select('industries.industry', 'industries.industry_id')->lang()->active()->sorted()->pluck('industries.industry', 'industries.industry_id')->toArray();
-        if ((int) count($array) === 0) {
-            $array = self::defaultIndustriesArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_industries_{$locale}", 3600, function () {
+            $array = Industry::select('industries.industry', 'industries.industry_id')->lang()->active()->sorted()->pluck('industries.industry', 'industries.industry_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultIndustriesArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultFunctionalAreasArray()
     {
-        $array = FunctionalArea::select('functional_areas.functional_area', 'functional_areas.functional_area_id')->isDefault()->active()->orderBy('functional_areas.functional_area', 'ASC')->pluck('functional_areas.functional_area', 'functional_areas.functional_area_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_functional_areas', 3600, function () {
+            return FunctionalArea::select('functional_areas.functional_area', 'functional_areas.functional_area_id')->isDefault()->active()->orderBy('functional_areas.functional_area', 'ASC')->pluck('functional_areas.functional_area', 'functional_areas.functional_area_id')->toArray();
+        });
     }
 
     public static function langFunctionalAreasArray()
     {
-        $array = FunctionalArea::select('functional_areas.functional_area', 'functional_areas.functional_area_id')->lang()->active()->orderBy('functional_areas.functional_area', 'ASC')->pluck('functional_areas.functional_area', 'functional_areas.functional_area_id')->toArray();
-        if ((int) count($array) === 0) {
-            $array = self::defaultFunctionalAreasArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_functional_areas_{$locale}", 3600, function () {
+            $array = FunctionalArea::select('functional_areas.functional_area', 'functional_areas.functional_area_id')->lang()->active()->orderBy('functional_areas.functional_area', 'ASC')->pluck('functional_areas.functional_area', 'functional_areas.functional_area_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultFunctionalAreasArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultDegreelevelsArray()
     {
-        $array = DegreeLevel::select('degree_levels.degree_level', 'degree_levels.degree_level_id')->isDefault()->active()->sorted()->pluck('degree_levels.degree_level', 'degree_levels.degree_level_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_degree_levels', 3600, function () {
+            return DegreeLevel::select('degree_levels.degree_level', 'degree_levels.degree_level_id')->isDefault()->active()->sorted()->pluck('degree_levels.degree_level', 'degree_levels.degree_level_id')->toArray();
+        });
     }
 
     public static function langDegreelevelsArray()
     {
-        $array = DegreeLevel::select('degree_levels.degree_level', 'degree_levels.degree_level_id')->lang()->active()->sorted()->pluck('degree_levels.degree_level', 'degree_levels.degree_level_id')->toArray();
-        if ((int) count($array) === 0) {
-            $array = self::defaultDegreelevelsArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_degree_levels_{$locale}", 3600, function () {
+            $array = DegreeLevel::select('degree_levels.degree_level', 'degree_levels.degree_level_id')->lang()->active()->sorted()->pluck('degree_levels.degree_level', 'degree_levels.degree_level_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultDegreelevelsArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
@@ -348,54 +368,63 @@ class DataArrayHelper
 
     public static function defaultJobExperiencesArray()
     {
-        $array = JobExperience::select('job_experiences.job_experience', 'job_experiences.job_experience_id')->isDefault()->active()->sorted()->pluck('job_experiences.job_experience', 'job_experiences.job_experience_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_job_exp', 3600, function () {
+            return JobExperience::select('job_experiences.job_experience', 'job_experiences.job_experience_id')->isDefault()->active()->sorted()->pluck('job_experiences.job_experience', 'job_experiences.job_experience_id')->toArray();
+        });
     }
 
     public static function langJobExperiencesArray()
     {
-        $array = JobExperience::select('job_experiences.job_experience', 'job_experiences.job_experience_id')->lang()->active()->sorted()->pluck('job_experiences.job_experience', 'job_experiences.job_experience_id')->toArray();
-
-        if ((int) count($array) === 0) {
-            $array = self::defaultJobExperiencesArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_job_exp_{$locale}", 3600, function () {
+            $array = JobExperience::select('job_experiences.job_experience', 'job_experiences.job_experience_id')->lang()->active()->sorted()->pluck('job_experiences.job_experience', 'job_experiences.job_experience_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultJobExperiencesArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultJobTypesArray()
     {
-        $array = JobType::select('job_types.job_type', 'job_types.job_type_id')->isDefault()->active()->sorted()->pluck('job_types.job_type', 'job_types.job_type_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_job_types', 3600, function () {
+            return JobType::select('job_types.job_type', 'job_types.job_type_id')->isDefault()->active()->sorted()->pluck('job_types.job_type', 'job_types.job_type_id')->toArray();
+        });
     }
 
     public static function langJobTypesArray()
     {
-        $array = JobType::select('job_types.job_type', 'job_types.job_type_id')->lang()->active()->sorted()->pluck('job_types.job_type', 'job_types.job_type_id')->toArray();
-
-        if ((int) count($array) === 0) {
-            $array = self::defaultJobTypesArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_job_types_{$locale}", 3600, function () {
+            $array = JobType::select('job_types.job_type', 'job_types.job_type_id')->lang()->active()->sorted()->pluck('job_types.job_type', 'job_types.job_type_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultJobTypesArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */
 
     public static function defaultJobShiftsArray()
     {
-        $array = JobShift::select('job_shifts.job_shift', 'job_shifts.job_shift_id')->isDefault()->active()->sorted()->pluck('job_shifts.job_shift', 'job_shifts.job_shift_id')->toArray();
-        return $array;
+        return \Cache::remember('dd_def_job_shifts', 3600, function () {
+            return JobShift::select('job_shifts.job_shift', 'job_shifts.job_shift_id')->isDefault()->active()->sorted()->pluck('job_shifts.job_shift', 'job_shifts.job_shift_id')->toArray();
+        });
     }
 
     public static function langJobShiftsArray()
     {
-        $array = JobShift::select('job_shifts.job_shift', 'job_shifts.job_shift_id')->lang()->active()->sorted()->pluck('job_shifts.job_shift', 'job_shifts.job_shift_id')->toArray();
-
-        if ((int) count($array) === 0) {
-            $array = self::defaultJobShiftsArray();
-        }
-        return $array;
+        $locale = \App::getLocale();
+        return \Cache::remember("dd_lang_job_shifts_{$locale}", 3600, function () {
+            $array = JobShift::select('job_shifts.job_shift', 'job_shifts.job_shift_id')->lang()->active()->sorted()->pluck('job_shifts.job_shift', 'job_shifts.job_shift_id')->toArray();
+            if ((int) count($array) === 0) {
+                $array = self::defaultJobShiftsArray();
+            }
+            return $array;
+        });
     }
 
     /*     * **************************** */

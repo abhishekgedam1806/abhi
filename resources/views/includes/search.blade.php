@@ -268,7 +268,7 @@
                          class="hero-man-img"
                          width="450"
                          height="380"
-                         loading="lazy"
+                         fetchpriority="high"
                          decoding="async" />
                 </div>
             </div>

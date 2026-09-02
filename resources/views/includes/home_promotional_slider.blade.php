@@ -246,6 +246,10 @@
                                 <img src="{{ $imgSrc }}" 
                                      alt="{{ $slider->slider_heading ?: __('Promotional Offer') }}" 
                                      class="promo-slide-img" 
+                                     width="1140"
+                                     height="260"
+                                     decoding="async"
+                                     {{ $key === 0 ? 'fetchpriority="high"' : '' }}
                                      loading="{{ $key === 0 ? 'eager' : 'lazy' }}">
                             </a>
                         @else

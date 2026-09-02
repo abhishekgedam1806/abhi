@@ -94,9 +94,9 @@ if (!isset($seo)) {
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 
     <!-- Fonts (Non-render-blocking with display=swap) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet"></noscript>
 
     <!-- Core Critical Stylesheets -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
@@ -106,8 +106,6 @@ if (!isset($seo)) {
 
     <!-- Secondary / Component Styles (Asynchronous) -->
     <link href="{{ asset('css/owl.carousel.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" media="print" onload="this.media='all'" />
-    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" media="print" onload="this.media='all'" />
     @if((session('localeDir', 'ltr') == 'rtl'))
     <link href="{{ asset('css/rtl-style.css') }}" rel="stylesheet">
     @endif
@@ -186,8 +184,6 @@ if (!isset($seo)) {
     <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
     <script src="{{ asset('js/owl.carousel.js') }}" defer></script>
     <script src="{{ asset('admin_assets/global/plugins/Bootstrap-3-Typeahead/bootstrap3-typeahead.min.js') }}" defer></script>
-    <script src="{{ asset('admin_assets/global/plugins/select2/js/select2.full.min.js') }}" defer></script>
-    {!! NoCaptcha::renderJs() !!}
     @stack('scripts')
     <!-- Custom js -->
     <script src="{{ asset('js/script.js') }}" defer></script>
