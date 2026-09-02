@@ -34,10 +34,11 @@ class JobPublisher
         $companyName = !empty($rawJob->raw_company) ? trim($rawJob->raw_company) : 'Featured Employer';
         $company = Company::where('name', $companyName)->first();
         if (!$company) {
+            $cleanSlug = substr(Str::slug($companyName), 0, 40);
             $company = new Company();
-            $company->name = $companyName;
-            $company->email = 'contact@' . Str::slug($companyName) . '.com';
-            $company->slug = Str::slug($companyName . '-' . uniqid());
+            $company->name = substr($companyName, 0, 190);
+            $company->email = 'contact@' . ($cleanSlug ?: 'company') . '.com';
+            $company->slug = ($cleanSlug ?: 'company') . '-' . uniqid();
             $company->is_active = 1;
             $company->verified = 1;
             $company->package_id = 1;
