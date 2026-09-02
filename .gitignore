@@ -8,8 +8,10 @@
 /storage/logs/*
 !storage/logs/.gitkeep
 !storage/framework/cache/.gitkeep
+!storage/framework/cache/data/.gitkeep
 !storage/framework/sessions/.gitkeep
 !storage/framework/views/.gitkeep
+!bootstrap/cache/.gitkeep
 /vendor
 /.idea
 /.vscode
@@ -24,3 +26,6 @@ yarn-error.log
 *.exe
 cloudflared.exe
 cf.exe
+*.sql
+*.zip
+*.tar.gz

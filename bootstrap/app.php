@@ -11,8 +11,24 @@
 |
 */
 
+$basePath = realpath(__DIR__.'/../');
+
+// Auto-create required storage directories if missing on server
+$dirs = [
+    $basePath . '/storage/framework/views',
+    $basePath . '/storage/framework/cache/data',
+    $basePath . '/storage/framework/sessions',
+    $basePath . '/storage/logs',
+    $basePath . '/bootstrap/cache',
+];
+foreach ($dirs as $dir) {
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0775, true);
+    }
+}
+
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
+    $basePath
 );
 
 /*
