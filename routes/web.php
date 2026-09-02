@@ -123,6 +123,7 @@ include_once($real_path . 'site_user.php');
 /* * ******** User Auth ************ */
 
 Auth::routes();
+Route::match(['get', 'post'], 'logout', 'Auth\LoginController@logout')->name('logout');
 
 /* * ******** Company Auth ************ */
 

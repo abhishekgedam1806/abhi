@@ -81,7 +81,8 @@ use AuthenticatesUsers;
     {
         $this->guard('company')->logout();
         $request->session()->invalidate();
-        return redirect('/login');
+        $request->session()->regenerateToken();
+        return redirect()->route('company.login');
     }
 
     /**

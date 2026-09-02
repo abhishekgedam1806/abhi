@@ -4,7 +4,7 @@ Route::prefix('company')->name('company.')->group(function () {
     Route::get('/', 'Company\Auth\LoginController@showLoginForm');
     Route::get('/login', 'Company\Auth\LoginController@showLoginForm')->name('login');
     Route::post('/login', 'Company\Auth\LoginController@login');
-    Route::post('/logout', 'Company\Auth\LoginController@logout')->name('logout');
+    Route::match(['get', 'post'], '/logout', 'Company\Auth\LoginController@logout')->name('logout');
 
     // Registration Routes...
     Route::get('/register', 'Company\Auth\RegisterController@showRegistrationForm')->name('register');
