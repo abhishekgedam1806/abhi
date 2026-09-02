@@ -1195,7 +1195,7 @@ if (!empty(Request::get('search'))) {
                                     <div class="apna-job-top-row">
                                         <div class="apna-comp-logo-box">
                                             @if(!empty($company->logo))
-                                                <img src="{{ asset('company_logos/'.$company->logo) }}" alt="{{ $company->name }}">
+                                                <img src="{{ asset('company_logos/'.$company->logo) }}" alt="{{ $company->name }}" width="48" height="48" loading="lazy" decoding="async">
                                             @else
                                                 <span class="placeholder-icon"><i class="fa fa-building-o"></i></span>
                                             @endif

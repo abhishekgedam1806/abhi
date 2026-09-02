@@ -102,7 +102,7 @@ $homeBizCategories = $homeBizCategories ?? \App\BusinessCategory::active()->wher
                     <div style="display: flex; gap: 14px; align-items: flex-start;">
                         <div class="home-biz-logo">
                             @if($hBiz->logo)
-                            <img src="{{ $hBiz->getLogoUrl() }}" alt="{{ $hBiz->name }}">
+                            <img src="{{ $hBiz->getLogoUrl() }}" alt="{{ $hBiz->name }}" width="48" height="48" loading="lazy">
                             @else
                             <i class="fa fa-building-o" style="font-size: 22px; color: #94A3B8;"></i>
                             @endif

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-5 col-sm-6"> 
                 <!--app image Start-->
-                <div class="appimg"><img src="{{asset('/')}}images/app-mobile.png" alt="Your alt text here" /></div>
+                <div class="appimg"><img src="{{asset('/')}}images/app-mobile.png" alt="Jobs Portal App" width="320" height="340" loading="lazy" /></div>
                 <!--app image end--> 
             </div>
             <div class="col-md-7 col-sm-6"> 
@@ -16,8 +16,8 @@
                 <p>{{__('Aliquam vestibulum cursus felis. In iaculis iaculis sapien ac condimentum. Vestibulum congue posuere lacus, id tincidunt nisi porta sit amet. Suspendisse et sapien varius, pellentesque dui non, semper orci. Curabitur blandit, diam ut ornare ultricies')}}.</p>
                 <div class="appbtn">
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 col-xs-6"><a href="{{url('/')}}"><img src="{{asset('/')}}images/apple-btn.png" alt="Your alt text here"></a></div>
-                        <div class="col-md-6 col-sm-6 col-xs-6"><a href="{{url('/')}}"><img src="{{asset('/')}}images/andriod-btn.png" alt="Your alt text here"></a></div>
+                        <div class="col-md-6 col-sm-6 col-xs-6"><a href="{{url('/')}}"><img src="{{asset('/')}}images/apple-btn.png" alt="Download on App Store" width="160" height="48" loading="lazy"></a></div>
+                        <div class="col-md-6 col-sm-6 col-xs-6"><a href="{{url('/')}}"><img src="{{asset('/')}}images/andriod-btn.png" alt="Get it on Google Play" width="160" height="48" loading="lazy"></a></div>
                     </div>
                 </div>
                 <!--app info end--> 

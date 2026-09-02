@@ -3,7 +3,7 @@
         <!-- Brand Logo (Left Pinned) -->
         <div class="header-logo-area">
             <a href="{{url('/')}}" class="logo">
-                <img src="{{ asset('/') }}sitesetting_images/thumb/{{ $siteSetting->site_logo }}" alt="{{ $siteSetting->site_name }}" />
+                <img src="{{ asset('/') }}sitesetting_images/thumb/{{ $siteSetting->site_logo }}" alt="{{ $siteSetting->site_name }}" width="160" height="40" style="max-height: 40px; width: auto; object-fit: contain;" decoding="async" />
             </a>
         </div>
 

@@ -25,12 +25,9 @@
                             <div class="bloginner">
                                 <div class="postimg">
 									@if(null!==($blog->image) && $blog->image!="")
-
-									<img src="{{asset('uploads/blogs/'.$blog->image)}}"
-                                        alt="{{$blog->heading}}">
+									<img src="{{asset('uploads/blogs/'.$blog->image)}}" alt="{{$blog->heading}}" width="360" height="220" loading="lazy">
 									@else
-									<img src="{{asset('images/blog/1.jpg')}}"
-                                        alt="{{$blog->heading}}">
+									<img src="{{asset('images/blog/1.jpg')}}" alt="{{$blog->heading}}" width="360" height="220" loading="lazy">
 									@endif
 								</div>
 

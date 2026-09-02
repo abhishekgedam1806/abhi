@@ -141,7 +141,7 @@
             </div>
             @if($showPaymentIcons)
             <div class="col-md-4">
-                <div class="paylogos"><img src="{{asset('/')}}images/payment-icons.png" alt="" /></div>	
+                <div class="paylogos"><img src="{{asset('/')}}images/payment-icons.png" alt="Payment Methods" width="220" height="28" loading="lazy" /></div>	
             </div>
             @endif
         </div>

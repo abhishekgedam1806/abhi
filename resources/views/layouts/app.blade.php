@@ -376,7 +376,7 @@ if (!isset($seo)) {
     <!-- PWA Install Banner on Mobile -->
     <div id="pwaInstallBanner" style="display: none; position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 480px; margin: 0 auto; background: #FFFFFF; border: 1.5px solid #2563EB; border-radius: 14px; padding: 12px 16px; box-shadow: 0 10px 30px rgba(37,99,235,0.2); z-index: 999999; align-items: center; justify-content: space-between; gap: 12px; font-family: 'Inter', sans-serif;">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="{{ asset('images/pwa/icon-192.png') }}" alt="App Icon" style="width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;">
+            <img src="{{ asset('images/pwa/icon-192.png') }}" alt="App Icon" width="40" height="40" loading="lazy" style="width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;">
             <div>
                 <div style="font-size: 13.5px; font-weight: 700; color: #0F172A; line-height: 1.2;">Install Jobs Portal App</div>
                 <div style="font-size: 11.5px; color: #64748B; margin-top: 2px;">Fast access & instant job notifications</div>

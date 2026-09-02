@@ -265,7 +265,11 @@
                 <div class="hero-img-wrap" style="width:100%;">
                     <img src="{{ asset('images/hero-man.png') }}"
                          alt="Jobs Portal"
-                         class="hero-man-img" />
+                         class="hero-man-img"
+                         width="450"
+                         height="380"
+                         loading="lazy"
+                         decoding="async" />
                 </div>
             </div>
 
