@@ -25,8 +25,16 @@ class FunctionalArea extends Model
 
     public static function getUsingFunctionalAreas($limit = 10)
     {
-        $functionalAreaIds = App\Job::select('functional_area_id')->pluck('functional_area_id')->toArray();
-        return App\FunctionalArea::whereIn('functional_area_id', $functionalAreaIds)->lang()->active()->inRandomOrder()->paginate($limit);
+        $functionalAreaIds = App\Job::select('functional_area_id')->whereNotNull('functional_area_id')->pluck('functional_area_id')->toArray();
+        if (empty($functionalAreaIds)) {
+            return App\FunctionalArea::lang()->active()->orderBy('functional_area', 'ASC')->limit($limit)->get();
+        }
+        return App\FunctionalArea::whereIn('functional_area_id', array_unique($functionalAreaIds))
+            ->lang()
+            ->active()
+            ->orderBy('functional_area', 'ASC')
+            ->limit($limit)
+            ->get();
     }
 
     public function jobSkills()
