@@ -59,6 +59,14 @@ class RazorpayGateway implements PaymentGatewayInterface
      */
     public function createOrder(Order $order, array $options = []): array
     {
+        if (empty($this->keyId) || empty($this->keySecret)) {
+            Log::warning('Razorpay: API credentials missing in SiteSetting');
+            return [
+                'success' => false,
+                'error'   => 'Razorpay payment gateway is not configured with API keys. Please update Razorpay Key & Secret in Admin Settings.',
+            ];
+        }
+
         // Amount in Paise (e.g., INR 999 -> 99900 paise)
         $amountInPaise = intval(round($order->total_amount * 100));
 

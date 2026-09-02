@@ -47,7 +47,8 @@ class PaymentController extends Controller
     {
         $buyer = $this->getAuthenticatedBuyer();
         if (!$buyer) {
-            flash(__('Please login to purchase a package.'))->error();
+            session()->put('url.intended', route('payment.checkout', $package_id));
+            flash(__('Please login or create an account to proceed with checkout.'))->info();
             return redirect()->route('login');
         }
 
