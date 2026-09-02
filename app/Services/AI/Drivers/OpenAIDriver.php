@@ -20,11 +20,12 @@ class OpenAIDriver implements AIDriverInterface
         $this->apiKey = $provider->getDecryptedApiKey();
         $this->model = $provider->model ?: 'gpt-4o-mini';
         $this->baseUrl = rtrim($provider->base_url ?: 'https://api.openai.com/v1', '/');
-        $this->timeout = max(45, (int)($provider->timeout_sec ?: 45));
+        $this->timeout = max(90, (int)($provider->timeout_sec ?: 90));
     }
 
     public function generateText(string $prompt, array $options = []): array
     {
+        @set_time_limit(180);
         $url = "{$this->baseUrl}/chat/completions";
 
         $messages = [];
@@ -103,8 +104,10 @@ class OpenAIDriver implements AIDriverInterface
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey,
         ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout ?: 45);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout ?: 90);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result = curl_exec($ch);

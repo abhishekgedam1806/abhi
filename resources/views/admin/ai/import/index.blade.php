@@ -721,7 +721,7 @@ Email: example@company.com" oninput="updateCharCount(this)"></textarea>
             $('#btn_extract_image').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Reading Image with AI Vision...');
         }
 
-        var ajaxTimeout = (type === 'image') ? 130000 : 60000; // 130s for image, 60s for text
+        var ajaxTimeout = (type === 'image') ? 180000 : 120000; // 180s for image vision, 120s for raw text
 
         $.ajax({
             url: "{{ route('admin.ai.job_import.extract') }}",

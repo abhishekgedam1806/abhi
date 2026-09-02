@@ -20,12 +20,13 @@ class GeminiDriver implements AIDriverInterface
         $this->apiKey = $provider->getDecryptedApiKey();
         $this->model = $provider->model ?: 'gemini-1.5-flash';
         $this->baseUrl = rtrim($provider->base_url ?: 'https://generativelanguage.googleapis.com', '/');
-        // Enforce minimum 45s timeout for resilient AI completions on shared hosts
-        $this->timeout = max(45, (int)($provider->timeout_sec ?: 45));
+        // Enforce minimum 90s timeout for resilient AI completions on shared hosts
+        $this->timeout = max(90, (int)($provider->timeout_sec ?: 90));
     }
 
     public function generateText(string $prompt, array $options = []): array
     {
+        @set_time_limit(180);
         $url = "{$this->baseUrl}/v1beta/models/{$this->model}:generateContent?key={$this->apiKey}";
 
         $parts = [
@@ -75,14 +76,9 @@ class GeminiDriver implements AIDriverInterface
         $startTime = microtime(true);
 
         // Vision/image calls get extra time — override timeout if images present
-        $effectiveTimeout = !empty($options['images']) ? max($this->timeout ?: 45, 120) : ($this->timeout ?: 45);
+        $effectiveTimeout = !empty($options['images']) ? max($this->timeout ?: 90, 150) : ($this->timeout ?: 90);
 
-        // Also raise PHP execution time for vision calls
-        if (!empty($options['images'])) {
-            @set_time_limit(150);
-        }
-
-        $response = $this->sendHttpRequest($url, $payload, $effectiveTimeout);
+        $response = $this->sendHttpRequestWithRetry($url, $payload, $effectiveTimeout);
         $responseTimeMs = (int) round((microtime(true) - $startTime) * 1000);
 
         if (isset($response['error'])) {
@@ -127,16 +123,36 @@ class GeminiDriver implements AIDriverInterface
         }
     }
 
+    protected function sendHttpRequestWithRetry(string $url, array $payload, int $timeout = null, int $maxAttempts = 2): array
+    {
+        $lastException = null;
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            try {
+                return $this->sendHttpRequest($url, $payload, $timeout);
+            } catch (Exception $e) {
+                $lastException = $e;
+                if ($attempt < $maxAttempts && (strpos($e->getMessage(), 'cURL Error') !== false || strpos($e->getMessage(), 'timed out') !== false)) {
+                    usleep(500000); // Wait 500ms before retry
+                    continue;
+                }
+                throw $e;
+            }
+        }
+        throw ($lastException ?: new Exception('Gemini request failed.'));
+    }
+
     protected function sendHttpRequest(string $url, array $payload, int $timeout = null): array
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        $actualTimeout = $timeout ?: ($this->timeout ?: 45);
+        $actualTimeout = $timeout ?: ($this->timeout ?: 90);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_TIMEOUT, $actualTimeout);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $responseBody = curl_exec($ch);
