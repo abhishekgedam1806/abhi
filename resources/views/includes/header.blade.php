@@ -243,13 +243,13 @@
                         </li>
 
                         {{-- 📱 MOBILE PWA INSTALL BUTTON IN DRAWER --}}
-                        <li class="nav-item d-lg-none" id="pwaMobileDrawerBtn">
-                            <a href="javascript:void(0);" onclick="installPwaApp()" class="nav-link" style="background: rgba(37,99,235,0.1); border: 1px solid #BFDBFE; border-radius: 8px; font-weight: 700; color: #2563EB !important; margin: 8px 12px; display: flex; align-items: center; justify-content: space-between;">
-                                <span class="nav-link-content">
-                                    <i class="fa fa-download nav-icon" style="color: #2563EB;"></i>
-                                    <span>{{ __('Install Mobile App') }}</span>
+                        <li class="nav-item d-lg-none" id="pwaMobileDrawerBtn" style="margin: 8px 0 6px 0; width: 100%;">
+                            <a href="javascript:void(0);" onclick="installPwaApp()" class="nav-link" style="background: #EFF6FF !important; border: 1.5px solid #BFDBFE !important; border-radius: 10px !important; font-weight: 700 !important; color: #2563EB !important; padding: 10px 14px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important;">
+                                <span class="nav-link-content" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa fa-download" style="color: #2563EB; font-size: 15px;"></i>
+                                    <span style="font-size: 13.5px; font-weight: 700; color: #1E40AF;">{{ __('Install Mobile App') }}</span>
                                 </span>
-                                <span class="badge" style="background: #2563EB; color: #FFF; font-size: 10px; padding: 3px 6px; border-radius: 4px;">FREE</span>
+                                <span class="badge" style="background: #2563EB; color: #FFF; font-size: 10.5px; font-weight: 800; padding: 4px 8px; border-radius: 6px;">FREE</span>
                             </a>
                         </li>
 
@@ -908,15 +908,8 @@
         color: #2563EB !important;
         font-size: 16px !important;
     }
-    .mobile-lang-label {
-        font-size: 13.5px !important;
-        font-weight: 700 !important;
-        color: #1E293B !important;
-        margin-left: 10px !important;
-        flex: 1 !important;
-        text-align: left !important;
-    }
     .header .lang-dropdown-menu {
+        display: none;
         position: static !important;
         float: none !important;
         width: 100% !important;
@@ -926,6 +919,16 @@
         border: 1.5px solid #E2E8F0 !important;
         border-radius: 10px !important;
         padding: 6px !important;
+        max-height: 220px !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    .header .lang-dropdown-item.show .lang-dropdown-menu,
+    .header .lang-dropdown-menu.show {
+        display: block !important;
+    }
+    .header .lang-dropdown-item.show .lang-caret-icon {
+        transform: rotate(180deg);
     }
     .header .lang-dropdown-menu .lang-option-row {
         list-style: none !important;

@@ -1,35 +1,37 @@
 {{--
     MOBILE FILTER DRAWER BODY
     Renders all filter options inside the mobile bottom sheet.
-    All filter logic is identical to job_list_side_bar.blade.php.
-    Used ONLY inside the mobile drawer — no sidebar wrapper/card.
+    Enhanced with quick clear buttons per section and real-time counter.
 --}}
 
 {{-- 1. Date Posted --}}
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwDatePosted" aria-expanded="true">
         <span>Date posted</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearRadioGroup('date_posted', '#drwDatePosted')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Reset</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwDatePosted" class="collapse show">
         <div class="apna-filter-options">
             <label class="apna-radio-label">
-                <input type="radio" name="date_posted" value="" {{ empty(Request::get('date_posted')) ? 'checked' : '' }}>
+                <input type="radio" name="date_posted" value="" {{ empty(Request::get('date_posted')) ? 'checked' : '' }} onchange="updateDrawerActiveCount()">
                 <span class="custom-radio"></span>
                 <span class="opt-text">All Time</span>
             </label>
             <label class="apna-radio-label">
-                <input type="radio" name="date_posted" value="1" {{ Request::get('date_posted') == '1' ? 'checked' : '' }}>
+                <input type="radio" name="date_posted" value="1" {{ Request::get('date_posted') == '1' ? 'checked' : '' }} onchange="updateDrawerActiveCount()">
                 <span class="custom-radio"></span>
                 <span class="opt-text">Last 24 hours</span>
             </label>
             <label class="apna-radio-label">
-                <input type="radio" name="date_posted" value="3" {{ Request::get('date_posted') == '3' ? 'checked' : '' }}>
+                <input type="radio" name="date_posted" value="3" {{ Request::get('date_posted') == '3' ? 'checked' : '' }} onchange="updateDrawerActiveCount()">
                 <span class="custom-radio"></span>
                 <span class="opt-text">Last 3 days</span>
             </label>
             <label class="apna-radio-label">
-                <input type="radio" name="date_posted" value="7" {{ Request::get('date_posted') == '7' ? 'checked' : '' }}>
+                <input type="radio" name="date_posted" value="7" {{ Request::get('date_posted') == '7' ? 'checked' : '' }} onchange="updateDrawerActiveCount()">
                 <span class="custom-radio"></span>
                 <span class="opt-text">Last 7 days</span>
             </label>
@@ -41,7 +43,10 @@
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwSalary" aria-expanded="true">
         <span>Salary</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); resetSalaryDrawer()" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Reset</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwSalary" class="collapse show">
         <div class="salary-sublabel">Minimum monthly salary</div>
@@ -61,8 +66,11 @@
 {{-- 3. Location / City with Quick Metro Pills --}}
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwCities" aria-expanded="true">
-        <span>Location @if(!empty(Request::get('city_id')))<span class="group-count-badge">{{ count((array)Request::get('city_id')) }}</span>@endif</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <span>Location @if(!empty(Request::get('city_id')))<span class="group-count-badge" id="drwCityCountBadge">{{ count((array)Request::get('city_id')) }}</span>@endif</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearSectionCheckboxes('drw-city-options-list', '#drwCityCountBadge')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Clear</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwCities" class="collapse show">
         <div class="quick-city-pills-row" style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;">
@@ -76,11 +84,12 @@
             @endphp
             @foreach($topCities as $cName => $cId)
                 @php $isCityActive = in_array($cId, (array)Request::get('city_id', [])); @endphp
-                <a href="{{ $isCityActive ? request()->fullUrlWithQuery(['city_id' => array_diff((array)Request::get('city_id'), [$cId])]) : request()->fullUrlWithQuery(['city_id' => array_merge((array)Request::get('city_id', []), [$cId])]) }}" 
+                <button type="button" 
+                   onclick="toggleDrawerCityCheckbox('{{ $cId }}', this)"
                    class="quick-city-pill {{ $isCityActive ? 'active-city-pill' : '' }}"
-                   style="padding: 3px 9px; font-size: 11px; font-weight: 600; border-radius: 16px; text-decoration: none; border: 1px solid {{ $isCityActive ? '#2563EB' : '#E2E8F0' }}; background: {{ $isCityActive ? '#EFF6FF' : '#F8FAFC' }}; color: {{ $isCityActive ? '#2563EB' : '#475569' }};">
+                   style="padding: 4px 10px; font-size: 11.5px; font-weight: 600; border-radius: 16px; border: 1.5px solid {{ $isCityActive ? '#2563EB' : '#E2E8F0' }}; background: {{ $isCityActive ? '#EFF6FF' : '#F8FAFC' }}; color: {{ $isCityActive ? '#2563EB' : '#475569' }}; cursor: pointer;">
                     <i class="fa fa-map-marker" style="margin-right: 3px; font-size: 10px; color: {{ $isCityActive ? '#2563EB' : '#94A3B8' }};"></i> {{ $cName }}
-                </a>
+                </button>
             @endforeach
         </div>
         <div class="filter-search-box">
@@ -99,7 +108,7 @@
                             $numJobs = App\Job::countNumJobs('city_id', $city->city_id);
                         @endphp
                         <label class="apna-checkbox-label filter-item-row">
-                            <input type="checkbox" name="city_id[]" value="{{ $city->city_id }}" {{ $checked }}>
+                            <input type="checkbox" name="city_id[]" value="{{ $city->city_id }}" data-city-name="{{ $city->city }}" {{ $checked }} onchange="updateDrawerActiveCount()">
                             <span class="custom-checkbox"></span>
                             <span class="opt-text">{{ $city->city }}</span>
                             @if($numJobs > 0)<span class="opt-count">{{ $numJobs }}</span>@endif
@@ -123,14 +132,14 @@
                     <span><i class="fa fa-crosshairs" style="color: #2563EB;"></i> Local Areas (5km Radius)</span>
                     <span style="font-size: 10px; color: #2563EB; font-weight: 800;">{{ count($drwActiveAreas) }}</span>
                 </div>
-                <div class="apna-filter-options scrollable-options" style="max-height: 140px;">
+                <div class="apna-filter-options scrollable-options" id="drw-area-options-list" style="max-height: 140px;">
                     @foreach($drwActiveAreas as $area)
                         @php
                             $areaChecked = in_array($area->id, (array)Request::get('area_id', [])) ? 'checked' : '';
                             $numAreaJobs = App\Job::where('area_id', $area->id)->orWhere('area_name', 'like', '%' . $area->area_name . '%')->count();
                         @endphp
                         <label class="apna-checkbox-label filter-item-row" style="font-size: 12px;">
-                            <input type="checkbox" name="area_id[]" value="{{ $area->id }}" {{ $areaChecked }}>
+                            <input type="checkbox" name="area_id[]" value="{{ $area->id }}" {{ $areaChecked }} onchange="updateDrawerActiveCount()">
                             <span class="custom-checkbox"></span>
                             <span class="opt-text">{{ $area->area_name }}</span>
                             @if($numAreaJobs > 0)
@@ -147,11 +156,14 @@
 {{-- 4. Work Mode / Job Type --}}
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwWorkMode" aria-expanded="true">
-        <span>Job Type / Mode @if(!empty(Request::get('job_type_id')))<span class="group-count-badge">{{ count((array)Request::get('job_type_id')) }}</span>@endif</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <span>Job Type / Mode @if(!empty(Request::get('job_type_id')))<span class="group-count-badge" id="drwJtCountBadge">{{ count((array)Request::get('job_type_id')) }}</span>@endif</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearSectionCheckboxes('drw-jobtype-options-list', '#drwJtCountBadge')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Clear</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwWorkMode" class="collapse show">
-        <div class="apna-filter-options">
+        <div class="apna-filter-options" id="drw-jobtype-options-list">
             @if(isset($jobTypeIdsArray) && count($jobTypeIdsArray))
                 @foreach($jobTypeIdsArray as $key => $job_type_id)
                     @php
@@ -163,7 +175,7 @@
                             $numJobs = App\Job::countNumJobs('job_type_id', $jobType->job_type_id);
                         @endphp
                         <label class="apna-checkbox-label">
-                            <input type="checkbox" name="job_type_id[]" value="{{ $jobType->job_type_id }}" {{ $checked }}>
+                            <input type="checkbox" name="job_type_id[]" value="{{ $jobType->job_type_id }}" {{ $checked }} onchange="updateDrawerActiveCount()">
                             <span class="custom-checkbox"></span>
                             <span class="opt-text">{{ $jobType->job_type }}</span>
                             @if($numJobs > 0)<span class="opt-count">{{ $numJobs }}</span>@endif
@@ -178,8 +190,11 @@
 {{-- 5. Department / Functional Area with search --}}
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwDept" aria-expanded="true">
-        <span>Department @if(!empty(Request::get('functional_area_id')))<span class="group-count-badge">{{ count((array)Request::get('functional_area_id')) }}</span>@endif</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <span>Department @if(!empty(Request::get('functional_area_id')))<span class="group-count-badge" id="drwFaCountBadge">{{ count((array)Request::get('functional_area_id')) }}</span>@endif</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearSectionCheckboxes('drw-dept-options-list', '#drwFaCountBadge')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Clear</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwDept" class="collapse show">
         <div class="filter-search-box">
@@ -198,7 +213,7 @@
                             $numJobs = App\Job::countNumJobs('functional_area_id', $functionalArea->functional_area_id);
                         @endphp
                         <label class="apna-checkbox-label filter-item-row">
-                            <input type="checkbox" name="functional_area_id[]" value="{{ $functionalArea->functional_area_id }}" {{ $checked }}>
+                            <input type="checkbox" name="functional_area_id[]" value="{{ $functionalArea->functional_area_id }}" {{ $checked }} onchange="updateDrawerActiveCount()">
                             <span class="custom-checkbox"></span>
                             <span class="opt-text">{{ $functionalArea->functional_area }}</span>
                             @if($numJobs > 0)<span class="opt-count">{{ $numJobs }}</span>@endif
@@ -213,11 +228,14 @@
 {{-- 6. Experience Level --}}
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwExp" aria-expanded="true">
-        <span>Experience @if(!empty(Request::get('job_experience_id')))<span class="group-count-badge">{{ count((array)Request::get('job_experience_id')) }}</span>@endif</span>
-        <i class="fa fa-chevron-up toggle-ico"></i>
+        <span>Experience @if(!empty(Request::get('job_experience_id')))<span class="group-count-badge" id="drwExpCountBadge">{{ count((array)Request::get('job_experience_id')) }}</span>@endif</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearSectionCheckboxes('drw-exp-options-list', '#drwExpCountBadge')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Clear</button>
+            <i class="fa fa-chevron-up toggle-ico"></i>
+        </div>
     </div>
     <div id="drwExp" class="collapse show">
-        <div class="apna-filter-options">
+        <div class="apna-filter-options" id="drw-exp-options-list">
             @if(isset($jobExperienceIdsArray) && count($jobExperienceIdsArray))
                 @foreach($jobExperienceIdsArray as $key => $job_experience_id)
                     @php
@@ -229,7 +247,7 @@
                             $numJobs = App\Job::countNumJobs('job_experience_id', $jobExperience->job_experience_id);
                         @endphp
                         <label class="apna-checkbox-label">
-                            <input type="checkbox" name="job_experience_id[]" value="{{ $jobExperience->job_experience_id }}" {{ $checked }}>
+                            <input type="checkbox" name="job_experience_id[]" value="{{ $jobExperience->job_experience_id }}" {{ $checked }} onchange="updateDrawerActiveCount()">
                             <span class="custom-checkbox"></span>
                             <span class="opt-text">{{ $jobExperience->job_experience }}</span>
                             @if($numJobs > 0)<span class="opt-count">{{ $numJobs }}</span>@endif
@@ -245,11 +263,14 @@
 @if(isset($jobShiftIdsArray) && count($jobShiftIdsArray))
 <div class="apna-filter-group">
     <div class="apna-filter-title" data-toggle="collapse" data-target="#drwShift" aria-expanded="false">
-        <span>Work shift @if(!empty(Request::get('job_shift_id')))<span class="group-count-badge">{{ count((array)Request::get('job_shift_id')) }}</span>@endif</span>
-        <i class="fa fa-chevron-down toggle-ico"></i>
+        <span>Work shift @if(!empty(Request::get('job_shift_id')))<span class="group-count-badge" id="drwShiftCountBadge">{{ count((array)Request::get('job_shift_id')) }}</span>@endif</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="btn-clear-group" onclick="event.stopPropagation(); clearSectionCheckboxes('drw-shift-options-list', '#drwShiftCountBadge')" style="background:none;border:none;font-size:11px;font-weight:700;color:#DC2626;padding:0 4px;cursor:pointer;">Clear</button>
+            <i class="fa fa-chevron-down toggle-ico"></i>
+        </div>
     </div>
     <div id="drwShift" class="collapse">
-        <div class="apna-filter-options">
+        <div class="apna-filter-options" id="drw-shift-options-list">
             @foreach($jobShiftIdsArray as $key => $job_shift_id)
                 @php
                     $jobShift = App\JobShift::where('job_shift_id', '=', $job_shift_id)->lang()->active()->first();
@@ -260,7 +281,7 @@
                         $numJobs = App\Job::countNumJobs('job_shift_id', $jobShift->job_shift_id);
                     @endphp
                     <label class="apna-checkbox-label">
-                        <input type="checkbox" name="job_shift_id[]" value="{{ $jobShift->job_shift_id }}" {{ $checked }}>
+                        <input type="checkbox" name="job_shift_id[]" value="{{ $jobShift->job_shift_id }}" {{ $checked }} onchange="updateDrawerActiveCount()">
                         <span class="custom-checkbox"></span>
                         <span class="opt-text">{{ $jobShift->job_shift }}</span>
                         @if($numJobs > 0)<span class="opt-count">{{ $numJobs }}</span>@endif
@@ -298,3 +319,75 @@
         </div>
     </div>
 </div>
+
+<script>
+function clearSectionCheckboxes(containerId, badgeId) {
+    var cont = document.getElementById(containerId);
+    if (cont) {
+        var inputs = cont.querySelectorAll('input[type="checkbox"]');
+        inputs.forEach(function(inp) { inp.checked = false; });
+    }
+    if (badgeId) {
+        var b = document.querySelector(badgeId);
+        if (b) b.remove();
+    }
+    updateDrawerActiveCount();
+}
+
+function clearRadioGroup(name, sectionId) {
+    var sec = document.querySelector(sectionId);
+    if (sec) {
+        var radios = sec.querySelectorAll('input[name="' + name + '"]');
+        radios.forEach(function(r) { r.checked = (r.value === ''); });
+    }
+    updateDrawerActiveCount();
+}
+
+function resetSalaryDrawer() {
+    var range = document.getElementById('salaryRangeInputDrawer');
+    if (range) {
+        range.value = 0;
+        updateSalaryLabelDrawer(0);
+    }
+    updateDrawerActiveCount();
+}
+
+function toggleDrawerCityCheckbox(cityId, btn) {
+    var cont = document.getElementById('drw-city-options-list');
+    if (cont) {
+        var chk = cont.querySelector('input[value="' + cityId + '"]');
+        if (chk) {
+            chk.checked = !chk.checked;
+            if (chk.checked) {
+                btn.style.borderColor = '#2563EB';
+                btn.style.background = '#EFF6FF';
+                btn.style.color = '#2563EB';
+            } else {
+                btn.style.borderColor = '#E2E8F0';
+                btn.style.background = '#F8FAFC';
+                btn.style.color = '#475569';
+            }
+        }
+    }
+    updateDrawerActiveCount();
+}
+
+function updateDrawerActiveCount() {
+    var form = document.getElementById('mob-filter-form');
+    if (!form) return;
+    var count = 0;
+    var chks = form.querySelectorAll('input[type="checkbox"]:checked');
+    count += chks.length;
+    var datePosted = form.querySelector('input[name="date_posted"]:checked');
+    if (datePosted && datePosted.value !== '') count++;
+    var sal = form.querySelector('input[name="salary_from"]');
+    if (sal && parseInt(sal.value) > 0) count++;
+
+    var btn = document.getElementById('drawerApplyBtn');
+    if (btn) {
+        btn.innerHTML = count > 0 
+            ? '<i class="fa fa-check"></i> Apply Filters (' + count + ')'
+            : '<i class="fa fa-check"></i> Apply Filters';
+    }
+}
+</script>

@@ -1035,8 +1035,10 @@ if (!empty(Request::get('search'))) {
                     @include('includes.job_list_side_bar_drawer')
                 </div>
                 <div class="mob-drawer-footer">
-                    <a href="{{ route('job.list') }}" class="btn-clear">Clear all</a>
-                    <button type="submit" class="btn-apply"><i class="fa fa-check"></i> Apply Filters</button>
+                    <a href="{{ route('job.list') }}" class="btn-clear"><i class="fa fa-trash-o" style="margin-right: 4px;"></i> Clear all</a>
+                    <button type="submit" class="btn-apply" id="drawerApplyBtn">
+                        <i class="fa fa-check"></i> Apply Filters @if($mActiveCount > 0)({{ $mActiveCount }})@endif
+                    </button>
                 </div>
             </form>
         </div>
@@ -1086,6 +1088,98 @@ if (!empty(Request::get('search'))) {
 
                 {{-- CENTER COLUMN: Modern Job Cards List --}}
                 <div class="col-lg-6 col-md-8 col-12">
+                    {{-- 🏷️ INTERACTIVE ACTIVE FILTER CHIPS BAR (1-Tap Deselect) --}}
+                    @if($mActiveCount > 0)
+                    <div class="apna-active-chips-container" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+                        <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 4px; margin-right: 4px;">
+                            <i class="fa fa-filter text-primary"></i> Active:
+                        </span>
+
+                        @if(!empty(Request::get('search')))
+                            <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="apna-active-chip" title="Remove search filter">
+                                <span>"{{ Request::get('search') }}"</span> <i class="fa fa-times"></i>
+                            </a>
+                        @endif
+
+                        @if(!empty(Request::get('city_id')))
+                            @foreach((array)Request::get('city_id') as $cId)
+                                @php $cObj = App\City::getCityById($cId); @endphp
+                                @if($cObj)
+                                    <a href="{{ request()->fullUrlWithQuery(['city_id' => array_values(array_diff((array)Request::get('city_id'), [$cId]))]) }}" class="apna-active-chip" title="Remove {{ $cObj->city }}">
+                                        <span><i class="fa fa-map-marker" style="font-size: 10px;"></i> {{ $cObj->city }}</span> <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+
+                        @if(!empty(Request::get('area_id')))
+                            @foreach((array)Request::get('area_id') as $aId)
+                                @php $aObj = App\Area::find($aId); @endphp
+                                @if($aObj)
+                                    <a href="{{ request()->fullUrlWithQuery(['area_id' => array_values(array_diff((array)Request::get('area_id'), [$aId]))]) }}" class="apna-active-chip" title="Remove {{ $aObj->area_name }}">
+                                        <span><i class="fa fa-crosshairs" style="font-size: 10px;"></i> {{ $aObj->area_name }}</span> <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+
+                        @if(!empty(Request::get('job_type_id')))
+                            @foreach((array)Request::get('job_type_id') as $jtId)
+                                @php $jtObj = App\JobType::where('job_type_id', $jtId)->lang()->first(); @endphp
+                                @if($jtObj)
+                                    <a href="{{ request()->fullUrlWithQuery(['job_type_id' => array_values(array_diff((array)Request::get('job_type_id'), [$jtId]))]) }}" class="apna-active-chip" title="Remove {{ $jtObj->job_type }}">
+                                        <span>{{ $jtObj->job_type }}</span> <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+
+                        @if(!empty(Request::get('functional_area_id')))
+                            @foreach((array)Request::get('functional_area_id') as $faId)
+                                @php $faObj = App\FunctionalArea::where('functional_area_id', $faId)->lang()->first(); @endphp
+                                @if($faObj)
+                                    <a href="{{ request()->fullUrlWithQuery(['functional_area_id' => array_values(array_diff((array)Request::get('functional_area_id'), [$faId]))]) }}" class="apna-active-chip" title="Remove {{ $faObj->functional_area }}">
+                                        <span>{{ $faObj->functional_area }}</span> <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+
+                        @if(!empty(Request::get('job_experience_id')))
+                            @foreach((array)Request::get('job_experience_id') as $expId)
+                                @php $expObj = App\JobExperience::where('job_experience_id', $expId)->lang()->first(); @endphp
+                                @if($expObj)
+                                    <a href="{{ request()->fullUrlWithQuery(['job_experience_id' => array_values(array_diff((array)Request::get('job_experience_id'), [$expId]))]) }}" class="apna-active-chip" title="Remove {{ $expObj->job_experience }}">
+                                        <span>Exp: {{ $expObj->job_experience }}</span> <i class="fa fa-times"></i>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
+
+                        @if(!empty(Request::get('salary_from')) && Request::get('salary_from') > 0)
+                            <a href="{{ request()->fullUrlWithQuery(['salary_from' => null]) }}" class="apna-active-chip" title="Remove salary filter">
+                                <span>₹ {{ number_format(Request::get('salary_from')) }}+</span> <i class="fa fa-times"></i>
+                            </a>
+                        @endif
+
+                        @if(!empty(Request::get('date_posted')))
+                            <a href="{{ request()->fullUrlWithQuery(['date_posted' => null]) }}" class="apna-active-chip" title="Remove date filter">
+                                <span>{{ Request::get('date_posted') == '1' ? 'Last 24h' : 'Last ' . Request::get('date_posted') . ' days' }}</span> <i class="fa fa-times"></i>
+                            </a>
+                        @endif
+
+                        @if(Request::get('is_freelance') == '1')
+                            <a href="{{ request()->fullUrlWithQuery(['is_freelance' => null]) }}" class="apna-active-chip" title="Remove remote filter">
+                                <span>Remote / WFH</span> <i class="fa fa-times"></i>
+                            </a>
+                        @endif
+
+                        <a href="{{ route('job.list') }}" style="font-size: 11.5px; font-weight: 700; color: #DC2626; text-decoration: none; margin-left: auto; padding: 3px 8px; background: #FEE2E2; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa fa-trash-o"></i> Clear all
+                        </a>
+                    </div>
+                    @endif
+
                     @if(isset($jobs) && count($jobs))
                         @foreach($jobs as $job)
                             @php

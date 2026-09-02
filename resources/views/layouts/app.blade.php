@@ -87,21 +87,30 @@ if (!isset($seo)) {
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="{{ $siteSetting->site_name ?? 'Jobs Portal' }}">
     <link rel="apple-touch-icon" href="{{ asset('images/pwa/apple-touch-icon.png') }}">
-    <!-- Core Stylesheets -->
-    <link href="{{ asset('css/owl.carousel.css') }}" rel="stylesheet">
+    <!-- Preconnect to Font Servers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+    <!-- Fonts (Non-render-blocking with display=swap) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Core Critical Stylesheets -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.css') }}" rel="stylesheet">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="{{ asset('css/apna-theme.css') }}" rel="stylesheet">
+
+    <!-- Secondary / Component Styles (Asynchronous) -->
+    <link href="{{ asset('css/owl.carousel.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" media="print" onload="this.media='all'" />
+    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" media="print" onload="this.media='all'" />
     @if((session('localeDir', 'ltr') == 'rtl'))
     <link href="{{ asset('css/rtl-style.css') }}" rel="stylesheet">
     @endif
-    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('admin_assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     @stack('styles')
 </head>
 
