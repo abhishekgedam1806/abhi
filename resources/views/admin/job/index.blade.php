@@ -231,42 +231,42 @@
         </div>
 
         {{-- Main Filter Toolbar Card Above Table --}}
-        <div class="portlet light bordered" style="padding: 20px 24px; border-radius: 14px; margin-bottom: 20px;">
+        <div class="portlet light bordered" style="padding: 22px 24px; border-radius: 14px; margin-bottom: 24px; background: #FFFFFF; border: 1.5px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
             <form method="post" role="form" id="job-search-form">
                 <input type="hidden" name="is_featured" id="is_featured" value="-1">
                 
                 <div class="row">
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                    <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa fa-search text-primary"></i> Search Job Title
                         </label>
-                        <input type="text" class="form-control" name="title" id="title" autocomplete="off" placeholder="e.g. Flutter, SEO Manager..." style="height: 42px; border-radius: 8px;">
+                        <input type="text" class="form-control" name="title" id="title" autocomplete="off" placeholder="e.g. Flutter, SEO Manager..." style="height: 42px; border-radius: 9px; border: 1.5px solid #E2E8F0; font-size: 13.5px;">
                     </div>
-                    <div class="col-md-3 col-sm-6" style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                    <div class="col-md-3 col-sm-6" style="margin-bottom: 14px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa fa-building text-primary"></i> Company
                         </label>
-                        {!! Form::select('company_id', ['' => 'All Companies']+$companies, null, array('id'=>'company_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 8px;')) !!}
+                        {!! Form::select('company_id', ['' => 'All Companies']+$companies, null, array('id'=>'company_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 9px; border: 1.5px solid #E2E8F0; font-size: 13.5px;')) !!}
                     </div>
-                    <div class="col-md-2 col-sm-6" style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                    <div class="col-md-2 col-sm-6" style="margin-bottom: 14px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa fa-globe text-primary"></i> Country
                         </label>
-                        {!! Form::select('country_id', ['' => 'All Countries']+$countries, null, array('id'=>'country_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 8px;')) !!}
+                        {!! Form::select('country_id', ['' => 'All Countries']+$countries, null, array('id'=>'country_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 9px; border: 1.5px solid #E2E8F0; font-size: 13.5px;')) !!}
                     </div>
-                    <div class="col-md-2 col-sm-6" style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                    <div class="col-md-2 col-sm-6" style="margin-bottom: 14px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa fa-map-marker text-danger"></i> State
                         </label>
                         <span id="default_state_dd">
-                            {!! Form::select('state_id', ['' => 'All States'], null, array('id'=>'state_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 8px;')) !!}
+                            {!! Form::select('state_id', ['' => 'All States'], null, array('id'=>'state_id', 'class'=>'form-control', 'style'=>'height: 42px; border-radius: 9px; border: 1.5px solid #E2E8F0; font-size: 13.5px;')) !!}
                         </span>
                     </div>
-                    <div class="col-md-2 col-sm-6" style="margin-bottom: 12px;">
-                        <label style="font-size: 12.5px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                    <div class="col-md-2 col-sm-6" style="margin-bottom: 14px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa fa-toggle-on text-success"></i> Status
                         </label>
-                        <select name="is_active" id="is_active" class="form-control" style="height: 42px; border-radius: 8px;">
+                        <select name="is_active" id="is_active" class="form-control" style="height: 42px; border-radius: 9px; border: 1.5px solid #E2E8F0; font-size: 13.5px;">
                             <option value="-1">All Status</option>
                             <option value="1">Active Only</option>
                             <option value="0">Inactive Only</option>
@@ -274,18 +274,18 @@
                     </div>
                 </div>
 
-                <div class="row" style="margin-top: 6px; padding-top: 14px; border-top: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <div class="col-sm-6" style="display: flex; align-items: center; gap: 16px;">
-                        <label style="margin: 0; font-size: 13px; font-weight: 500; color: #334155; display: inline-flex; align-items: center; gap: 7px; cursor: pointer;">
-                            <input type="checkbox" id="filter_featured_toggle" style="width: 17px; height: 17px; accent-color: #1B4FD8;">
-                            <span>⭐ Show Featured Jobs Only</span>
+                <div style="margin-top: 4px; padding-top: 16px; border-top: 1.5px dashed #E2E8F0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                    <div style="display: flex; align-items: center;">
+                        <label style="margin: 0; font-size: 13.5px; font-weight: 600; color: #334155; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; background: #FFFBEB; border: 1px solid #FDE68A; padding: 7px 14px; border-radius: 8px;">
+                            <input type="checkbox" id="filter_featured_toggle" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;">
+                            <span style="color: #B45309;">⭐ Show Featured Jobs Only</span>
                         </label>
                     </div>
-                    <div class="col-sm-6" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" id="btnResetFilter" class="btn btn-default" style="height: 40px; padding: 0 18px; border-radius: 8px; font-weight: 600; border: 1.5px solid #CBD5E1;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button type="button" id="btnResetFilter" class="btn btn-default" style="height: 40px; padding: 0 18px; border-radius: 8px; font-weight: 600; color: #475569; background: #F8FAFC; border: 1.5px solid #CBD5E1; transition: all 0.2s ease;">
                             <i class="fa fa-refresh"></i> Reset Filters
                         </button>
-                        <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 22px; border-radius: 8px; font-weight: 600; background: #2563EB; border: none; box-shadow: 0 4px 12px rgba(27, 79, 216, 0.25);">
+                        <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 22px; border-radius: 8px; font-weight: 600; background: #2563EB; border: none; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); transition: all 0.2s ease;">
                             <i class="fa fa-search"></i> Apply Filters
                         </button>
                     </div>

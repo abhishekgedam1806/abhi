@@ -118,7 +118,13 @@
         <div class="col-md-6 col-12">
             <div class="formrow {!! APFrmErrHelp::hasError($errors, 'country_id') !!}" style="margin-bottom: 16px;">
                 <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">{{__('Country')}}</label>
-                <?php $country_id = old('country_id', (isset($user) && (int) $user->country_id > 0) ? $user->country_id : $siteSetting->default_country_id); ?>
+                <?php
+                $country_id = old('country_id', (isset($user) && (int) $user->country_id > 0) ? $user->country_id : (isset($siteSetting) ? $siteSetting->default_country_id : 101));
+                $state_id = old('state_id', (isset($user) && (int) $user->state_id > 0) ? $user->state_id : null);
+                $city_id = old('city_id', (isset($user) && (int) $user->city_id > 0) ? $user->city_id : null);
+                $states = !empty($country_id) ? App\Helpers\DataArrayHelper::langStatesArray($country_id) : [];
+                $cities = !empty($state_id) ? App\Helpers\DataArrayHelper::langCitiesArray($state_id) : [];
+                ?>
                 {!! Form::select('country_id', [''=>__('Select Country')]+$countries, $country_id, array('class'=>'form-control modern-form-control', 'id'=>'country_id')) !!}
                 {!! APFrmErrHelp::showErrors($errors, 'country_id') !!}
             </div>
@@ -126,14 +132,18 @@
         <div class="col-md-6 col-12">
             <div class="formrow {!! APFrmErrHelp::hasError($errors, 'state_id') !!}" style="margin-bottom: 16px;">
                 <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">{{__('State')}}</label>
-                <span id="state_dd"> {!! Form::select('state_id', [''=>__('Select State')], null, array('class'=>'form-control modern-form-control', 'id'=>'state_id')) !!} </span>
+                <span id="state_dd">
+                    {!! Form::select('state_id', [''=>__('Select State')]+$states, $state_id, array('class'=>'form-control modern-form-control', 'id'=>'state_id')) !!}
+                </span>
                 {!! APFrmErrHelp::showErrors($errors, 'state_id') !!}
             </div>
         </div>
         <div class="col-md-6 col-12">
             <div class="formrow {!! APFrmErrHelp::hasError($errors, 'city_id') !!}" style="margin-bottom: 16px;">
                 <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">{{__('City')}}</label>
-                <span id="city_dd"> {!! Form::select('city_id', [''=>__('Select City')], null, array('class'=>'form-control modern-form-control', 'id'=>'city_id')) !!} </span>
+                <span id="city_dd">
+                    {!! Form::select('city_id', [''=>__('Select City')]+$cities, $city_id, array('class'=>'form-control modern-form-control', 'id'=>'city_id')) !!}
+                </span>
                 {!! APFrmErrHelp::showErrors($errors, 'city_id') !!}
             </div>
         </div>
@@ -302,7 +312,11 @@
             e.preventDefault();
             filterCities(0);
         });
-        filterStates(<?php echo old('state_id', $user->state_id); ?>);
+
+        // If states not already pre-populated, trigger AJAX load
+        if (!$('#state_id option').length || $('#state_id option').length <= 1) {
+            filterStates(<?php echo (int) old('state_id', $user->state_id ?? 0); ?>);
+        }
 
         /*******************************/
         var imageInput = document.getElementById("image_input_file");
@@ -368,24 +382,38 @@
     function filterStates(state_id)
     {
         var country_id = $('#country_id').val();
-        if (country_id != '') {
+        if (country_id && country_id != '') {
             $.post("{{ route('filter.lang.states.dropdown') }}", {country_id: country_id, state_id: state_id, _method: 'POST', _token: '{{ csrf_token() }}'})
-                    .done(function (response) {
-                        $('#state_dd').html(response);
-                        filterCities(<?php echo old('city_id', $user->city_id); ?>);
-                    });
+                .done(function (response) {
+                    $('#state_dd').html(response);
+                    $('#state_dd select').addClass('form-control modern-form-control');
+                    var newStateId = $('#state_id').val();
+                    if (newStateId && newStateId != '') {
+                        filterCities(<?php echo (int) old('city_id', $user->city_id ?? 0); ?>);
+                    } else {
+                        $('#city_dd').html('<select id="city_id" name="city_id" class="form-control modern-form-control"><option value="">{{ __("Select City") }}</option></select>');
+                    }
+                });
+        } else {
+            $('#state_dd').html('<select id="state_id" name="state_id" class="form-control modern-form-control"><option value="">{{ __("Select State") }}</option></select>');
+            $('#city_dd').html('<select id="city_id" name="city_id" class="form-control modern-form-control"><option value="">{{ __("Select City") }}</option></select>');
         }
     }
+
     function filterCities(city_id)
     {
         var state_id = $('#state_id').val();
-        if (state_id != '') {
+        if (state_id && state_id != '') {
             $.post("{{ route('filter.lang.cities.dropdown') }}", {state_id: state_id, city_id: city_id, _method: 'POST', _token: '{{ csrf_token() }}'})
-                    .done(function (response) {
-                        $('#city_dd').html(response);
-                    });
+                .done(function (response) {
+                    $('#city_dd').html(response);
+                    $('#city_dd select').addClass('form-control modern-form-control');
+                });
+        } else {
+            $('#city_dd').html('<select id="city_id" name="city_id" class="form-control modern-form-control"><option value="">{{ __("Select City") }}</option></select>');
         }
     }
+
     function initdatepicker() {
         $(".datepicker").datepicker({
             autoclose: true,
