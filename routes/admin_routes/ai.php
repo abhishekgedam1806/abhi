@@ -26,6 +26,11 @@ Route::post('ai-job-pipeline/ingest', array_merge(['uses' => 'Admin\AIJobPipelin
 Route::post('ai-job-pipeline/enrich/{id}', array_merge(['uses' => 'Admin\AIJobPipelineController@enrichSingle'], $all_users))->name('admin.ai.pipeline.enrich');
 Route::post('ai-job-pipeline/publish/{id}', array_merge(['uses' => 'Admin\AIJobPipelineController@publishSingle'], $all_users))->name('admin.ai.pipeline.publish');
 Route::post('ai-job-pipeline/fetch-adzuna', array_merge(['uses' => 'Admin\AIJobPipelineController@fetchAdzunaJobs'], $all_users))->name('admin.ai.pipeline.fetch_adzuna');
+Route::post('ai-job-pipeline/keyword-search', array_merge(['uses' => 'Admin\AIJobPipelineController@keywordSearch'], $all_users))->name('admin.ai.pipeline.keyword_search');
+Route::post('ai-job-pipeline/keyword-preview', array_merge(['uses' => 'Admin\AIJobPipelineController@previewKeywordJobs'], $all_users))->name('admin.ai.pipeline.keyword_preview');
+Route::post('ai-job-pipeline/add-selected', array_merge(['uses' => 'Admin\AIJobPipelineController@addSelectedToQueue'], $all_users))->name('admin.ai.pipeline.add_selected');
+
+
 Route::put('ai-job-pipeline/raw/{id}/update', array_merge(['uses' => 'Admin\AIJobPipelineController@updateRawJob'], $all_users))->name('admin.ai.pipeline.raw.update');
 Route::delete('ai-job-pipeline/raw/{id}/delete', array_merge(['uses' => 'Admin\AIJobPipelineController@deleteRawJob'], $all_users))->name('admin.ai.pipeline.raw.delete');
 Route::post('ai-job-pipeline/raw/bulk-delete', array_merge(['uses' => 'Admin\AIJobPipelineController@bulkDeleteRawJobs'], $all_users))->name('admin.ai.pipeline.raw.bulk_delete');

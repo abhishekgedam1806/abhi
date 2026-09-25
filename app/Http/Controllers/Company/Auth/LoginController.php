@@ -68,7 +68,7 @@ use AuthenticatesUsers;
      */
     public function showLoginForm()
     {
-        return view('company_auth.login');
+        return view('auth.login', ['tab' => 'employer']);
     }
 
     /**

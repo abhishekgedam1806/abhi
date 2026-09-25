@@ -108,6 +108,14 @@ include_once($real_path . 'job.php');
 
 include_once($real_path . 'contact.php');
 
+/* * ******** Company Auth ************ */
+
+include_once($real_path . 'company_auth.php');
+
+/* * ******** Admin Auth ************ */
+
+include_once($real_path . 'admin_auth.php');
+
 /* * ******** CompanyController ************ */
 
 include_once($real_path . 'company.php');
@@ -124,14 +132,6 @@ include_once($real_path . 'site_user.php');
 
 Auth::routes();
 Route::match(['get', 'post'], 'logout', 'Auth\LoginController@logout')->name('logout');
-
-/* * ******** Company Auth ************ */
-
-include_once($real_path . 'company_auth.php');
-
-/* * ******** Admin Auth ************ */
-
-include_once($real_path . 'admin_auth.php');
 
 /* * ******** Email OTP Login & Registration Routes ************ */
 Route::post('auth/otp/send', 'Auth\OtpLoginController@sendOtp')->name('otp.send');

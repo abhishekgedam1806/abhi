@@ -21,9 +21,11 @@ class AddUserTypeToUsersTable extends Migration
         }
 
         // Set users who already own a business to 'business'
-        $businessUserIds = DB::table('businesses')->whereNotNull('user_id')->pluck('user_id')->toArray();
-        if (!empty($businessUserIds)) {
-            DB::table('users')->whereIn('id', $businessUserIds)->update(['user_type' => 'business']);
+        if (Schema::hasTable('businesses')) {
+            $businessUserIds = DB::table('businesses')->whereNotNull('user_id')->pluck('user_id')->toArray();
+            if (!empty($businessUserIds)) {
+                DB::table('users')->whereIn('id', $businessUserIds)->update(['user_type' => 'business']);
+            }
         }
     }
 

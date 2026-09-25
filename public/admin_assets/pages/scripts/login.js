@@ -1,75 +1,60 @@
 var Login = function() {
-
     var handleLogin = function() {
+        var $form = $('.login-form');
+        if (!$form.length) return;
 
-        $('.login-form').validate({
-            errorElement: 'span', //default input error message container
-            errorClass: 'help-block', // default input error message class
-            focusInvalid: false, // do not focus the last invalid input
+        $form.validate({
+            errorElement: 'span',
+            errorClass: 'admin-field-error',
+            focusInvalid: false,
             rules: {
                 email: {
-                    required: true
+                    required: true,
+                    email: true
                 },
                 password: {
                     required: true
-                },
-                rememberme: {
-                    required: false
                 }
             },
-
             messages: {
                 email: {
-                    required: "Email Address is required."
+                    required: "Please enter your email address.",
+                    email: "Please enter a valid email address."
                 },
                 password: {
-                    required: "Password is required."
+                    required: "Please enter your password."
                 }
             },
-
-            invalidHandler: function(event, validator) { //display error alert on form submit   
-                $('.alert-danger', $('.login-form')).show();
+            invalidHandler: function(event, validator) {
+                $('.login-js-alert').slideDown(200);
             },
-
-            highlight: function(element) { // hightlight error inputs
-                $(element)
-                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            highlight: function(element) {
+                $(element).closest('.admin-field-group').addClass('has-error');
             },
-
-            success: function(label) {
-                label.closest('.form-group').removeClass('has-error');
-                label.remove();
+            unhighlight: function(element) {
+                $(element).closest('.admin-field-group').removeClass('has-error');
             },
-
             errorPlacement: function(error, element) {
-                error.insertAfter(element.closest('.input-icon'));
+                error.appendTo(element.closest('.admin-field-group'));
             },
-
             submitHandler: function(form) {
-                form.submit(); // form validation success, call ajax form submit
+                var $btn = $(form).find('button[type="submit"]');
+                $btn.prop('disabled', true).addClass('loading');
+                $btn.find('.btn-text').text('Signing In...');
+                form.submit();
             }
         });
 
-        $('.login-form input').keypress(function(e) {
-            if (e.which == 13) {
-                if ($('.login-form').validate().form()) {
-                    $('.login-form').submit(); //form validation success, call ajax form submit
-                }
-                return false;
-            }
+        $form.find('input').on('input keypress', function(e) {
+            $('.login-js-alert').slideUp(200);
         });
-    }
-    
-    return {
-        //main function to initiate the module
-        init: function() {
-
-            handleLogin();
-  
-        }
-
     };
 
+    return {
+        init: function() {
+            handleLogin();
+        }
+    };
 }();
 
 jQuery(document).ready(function() {

@@ -13,3 +13,4 @@ Route::post('filter-skills-dropdown', 'AjaxController@filterSkillsDropdown')->na
 Route::post('add-custom-skill', 'AjaxController@addCustomSkill')->name('add.custom.skill');
 Route::post('track-hr-contact', 'AjaxController@trackHrContact')->name('track.hr.contact');
 Route::post('report-job-abuse-ajax', 'AjaxController@reportJobAbuseAjax')->name('report.job.abuse.ajax');
+Route::get('search-locations-autocomplete', 'AjaxController@searchLocations')->name('search.locations.autocomplete');

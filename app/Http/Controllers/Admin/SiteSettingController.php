@@ -166,6 +166,24 @@ class SiteSettingController extends Controller
 
         }
 
+        if ($request->hasFile('journey_c1_image')) {
+            $c1_file_name = 'journey_c1_' . time();
+            $fileName = ImgUploader::UploadImage('sitesetting_images', $request->file('journey_c1_image'), $c1_file_name);
+            $siteSetting->journey_c1_image = $fileName;
+        }
+
+        if ($request->hasFile('journey_c2_image')) {
+            $c2_file_name = 'journey_c2_' . time();
+            $fileName = ImgUploader::UploadImage('sitesetting_images', $request->file('journey_c2_image'), $c2_file_name);
+            $siteSetting->journey_c2_image = $fileName;
+        }
+
+        if ($request->hasFile('journey_c3_image')) {
+            $c3_file_name = 'journey_c3_' . time();
+            $fileName = ImgUploader::UploadImage('sitesetting_images', $request->file('journey_c3_image'), $c3_file_name);
+            $siteSetting->journey_c3_image = $fileName;
+        }
+
         $siteSetting->site_name = $request->input('site_name');
 
         $siteSetting->site_slogan = $request->input('site_slogan');
@@ -321,6 +339,27 @@ class SiteSettingController extends Controller
         $siteSetting->hero_stat3_number = $request->input('hero_stat3_number');
         $siteSetting->hero_stat3_label = $request->input('hero_stat3_label');
         $siteSetting->hero_hired_text = $request->input('hero_hired_text');
+
+        $siteSetting->journey_badge_text = $request->input('journey_badge_text');
+        $siteSetting->journey_main_title = $request->input('journey_main_title');
+
+        $siteSetting->journey_c1_eyebrow = $request->input('journey_c1_eyebrow');
+        $siteSetting->journey_c1_title = $request->input('journey_c1_title');
+        $siteSetting->journey_c1_desc = $request->input('journey_c1_desc');
+        $siteSetting->journey_c1_btn_text = $request->input('journey_c1_btn_text');
+        $siteSetting->journey_c1_btn_url = $request->input('journey_c1_btn_url');
+
+        $siteSetting->journey_c2_eyebrow = $request->input('journey_c2_eyebrow');
+        $siteSetting->journey_c2_title = $request->input('journey_c2_title');
+        $siteSetting->journey_c2_desc = $request->input('journey_c2_desc');
+        $siteSetting->journey_c2_btn_text = $request->input('journey_c2_btn_text');
+        $siteSetting->journey_c2_btn_url = $request->input('journey_c2_btn_url');
+
+        $siteSetting->journey_c3_eyebrow = $request->input('journey_c3_eyebrow');
+        $siteSetting->journey_c3_title = $request->input('journey_c3_title');
+        $siteSetting->journey_c3_desc = $request->input('journey_c3_desc');
+        $siteSetting->journey_c3_btn_text = $request->input('journey_c3_btn_text');
+        $siteSetting->journey_c3_btn_url = $request->input('journey_c3_btn_url');
 
         $siteSetting->update();
 

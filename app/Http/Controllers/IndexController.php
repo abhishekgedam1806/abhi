@@ -162,5 +162,4 @@ class IndexController extends Controller
 
         return Redirect::to($return_url);
     }
-
 }

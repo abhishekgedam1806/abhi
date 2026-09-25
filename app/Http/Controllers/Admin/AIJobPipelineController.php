@@ -32,37 +32,78 @@ class AIJobPipelineController extends Controller
      */
     public function index(Request $request)
     {
-        $tab = $request->input('tab', 'enriched');
+        $tab    = $request->input('tab', 'enriched');
+        $search = trim($request->input('search', ''));
 
         // Target: 4–5 published jobs today
-        $todayStart = Carbon::today()->startOfDay();
+        $todayStart          = Carbon::today()->startOfDay();
         $publishedTodayCount = RawJob::where('status', 'published')
             ->where('updated_at', '>=', $todayStart)
             ->count();
 
-        $rawCount = RawJob::where('status', 'pending')->count();
-        $enrichedCount = RawJob::where('status', 'enriched')->count();
+        $rawCount       = RawJob::where('status', 'pending')->count();
+        $enrichedCount  = RawJob::where('status', 'enriched')->count();
         $totalPublished = RawJob::where('status', 'published')->count();
 
-        // Query based on tab
+        // Query based on tab — search filter applied when $search is present
         if ($tab == 'raw') {
-            $jobs = RawJob::where('status', 'pending')->orderBy('id', 'desc')->paginate(15);
+            $query = RawJob::where('status', 'pending');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('raw_title',    'like', "%{$search}%")
+                      ->orWhere('raw_company',  'like', "%{$search}%")
+                      ->orWhere('raw_location', 'like', "%{$search}%");
+                });
+            }
+            $jobs    = $query->orderBy('id', 'desc')->paginate(15);
+            $sources = collect();
+
+
         } elseif ($tab == 'published') {
-            $jobs = RawJob::where('status', 'published')->with('publishedJob', 'aiData')->orderBy('updated_at', 'desc')->paginate(15);
+            $query = RawJob::where('status', 'published')->with('publishedJob', 'aiData');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('raw_title',    'like', "%{$search}%")
+                      ->orWhere('raw_company',  'like', "%{$search}%")
+                      ->orWhere('raw_location', 'like', "%{$search}%")
+                      ->orWhereHas('aiData', function ($ai) use ($search) {
+                          $ai->where('seo_title',          'like', "%{$search}%")
+                             ->orWhere('suggested_category', 'like', "%{$search}%");
+                      });
+                });
+            }
+            $jobs    = $query->orderBy('updated_at', 'desc')->paginate(15);
+            $sources = collect();
+
         } elseif ($tab == 'sources') {
             $sources = JobSource::orderBy('id', 'desc')->get();
-            $jobs = collect();
+            $jobs    = collect();
+
         } else {
             // Default: enriched & ready to publish
-            $jobs = RawJob::where('status', 'enriched')->with('aiData')->orderBy('id', 'desc')->paginate(15);
-            $tab = 'enriched';
+            $query = RawJob::where('status', 'enriched')->with('aiData');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('raw_title',    'like', "%{$search}%")
+                      ->orWhere('raw_company',  'like', "%{$search}%")
+                      ->orWhere('raw_location', 'like', "%{$search}%")
+                      ->orWhereHas('aiData', function ($ai) use ($search) {
+                          $ai->where('seo_title',          'like', "%{$search}%")
+                             ->orWhere('suggested_category', 'like', "%{$search}%");
+                      });
+                });
+            }
+            $jobs    = $query->orderBy('id', 'desc')->paginate(15);
+            $tab     = 'enriched';
+            $sources = collect();
         }
 
-        $sourcesList = JobSource::all();
+        $sourcesList      = JobSource::all();
         $pipelineSettings = AIPipelineSetting::getSettings();
 
         return view('admin.ai.pipeline.index', compact(
             'tab',
+            'search',
             'jobs',
             'rawCount',
             'enrichedCount',
@@ -110,14 +151,143 @@ class AIJobPipelineController extends Controller
             flash($result['message'])->error();
         }
 
-        $settings = AIPipelineSetting::getSettings();
+        $settings  = AIPipelineSetting::getSettings();
         $targetTab = (!empty($result['published']) && $result['published'] > 0) ? 'published' : ($settings->auto_publish ? 'published' : 'raw');
         return redirect()->route('admin.ai.pipeline', ['tab' => $targetTab]);
     }
 
     /**
+     * Smart Keyword Job Search — fetches jobs by keyword from Adzuna
+     * for manual targeted ingestion (SEO, Software Engineer, Digital Marketing etc.)
+     */
+    public function keywordSearch(Request $request)
+    {
+        $request->validate([
+            'keyword'  => 'required|string|max:100',
+            'country'  => 'required|string|max:5',
+            'location' => 'nullable|string|max:100',
+            'limit'    => 'nullable|integer|min:1|max:50',
+            'max_days' => 'nullable|integer|min:1|max:90',
+        ]);
+
+        $keyword  = trim($request->input('keyword'));
+        $country  = trim($request->input('country', 'in'));
+        $location = trim($request->input('location', ''));
+        $limit    = (int) $request->input('limit', 10);
+        $maxDays  = (int) $request->input('max_days', 30);
+
+        $fetcher = app(AdzunaJobFetcher::class);
+        $result  = $fetcher->fetchByKeyword($keyword, $country, $location, $limit, $maxDays);
+
+        if ($result['success']) {
+            if ($result['inserted'] > 0) {
+                flash('✓ Keyword Search Complete! "' . $keyword . '" → ' . $result['message'])->success();
+            } else {
+                flash('No new jobs found for "' . $keyword . '". All results were duplicates or the API returned no data.')->warning();
+            }
+        } else {
+            flash($result['message'])->error();
+        }
+
+        return redirect()->route('admin.ai.pipeline', ['tab' => 'raw']);
+    }
+
+    /**
+     * Preview keyword jobs from Adzuna — returns JSON, NO DB writes.
+     * Admin sees results first, selects which to add.
+     */
+    public function previewKeywordJobs(Request $request)
+    {
+        $request->validate([
+            'keyword'  => 'required|string|max:100',
+            'country'  => 'required|string|max:5',
+            'location' => 'nullable|string|max:100',
+            'limit'    => 'nullable|integer|min:1|max:50',
+            'max_days' => 'nullable|integer|min:1|max:90',
+        ]);
+
+        $fetcher = app(AdzunaJobFetcher::class);
+        $result  = $fetcher->previewByKeyword(
+            trim($request->input('keyword')),
+            trim($request->input('country', 'in')),
+            trim($request->input('location', '')),
+            (int) $request->input('limit', 10),
+            (int) $request->input('max_days', 30)
+        );
+
+        return response()->json($result);
+    }
+
+    /**
+     * Add admin-selected jobs (from preview) to Raw Ingestion Queue.
+     * Each job goes through dedup check — already existing ones are skipped.
+     */
+    public function addSelectedToQueue(Request $request)
+    {
+        $jobs = $request->input('jobs', []);
+
+        if (empty($jobs) || !is_array($jobs)) {
+            return response()->json(['success' => false, 'message' => 'No jobs received.']);
+        }
+
+        $added      = 0;
+        $duplicates = 0;
+
+        foreach ($jobs as $jobData) {
+            $title   = trim($jobData['title']   ?? '');
+            $company = trim($jobData['company']  ?? 'Direct Employer');
+            $loc     = trim($jobData['location'] ?? 'India');
+
+            if (empty($title)) {
+                continue;
+            }
+
+            $contentHash = \App\Services\AI\JobDuplicateDetector::generateHash($company, $title, $loc);
+            if (\App\Services\AI\JobDuplicateDetector::isDuplicate($contentHash)) {
+                $duplicates++;
+                continue;
+            }
+
+            $rawJob                  = new \App\RawJob();
+            $rawJob->source_name     = 'Adzuna Keyword Search';
+            $rawJob->source_url      = $jobData['source_url']    ?? '';
+            $rawJob->content_hash    = $contentHash;
+            $rawJob->raw_title       = $title;
+            $rawJob->raw_company     = $company;
+            $rawJob->raw_location    = $loc;
+            $rawJob->raw_description = $jobData['description']   ?? "{$title} at {$company}.";
+            $rawJob->raw_payload     = json_encode([
+                'adzuna_id'      => $jobData['adzuna_id']     ?? null,
+                'salary_min'     => $jobData['salary_min']    ?? null,
+                'salary_max'     => $jobData['salary_max']    ?? null,
+                'contract_time'  => $jobData['contract_time'] ?? null,
+                'keyword'        => $jobData['keyword']       ?? '',
+                'country'        => $jobData['country']       ?? 'in',
+                'redirect_url'   => $jobData['source_url']    ?? '',
+                'created_at_api' => $jobData['created']       ?? null,
+            ]);
+            $rawJob->status = 'pending';
+            $rawJob->save();
+            $added++;
+        }
+
+        $msg = "{$added} job(s) added to Raw Ingestion Queue.";
+        if ($duplicates > 0) {
+            $msg .= " {$duplicates} duplicate(s) already existed — skipped.";
+        }
+
+        return response()->json([
+            'success'    => true,
+            'added'      => $added,
+            'duplicates' => $duplicates,
+            'message'    => $msg,
+        ]);
+    }
+
+    /**
      * Ingest a sample/custom raw job into pipeline with duplicate detection
      */
+
     public function ingestRawJob(Request $request)
     {
         $request->validate([

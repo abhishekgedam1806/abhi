@@ -115,6 +115,7 @@ $direction = MiscHelper::getLangDirection($lang);
                             <li> <a href="#paymentGateways" data-toggle="tab" aria-expanded="false"><i class="fa fa-credit-card"></i> Payment Gateways</a> </li>
                             <li> <a href="#homePageSlider" data-toggle="tab" aria-expanded="false"><i class="fa fa-sliders"></i> Home Page Slider</a> </li>
                             <li> <a href="#heroBanner" data-toggle="tab" aria-expanded="false"><i class="fa fa-picture-o"></i> Hero Banner</a> </li>
+                            <li> <a href="#journeyCards" data-toggle="tab" aria-expanded="false"><i class="fa fa-compass"></i> What Are You Looking For?</a> </li>
                             <li> <a href="#mailChimp" data-toggle="tab" aria-expanded="false"><i class="fa fa-paper-plane-o"></i> Mail Chimp</a> </li>              
                         </ul>
                         {!! Form::model($siteSetting, array('method' => 'put', 'route' => array('update.site.setting'), 'class' => 'form', 'files'=>true)) !!}
@@ -128,6 +129,7 @@ $direction = MiscHelper::getLangDirection($lang);
                             <div class="tab-pane fade" id="paymentGateways"> @include('admin.site_setting.forms.paymentGatewaysSetting_form') </div>
                             <div class="tab-pane fade" id="homePageSlider"> @include('admin.site_setting.forms.homePageSliderSetting_form') </div>
                             <div class="tab-pane fade" id="heroBanner"> @include('admin.site_setting.forms.heroBannerSetting_form') </div>
+                            <div class="tab-pane fade" id="journeyCards"> @include('admin.site_setting.forms.journeyCardsSetting_form') </div>
                             <div class="tab-pane fade" id="mailChimp"> @include('admin.site_setting.forms.mailChimpSetting_form') </div>
                         </div>
                         <div class="form-actions" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #F1F5F9; background: transparent;">

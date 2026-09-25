@@ -29,3 +29,5 @@ cf.exe
 *.sql
 *.zip
 *.tar.gz
+/scratch/
+~$*
