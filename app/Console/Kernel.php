@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\CallRoute',
         'App\Console\Commands\FetchAdzunaJobs',
+        'App\Console\Commands\CleanExpiredJobs',
     ];
 
     /**
@@ -34,6 +35,9 @@ class Kernel extends ConsoleKernel
         // Automated Adzuna Live Job Ingestion (Runs twice daily at 8 AM and 4 PM)
         $schedule->command('jobs:fetch-adzuna')->dailyAt('08:00')->withoutOverlapping(10)->sendOutputTo(storage_path() . '/logs/adzuna-fetch.log');
         $schedule->command('jobs:fetch-adzuna')->dailyAt('16:00')->withoutOverlapping(10)->sendOutputTo(storage_path() . '/logs/adzuna-fetch.log');
+
+        // Auto-delete expired jobs (30+ days past expiry) — keeps DB lean, no 404s on fresh expired
+        $schedule->command('jobs:clean-expired')->dailyAt('00:30')->withoutOverlapping(5)->sendOutputTo(storage_path() . '/logs/expired-jobs-cleanup.log');
     }
 
     /**
