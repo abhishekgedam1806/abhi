@@ -321,7 +321,10 @@ class CompanyController extends Controller
                 if (!empty($job_ids)) {
                     DB::table('manage_job_skills')->whereIn('job_id', $job_ids)->delete();
                     DB::table('job_apply')->whereIn('job_id', $job_ids)->delete();
-                    DB::table('favourites_job')->whereIn('job_id', $job_ids)->delete();
+                    $fav_slugs = DB::table('jobs')->whereIn('id', $job_ids)->pluck('slug')->toArray();
+                    if (!empty($fav_slugs)) {
+                        DB::table('favourites_job')->whereIn('job_slug', $fav_slugs)->delete();
+                    }
                     DB::table('jobs')->whereIn('id', $job_ids)->delete();
                 }
                 DB::table('company_messages')->whereIn('company_id', $ids)->delete();

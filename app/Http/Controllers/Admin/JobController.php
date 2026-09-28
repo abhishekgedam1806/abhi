@@ -195,7 +195,10 @@ class JobController extends Controller
             try {
                 DB::table('manage_job_skills')->whereIn('job_id', $ids)->delete();
                 DB::table('job_apply')->whereIn('job_id', $ids)->delete();
-                DB::table('favourites_job')->whereIn('job_id', $ids)->delete();
+                $job_slugs = DB::table('jobs')->whereIn('id', $ids)->pluck('slug')->toArray();
+                if (!empty($job_slugs)) {
+                    DB::table('favourites_job')->whereIn('job_slug', $job_slugs)->delete();
+                }
                 Job::whereIn('id', $ids)->delete();
                 return response()->json(['status' => 'ok', 'count' => count($ids)]);
             } catch (\Exception $e) {
