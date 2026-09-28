@@ -260,16 +260,25 @@
                 </div>
             </div>
 
-            {{-- RIGHT: Man Image - full body, bottom-aligned --}}
+            {{-- RIGHT: Hero Image --}}
             <div class="col-lg-5 col-md-5 col-12 d-none d-md-flex" style="align-items:flex-end; padding:0;">
                 <div class="hero-img-wrap" style="width:100%;">
-                    <img src="{{ asset('images/hero-man.png') }}"
-                         alt="Jobs Portal"
-                         class="hero-man-img"
-                         width="450"
-                         height="380"
-                         fetchpriority="high"
-                         decoding="async" />
+                    @if(!empty($siteSetting->hero_image) && file_exists(public_path('sitesetting_images/'.$siteSetting->hero_image)))
+                        <img src="{{ asset('sitesetting_images/'.$siteSetting->hero_image) }}"
+                             alt="{{ $siteSetting->site_name ?? 'Jobs Portal' }}"
+                             class="hero-man-img"
+                             style="max-height: 400px; width: auto; object-fit: contain;"
+                             fetchpriority="high"
+                             decoding="async" />
+                    @else
+                        <img src="{{ asset('images/hero-man.png') }}"
+                             alt="{{ $siteSetting->site_name ?? 'Jobs Portal' }}"
+                             class="hero-man-img"
+                             width="450"
+                             height="380"
+                             fetchpriority="high"
+                             decoding="async" />
+                    @endif
                 </div>
             </div>
 
