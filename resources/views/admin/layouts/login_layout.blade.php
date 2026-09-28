@@ -22,8 +22,9 @@
         <link href="{{ asset('/') }}admin_assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
-        <link type="text/css" rel="stylesheet" media="all" href="{{ asset('/') }}admin_assets/custom.css" />
-        <link rel="shortcut icon" href="{{ asset('/') }}favicon.ico" /> 
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" /> 
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" /> 
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" /> 
     </head>
     <body class="admin-login-body">
         <div class="admin-auth-wrapper">

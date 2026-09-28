@@ -79,7 +79,9 @@ if (!isset($seo)) {
     </script>
 
     <!-- Fav Icon & PWA Manifest -->
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#2563EB">
     <meta name="mobile-web-app-capable" content="yes">

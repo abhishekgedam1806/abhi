@@ -162,11 +162,33 @@ class SiteSettingController extends Controller
         }
 
         if ($request->hasFile('favicon')) {
-
             $file = $request->file('favicon');
+            $tempPath = $file->getRealPath();
+            $ext = strtolower($file->getClientOriginalExtension());
 
-            $file->move(public_path(), 'favicon.ico');
+            // Target all possible public directory paths on hostinger / cpanel
+            $targetDirs = array_filter(array_unique([
+                rtrim(public_path(), '/\\'),
+                rtrim(ImgUploader::real_public_path(), '/\\'),
+                rtrim(base_path('public'), '/\\'),
+                rtrim(base_path('public_html'), '/\\'),
+            ]), function($d) {
+                return !empty($d) && is_dir($d);
+            });
 
+            foreach ($targetDirs as $dir) {
+                @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.ico');
+                @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.png');
+                if ($ext === 'ico') {
+                    @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.ico');
+                }
+            }
+
+            try {
+                $file->move(public_path(), 'favicon.ico');
+            } catch (\Throwable $moveEx) {
+                // Already copied above
+            }
         }
 
         if ($request->hasFile('hero_image')) {

@@ -86,7 +86,9 @@
 
         <link type="text/css" rel="stylesheet" media="all" href="{{ asset('/') }}admin_assets/custom.css" />
 
-        <link rel="shortcut icon" href="{{ asset('/') }}favicon.ico" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" />
 
         @stack('css')
 

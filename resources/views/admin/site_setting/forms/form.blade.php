@@ -19,22 +19,42 @@
     </div>
     
     
-    <div class="row">
+    <div class="row" style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 16px; margin: 10px 0 20px 0;">
         <div class="col-md-6">
-            <div class="form-group {!! APFrmErrHelp::hasError($errors, 'favicon') !!}">
+            <div class="form-group {!! APFrmErrHelp::hasError($errors, 'favicon') !!}" style="margin: 0;">
+                <label class="bold" style="font-size: 13.5px; color: #0F172A; margin-bottom: 6px; display: block;">
+                    <i class="fa fa-star text-warning"></i> Website Favicon (.ico / .png / .jpg / .webp)
+                </label>
                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;"> <img src="{{ asset('/') }}admin_assets/no-image.png" alt="" /> </div>
-                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 16px; max-height: 16px;"> </div>
-                    <div> <span class="btn default btn-file"> <span class="fileinput-new"> Favicon </span> <span class="fileinput-exists"> Change </span> {!! Form::file('favicon', null, array('id'=>'favicon')) !!} </span> <a href="javascript:;" class="btn red fileinput-exists" data-dismiss="fileinput"> Remove </a> </div>
+                    <div class="fileinput-new thumbnail" style="width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 10px;"> 
+                        <img src="{{ asset('favicon.ico') }}?v={{ time() }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" onerror="this.src='{{ asset('favicon.png') }}?v={{ time() }}'" /> 
+                    </div>
+                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 72px; max-height: 72px;"> </div>
+                    <div style="margin-top: 8px;"> 
+                        <span class="btn default btn-file btn-sm" style="border-radius: 6px; font-weight: 600;"> 
+                            <span class="fileinput-new"> Select Favicon </span> 
+                            <span class="fileinput-exists"> Change </span> 
+                            {!! Form::file('favicon', array('id'=>'favicon', 'accept'=>'.ico,.png,.jpg,.jpeg,.webp,image/*')) !!} 
+                        </span> 
+                        <a href="javascript:;" class="btn red fileinput-exists btn-sm" data-dismiss="fileinput" style="border-radius: 6px;"> Remove </a> 
+                    </div>
                 </div>
-                <span id="name-error" class="help-block help-block-error">The favicon must be a file of type/extension ".ico"</span>
+                <span class="help-block" style="font-size: 11.5px; color: #64748B;">Supported: <code>.ico</code>, <code>.png</code>, <code>.jpg</code>, <code>.webp</code> (Recommended: 32&times;32 or 64&times;64 px square)</span>
+                {!! APFrmErrHelp::showErrors($errors, 'favicon') !!}
             </div>
         </div>
-        @if(isset($siteSetting))
         <div class="col-md-6">
-            {{ ImgUploader::print_image("favicon.ico") }}        
+            <label class="bold" style="font-size: 12px; color: #64748B;">Active Favicon Preview:</label>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
+                <div style="width: 54px; height: 54px; border-radius: 10px; border: 1.5px solid #CBD5E1; display: flex; align-items: center; justify-content: center; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                    <img src="{{ asset('favicon.ico') }}?v={{ time() }}" alt="Favicon" style="max-width: 36px; max-height: 36px; object-fit: contain;" onerror="this.src='{{ asset('favicon.png') }}?v={{ time() }}'">
+                </div>
+                <div style="font-size: 12px; color: #64748B;">
+                    <strong style="color: #0F172A;">Public URL:</strong> <code>{{ url('favicon.ico') }}</code><br>
+                    <small class="text-muted"><i class="fa fa-info-circle text-primary"></i> Browser tabs cache favicons aggressively. Hard-refresh (<code>Ctrl + F5</code>) to see updates.</small>
+                </div>
+            </div>
         </div>    
-        @endif  
     </div>
 
     <!-- Inner Page Title Banner Background Image -->

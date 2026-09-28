@@ -28,6 +28,7 @@ class SiteSettingFormRequest extends Request
             'site_name' => 'required|max:100',
             'site_slogan' => 'required|max:150',
             'image' => 'nullable|image',
+            'favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,webp,svg|max:2048',
             'page_title_bg_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
             'site_phone_primary' => 'required|max:20',
             'site_phone_secondary' => 'max:20',
