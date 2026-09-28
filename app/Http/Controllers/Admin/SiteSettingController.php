@@ -36,11 +36,10 @@ use DataTables;
 
 use App\Http\Requests\SiteSettingFormRequest;
 
-use App\Http\Controllers\Controller;
-
 use App\Helpers\DataArrayHelper;
-
-
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 
 class SiteSettingController extends Controller
 
@@ -71,6 +70,7 @@ class SiteSettingController extends Controller
     public function editSiteSetting()
 
     {
+        $this->ensureSchemaUpdated();
 
         $id = 1272;
 
@@ -117,6 +117,7 @@ class SiteSettingController extends Controller
     public function updateSiteSetting(SiteSettingFormRequest $request)
 
     {
+        $this->ensureSchemaUpdated();
 
         $id = 1272;
 
@@ -328,38 +329,42 @@ class SiteSettingController extends Controller
 
 		$siteSetting->mailchimp_list_id = $request->input('mailchimp_list_id');
 
-        $siteSetting->hero_badge_text = $request->input('hero_badge_text');
-        $siteSetting->hero_title_line1 = $request->input('hero_title_line1');
-        $siteSetting->hero_title_line2 = $request->input('hero_title_line2');
-        $siteSetting->hero_subtitle = $request->input('hero_subtitle');
-        $siteSetting->hero_stat1_number = $request->input('hero_stat1_number');
-        $siteSetting->hero_stat1_label = $request->input('hero_stat1_label');
-        $siteSetting->hero_stat2_number = $request->input('hero_stat2_number');
-        $siteSetting->hero_stat2_label = $request->input('hero_stat2_label');
-        $siteSetting->hero_stat3_number = $request->input('hero_stat3_number');
-        $siteSetting->hero_stat3_label = $request->input('hero_stat3_label');
-        $siteSetting->hero_hired_text = $request->input('hero_hired_text');
+        if (Schema::hasColumn('site_settings', 'hero_badge_text')) {
+            $siteSetting->hero_badge_text = $request->input('hero_badge_text');
+            $siteSetting->hero_title_line1 = $request->input('hero_title_line1');
+            $siteSetting->hero_title_line2 = $request->input('hero_title_line2');
+            $siteSetting->hero_subtitle = $request->input('hero_subtitle');
+            $siteSetting->hero_stat1_number = $request->input('hero_stat1_number');
+            $siteSetting->hero_stat1_label = $request->input('hero_stat1_label');
+            $siteSetting->hero_stat2_number = $request->input('hero_stat2_number');
+            $siteSetting->hero_stat2_label = $request->input('hero_stat2_label');
+            $siteSetting->hero_stat3_number = $request->input('hero_stat3_number');
+            $siteSetting->hero_stat3_label = $request->input('hero_stat3_label');
+            $siteSetting->hero_hired_text = $request->input('hero_hired_text');
+        }
 
-        $siteSetting->journey_badge_text = $request->input('journey_badge_text');
-        $siteSetting->journey_main_title = $request->input('journey_main_title');
+        if (Schema::hasColumn('site_settings', 'journey_badge_text')) {
+            $siteSetting->journey_badge_text = $request->input('journey_badge_text');
+            $siteSetting->journey_main_title = $request->input('journey_main_title');
 
-        $siteSetting->journey_c1_eyebrow = $request->input('journey_c1_eyebrow');
-        $siteSetting->journey_c1_title = $request->input('journey_c1_title');
-        $siteSetting->journey_c1_desc = $request->input('journey_c1_desc');
-        $siteSetting->journey_c1_btn_text = $request->input('journey_c1_btn_text');
-        $siteSetting->journey_c1_btn_url = $request->input('journey_c1_btn_url');
+            $siteSetting->journey_c1_eyebrow = $request->input('journey_c1_eyebrow');
+            $siteSetting->journey_c1_title = $request->input('journey_c1_title');
+            $siteSetting->journey_c1_desc = $request->input('journey_c1_desc');
+            $siteSetting->journey_c1_btn_text = $request->input('journey_c1_btn_text');
+            $siteSetting->journey_c1_btn_url = $request->input('journey_c1_btn_url');
 
-        $siteSetting->journey_c2_eyebrow = $request->input('journey_c2_eyebrow');
-        $siteSetting->journey_c2_title = $request->input('journey_c2_title');
-        $siteSetting->journey_c2_desc = $request->input('journey_c2_desc');
-        $siteSetting->journey_c2_btn_text = $request->input('journey_c2_btn_text');
-        $siteSetting->journey_c2_btn_url = $request->input('journey_c2_btn_url');
+            $siteSetting->journey_c2_eyebrow = $request->input('journey_c2_eyebrow');
+            $siteSetting->journey_c2_title = $request->input('journey_c2_title');
+            $siteSetting->journey_c2_desc = $request->input('journey_c2_desc');
+            $siteSetting->journey_c2_btn_text = $request->input('journey_c2_btn_text');
+            $siteSetting->journey_c2_btn_url = $request->input('journey_c2_btn_url');
 
-        $siteSetting->journey_c3_eyebrow = $request->input('journey_c3_eyebrow');
-        $siteSetting->journey_c3_title = $request->input('journey_c3_title');
-        $siteSetting->journey_c3_desc = $request->input('journey_c3_desc');
-        $siteSetting->journey_c3_btn_text = $request->input('journey_c3_btn_text');
-        $siteSetting->journey_c3_btn_url = $request->input('journey_c3_btn_url');
+            $siteSetting->journey_c3_eyebrow = $request->input('journey_c3_eyebrow');
+            $siteSetting->journey_c3_title = $request->input('journey_c3_title');
+            $siteSetting->journey_c3_desc = $request->input('journey_c3_desc');
+            $siteSetting->journey_c3_btn_text = $request->input('journey_c3_btn_text');
+            $siteSetting->journey_c3_btn_url = $request->input('journey_c3_btn_url');
+        }
 
         $siteSetting->update();
 
@@ -602,6 +607,80 @@ class SiteSettingController extends Controller
             File::delete(public_path('sitesetting_images/thumb/' . $image));
             File::delete(public_path('sitesetting_images/mid/' . $image));
         }
+    }
+
+    /**
+     * Auto ensure missing site_settings database columns and run migrations safely
+     */
+    private function ensureSchemaUpdated()
+    {
+        try {
+            if (!Schema::hasColumn('site_settings', 'journey_badge_text') || !Schema::hasColumn('site_settings', 'hero_badge_text') || !Schema::hasColumn('site_settings', 'page_title_bg_image')) {
+                try {
+                    Artisan::call('migrate', ['--force' => true]);
+                } catch (\Throwable $migEx) {
+                    // Fallback to manual column creation below
+                }
+
+                if (Schema::hasTable('site_settings')) {
+                    Schema::table('site_settings', function (Blueprint $table) {
+                        if (!Schema::hasColumn('site_settings', 'page_title_bg_image')) {
+                            $table->string('page_title_bg_image', 255)->nullable()->after('site_logo');
+                        }
+                        if (!Schema::hasColumn('site_settings', 'hero_badge_text')) {
+                            $table->string('hero_badge_text', 150)->nullable()->default('INDIA #1 JOB PLATFORM');
+                            $table->string('hero_title_line1', 150)->nullable()->default('Your job search');
+                            $table->string('hero_title_line2', 150)->nullable()->default('ends here');
+                            $table->string('hero_subtitle', 255)->nullable()->default('Discover 50 lakh+ career opportunities across India');
+                            $table->string('hero_stat1_number', 30)->nullable()->default('50L+');
+                            $table->string('hero_stat1_label', 60)->nullable()->default('Jobs');
+                            $table->string('hero_stat2_number', 30)->nullable()->default('1Cr+');
+                            $table->string('hero_stat2_label', 60)->nullable()->default('Job Seekers');
+                            $table->string('hero_stat3_number', 30)->nullable()->default('10K+');
+                            $table->string('hero_stat3_label', 60)->nullable()->default('Companies');
+                            $table->string('hero_hired_text', 100)->nullable()->default('Rahul got placed at TCS');
+                            $table->string('hero_image', 150)->nullable();
+                        }
+                        if (!Schema::hasColumn('site_settings', 'journey_badge_text')) {
+                            $table->string('journey_badge_text', 255)->nullable()->default('What Are You Looking For?');
+                            $table->string('journey_main_title', 255)->nullable()->default('Choose Your Path on JobNBiz');
+                            $table->string('journey_c1_image', 255)->nullable();
+                            $table->string('journey_c1_eyebrow', 255)->nullable()->default('For Job Seekers');
+                            $table->string('journey_c1_title', 255)->nullable()->default('Find Jobs');
+                            $table->text('journey_c1_desc')->nullable();
+                            $table->string('journey_c1_btn_text', 255)->nullable()->default('Browse Jobs');
+                            $table->string('journey_c1_btn_url', 255)->nullable();
+                            $table->string('journey_c2_image', 255)->nullable();
+                            $table->string('journey_c2_eyebrow', 255)->nullable()->default('For Employers');
+                            $table->string('journey_c2_title', 255)->nullable()->default('Hire Talent');
+                            $table->text('journey_c2_desc')->nullable();
+                            $table->string('journey_c2_btn_text', 255)->nullable()->default('Post a Job');
+                            $table->string('journey_c2_btn_url', 255)->nullable();
+                            $table->string('journey_c3_image', 255)->nullable();
+                            $table->string('journey_c3_eyebrow', 255)->nullable()->default('For Businesses');
+                            $table->string('journey_c3_title', 255)->nullable()->default('Get Discovered');
+                            $table->text('journey_c3_desc')->nullable();
+                            $table->string('journey_c3_btn_text', 255)->nullable()->default('Find Businesses');
+                            $table->string('journey_c3_btn_url', 255)->nullable();
+                        }
+                    });
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Auto schema update error: ' . $e->getMessage());
+        }
+    }
+
+    public function runSystemMigrations()
+    {
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            $output = Artisan::output();
+            flash("Database migrations updated successfully! " . $output)->success();
+        } catch (\Throwable $e) {
+            flash("Migration error: " . $e->getMessage())->error();
+        }
+        return redirect()->back();
     }
 }
 

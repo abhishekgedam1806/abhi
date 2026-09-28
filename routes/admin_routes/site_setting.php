@@ -9,5 +9,6 @@ Route::post('test-smtp-email', array_merge(['uses' => 'Admin\SiteSettingControll
 Route::get('otp-security-logs', array_merge(['uses' => 'Admin\SiteSettingController@otpSecurityLogs'], $all_users))->name('admin.otp.logs');
 Route::delete('blocked-domain/{id}', array_merge(['uses' => 'Admin\SiteSettingController@deleteBlockedDomain'], $all_users))->name('admin.delete.blocked.domain');
 Route::post('add-blocked-domain', array_merge(['uses' => 'Admin\SiteSettingController@addBlockedDomain'], $all_users))->name('admin.add.blocked.domain');
+Route::get('run-system-migrations', array_merge(['uses' => 'Admin\SiteSettingController@runSystemMigrations'], $all_users))->name('admin.run.migrations');
 /* * ****** End SiteSetting ********** */
 ?>
