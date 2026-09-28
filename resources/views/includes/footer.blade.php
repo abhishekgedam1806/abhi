@@ -135,7 +135,7 @@
                     @if(!empty($siteSetting->footer_copyright_text))
                         {!! $siteSetting->footer_copyright_text !!}
                     @else
-                        {{__('Copyright')}} &copy; {{date('Y')}} {{ $siteSetting->site_name }}. {{__('All Rights Reserved')}}. {{__('Design by')}}: <a href="{{url('/')}}https://www.phpsoftwarestore.com/" target="_blank">PHP Software Store</a>
+                        {{__('Copyright')}} &copy; {{date('Y')}} {{ $siteSetting->site_name }}. {{__('All Rights Reserved')}}.
                     @endif
                 </div>
             </div>
