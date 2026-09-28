@@ -15,6 +15,7 @@ use App\ProfileLanguage;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Traits\Active;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait CommonUserFunctions
 {
@@ -23,18 +24,14 @@ trait CommonUserFunctions
 
     private function deleteUserImage($id)
     {
-        try {
-            $user = User::findOrFail($id);
-            $image = $user->image;
-            if (!empty($image)) {
-                File::delete(ImgUploader::real_public_path() . 'user_images/thumb/' . $image);
-                File::delete(ImgUploader::real_public_path() . 'user_images/mid/' . $image);
-                File::delete(ImgUploader::real_public_path() . 'user_images/' . $image);
-            }
-            return 'ok';
-        } catch (ModelNotFoundException $e) {
-            return 'notok';
+        // Use find() not findOrFail() — user may already be partially deleted
+        $user = User::find($id);
+        if ($user && !empty($user->image)) {
+            File::delete(ImgUploader::real_public_path() . 'user_images/thumb/' . $user->image);
+            File::delete(ImgUploader::real_public_path() . 'user_images/mid/' . $user->image);
+            File::delete(ImgUploader::real_public_path() . 'user_images/' . $user->image);
         }
+        return 'ok';
     }
 
     public function deleteUser(Request $request)
