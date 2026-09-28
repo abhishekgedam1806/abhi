@@ -36,6 +36,7 @@ use DataTables;
 
 use App\Http\Requests\SiteSettingFormRequest;
 
+use App\Http\Controllers\Controller;
 use App\Helpers\DataArrayHelper;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
