@@ -1,21 +1,52 @@
 {!! APFrmErrHelp::showErrorsNotice($errors) !!}
 @include('flash::message')
 <div class="form-body">
-    <div class="row">
+    <div class="row" style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 16px; margin: 10px 0 20px 0;">
         <div class="col-md-6">
-            <div class="form-group {!! APFrmErrHelp::hasError($errors, 'image') !!}">
+            <div class="form-group {!! APFrmErrHelp::hasError($errors, 'image') !!}" style="margin: 0;">
+                <label class="bold" style="font-size: 13.5px; color: #0F172A; margin-bottom: 6px; display: block;">
+                    <i class="fa fa-picture-o text-primary"></i> Site Logo (PNG / SVG / JPG)
+                </label>
                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;"> <img src="{{ asset('/') }}admin_assets/no-image.png" alt="" /> </div>
-                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
-                    <div> <span class="btn default btn-file"> <span class="fileinput-new"> Site Logo </span> <span class="fileinput-exists"> Change </span> {!! Form::file('image', null, array('id'=>'image')) !!} </span> <a href="javascript:;" class="btn red fileinput-exists" data-dismiss="fileinput"> Remove </a> </div>
+                    <div class="fileinput-new thumbnail" style="width: 200px; height: 70px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 8px;"> 
+                        @if(isset($siteSetting) && !empty($siteSetting->site_logo))
+                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="Logo" style="max-height: 52px; max-width: 180px; object-fit: contain;" onerror="this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}'" />
+                        @else
+                            <img src="{{ asset('/') }}admin_assets/no-image.png" alt="No Logo" />
+                        @endif
+                    </div>
+                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 70px;"> </div>
+                    <div style="margin-top: 8px;"> 
+                        <span class="btn default btn-file btn-sm" style="border-radius: 6px; font-weight: 600;"> 
+                            <span class="fileinput-new"> Select Logo </span> 
+                            <span class="fileinput-exists"> Change </span> 
+                            {!! Form::file('image', ['id'=>'image', 'accept'=>'image/*']) !!} 
+                        </span> 
+                        <a href="javascript:;" class="btn red fileinput-exists btn-sm" data-dismiss="fileinput" style="border-radius: 6px;"> Remove </a> 
+                    </div>
                 </div>
-                {!! APFrmErrHelp::showErrors($errors, 'image') !!} </div>
+                <span class="help-block" style="font-size: 11.5px; color: #64748B;">Recommended: Transparent PNG (approx. 200&times;50 px)</span>
+                {!! APFrmErrHelp::showErrors($errors, 'image') !!} 
+            </div>
         </div>
-        @if(isset($siteSetting))
         <div class="col-md-6">
-            {{ ImgUploader::print_image("sitesetting_images/thumb/$siteSetting->site_logo") }}        
+            <label class="bold" style="font-size: 12px; color: #64748B;">Current Active Logo:</label>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
+                @if(isset($siteSetting) && !empty($siteSetting->site_logo))
+                <div style="padding: 10px 16px; border-radius: 10px; border: 1.5px solid #CBD5E1; background: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="Site Logo" style="max-height: 48px; max-width: 180px; object-fit: contain;" onerror="this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}'" />
+                </div>
+                <div>
+                    <code style="font-size: 11px; color: #64748B;">{{ $siteSetting->site_logo }}</code><br>
+                    <span style="font-size: 11.5px; color: #03855c;"><i class="fa fa-check-circle"></i> Logo is active</span>
+                </div>
+                @else
+                <div style="padding: 10px 16px; border-radius: 10px; border: 1.5px dashed #CBD5E1; background: #FFFFFF; color: #94A3B8; font-size: 12px;">
+                    <i class="fa fa-info-circle"></i> No logo uploaded yet
+                </div>
+                @endif
+            </div>
         </div>    
-        @endif  
     </div>
     
     

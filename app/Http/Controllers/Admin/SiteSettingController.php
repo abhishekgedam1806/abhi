@@ -416,6 +416,19 @@ class SiteSettingController extends Controller
 
         $siteSetting->update();
 
+        // Clear all cached site settings immediately so changes reflect instantly
+        try {
+            \Cache::forget('global_site_setting');
+            \Cache::forget('site_settings_custom_config');
+            \Cache::forget('home_seo');
+            \Cache::forget('home_video');
+            \Cache::forget('home_latest_jobs');
+            \Cache::forget('home_featured_jobs');
+            \Artisan::call('cache:clear');
+        } catch (\Throwable $cacheEx) {
+            // ignore
+        }
+
         flash('Site Setting has been updated!')->success();
 
         return \Redirect::route('edit.site.setting');
@@ -425,33 +438,20 @@ class SiteSettingController extends Controller
 
 
     private function deleteSiteSettingImage($id)
-
     {
-
         try {
-
-            $siteSetting = SiteSetting::findOrFail($id);
-
-            $image = $siteSetting->image;
-
+            $siteSetting = SiteSetting::find($id) ?: SiteSetting::first();
+            if (!$siteSetting) return 'ok';
+            $image = $siteSetting->site_logo;
             if (!empty($image)) {
-
                 File::delete(ImgUploader::real_public_path() . 'sitesetting_images/thumb/' . $image);
-
                 File::delete(ImgUploader::real_public_path() . 'sitesetting_images/mid/' . $image);
-
                 File::delete(ImgUploader::real_public_path() . 'sitesetting_images/' . $image);
-
             }
-
             return 'ok';
-
-        } catch (ModelNotFoundException $e) {
-
+        } catch (\Throwable $e) {
             return 'notok';
-
         }
-
     }
 
 
