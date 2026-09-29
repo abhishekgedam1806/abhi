@@ -3,10 +3,13 @@
         <!-- Brand Logo (Left Pinned) -->
         <div class="header-logo-area">
             <a href="{{url('/')}}" class="logo">
-                @if(!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo)))
-                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" width="160" height="40" style="max-height: 40px; width: auto; object-fit: contain;" decoding="async" />
-                @elseif(!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/' . $siteSetting->site_logo)))
-                    <img src="{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" width="160" height="40" style="max-height: 40px; width: auto; object-fit: contain;" decoding="async" />
+                @if(!empty($siteSetting->site_logo))
+                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" 
+                         alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
+                         width="160" height="40" 
+                         style="max-height: 40px; width: auto; object-fit: contain;" 
+                         onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}';"
+                         decoding="async" />
                 @else
                     <span style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Poppins', sans-serif;">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
                 @endif

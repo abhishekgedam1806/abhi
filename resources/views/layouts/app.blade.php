@@ -109,16 +109,24 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
     </script>
 
     <!-- Fav Icon & PWA Manifest -->
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}">
+    @php
+        $favIconUrl = asset('favicon.ico');
+        if (!empty($siteSetting->favicon)) {
+            $favIconUrl = asset('sitesetting_images/' . $siteSetting->favicon);
+        } elseif (!empty($siteSetting->site_logo)) {
+            $favIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo);
+        }
+    @endphp
+    <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ time() }}">
+    <link rel="icon" type="image/x-icon" href="{{ $favIconUrl }}?v={{ time() }}">
+    <link rel="icon" type="image/png" href="{{ $favIconUrl }}?v={{ time() }}">
+    <link rel="apple-touch-icon" href="{{ $favIconUrl }}?v={{ time() }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#2563EB">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="{{ $siteSetting->site_name ?? 'Jobs Portal' }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/pwa/apple-touch-icon.png') }}">
+    <meta name="apple-mobile-web-app-title" content="{{ $siteSetting->site_name ?? 'JobNBiz' }}">
     <!-- Preconnect to Font Servers -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
