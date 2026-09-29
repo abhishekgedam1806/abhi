@@ -106,42 +106,23 @@ class JobController extends Controller
 
         /*         * ************************************************** */
 
-        $seoArray = $this->getSEO($functional_area_ids, $country_ids, $state_ids, $city_ids, $career_level_ids, $job_type_ids, $job_shift_ids, $gender_ids, $degree_level_ids, $job_experience_ids);
-
-        /*         * ************************************************** */
-
         $currencies = DataArrayHelper::currenciesArray();
 
-        /*         * ************************************************** */
-
-        $seoTitle = $seoArray['description'];
-        $seoDesc = $seoArray['description'];
-        $seoKeywords = $seoArray['keywords'];
-
+        // ── Phase 1 SEO: Build $seo via central SeoHelper ──────────────────────────
         if ($request->filled('seo_category_name') && $request->filled('seo_city_name')) {
-            $cat = $request->input('seo_category_name');
-            $cit = $request->input('seo_city_name');
-            $seoTitle = "{$cat} Jobs in {$cit} | Latest Vacancies & Hiring";
-            $seoDesc = "Explore and apply for the latest {$cat} jobs in {$cit}. View salary, eligibility, hiring companies and job vacancies.";
-            $seoKeywords = "{$cat} jobs in {$cit}, {$cit} {$cat} vacancies, careers in {$cit}, employment in {$cit}";
+            $seo = \App\Helpers\SeoHelper::categoryCity(
+                $request->input('seo_category_name'),
+                $request->input('seo_city_name')
+            );
         } elseif ($request->filled('seo_city_name')) {
-            $cit = $request->input('seo_city_name');
-            $seoTitle = "Jobs in {$cit} | Latest Job Vacancies & Careers";
-            $seoDesc = "Find and apply for top jobs in {$cit}. Browse fresher, experienced, work from home, and full-time vacancies.";
-            $seoKeywords = "jobs in {$cit}, vacancies in {$cit}, careers {$cit}, hiring in {$cit}";
+            $seo = \App\Helpers\SeoHelper::city($request->input('seo_city_name'));
         } elseif ($request->filled('seo_category_name')) {
-            $cat = $request->input('seo_category_name');
-            $seoTitle = "{$cat} Jobs | Latest Careers & Vacancies";
-            $seoDesc = "Browse the latest {$cat} jobs and vacancies. Apply now to top hiring employers and companies.";
-            $seoKeywords = "{$cat} jobs, {$cat} vacancies, {$cat} careers, {$cat} hiring";
+            $seo = \App\Helpers\SeoHelper::category($request->input('seo_category_name'));
+        } else {
+            $seo = \App\Helpers\SeoHelper::jobList();
         }
+        // ─────────────────────────────────────────────────────────────────────────────
 
-        $seo = (object) array(
-                    'seo_title' => $seoTitle,
-                    'seo_description' => $seoDesc,
-                    'seo_keywords' => $seoKeywords,
-                    'seo_other' => ''
-        );
         return view('job.list')
                         ->with('functionalAreas', $this->functionalAreas)
                         ->with('countries', $this->countries)
@@ -360,11 +341,14 @@ class JobController extends Controller
 
         $seoArray = $this->getSEO((array) $job->functional_area_id, (array) $job->country_id, (array) $job->state_id, (array) $job->city_id, (array) $job->career_level_id, (array) $job->job_type_id, (array) $job->job_shift_id, (array) $job->gender_id, (array) $job->degree_level_id, (array) $job->job_experience_id);
         /*         * ************************************************** */
-        $seo = (object) array(
-                    'seo_title' => $job->title,
-                    'seo_description' => $seoArray['description'],
-                    'seo_keywords' => $seoArray['keywords'],
-                    'seo_other' => ''
+        // Phase 1 SEO: Build job detail SEO via SeoHelper
+        $detailCompany = $job->getCompany();
+        $detailCity    = optional($job->city)->city ?? '';
+        $seo = \App\Helpers\SeoHelper::jobDetail(
+            $job->title,
+            optional($detailCompany)->name ?? '',
+            $detailCity,
+            $job->slug
         );
         return view('job.detail')
                         ->with('job', $job)

@@ -48,20 +48,19 @@ class BusinessController extends Controller
 
         $cityName = isset($cityObj) && $cityObj ? $cityObj->city : ($citySlug ? ucfirst(str_replace('-', ' ', $citySlug)) : null);
 
-        // SEO metadata
+        // SEO metadata via central SeoHelper
         if ($selectedCategory && $cityName) {
-            $seoTitle = "Top {$selectedCategory->name} in {$cityName} | Local Business Directory";
-            $seoDescription = "Find verified {$selectedCategory->name} in {$cityName}. Check contact numbers, address, directions, reviews, and business hours.";
+            $seo = \App\Helpers\SeoHelper::businessCategoryCity($selectedCategory->name, $cityName, $selectedCategory->slug);
         } elseif ($cityName) {
-            $seoTitle = "Businesses in {$cityName} | Local Directory & Services";
-            $seoDescription = "Explore verified local businesses, shops, services, and companies in {$cityName}.";
+            $seo = \App\Helpers\SeoHelper::businessCity($cityName);
         } elseif ($selectedCategory) {
-            $seoTitle = "Top {$selectedCategory->name} Near You | Local Business Directory";
-            $seoDescription = "Find and contact verified {$selectedCategory->name} with phone numbers, addresses, WhatsApp, reviews, and opening hours.";
+            $seo = \App\Helpers\SeoHelper::businessCategory($selectedCategory->name, $selectedCategory->slug);
         } else {
-            $seoTitle = "Local Business Directory & Services | " . config('app.name', 'Jobs Portal');
-            $seoDescription = "Explore verified local businesses, home services, agencies, healthcare, and retail stores in your city.";
+            $seo = \App\Helpers\SeoHelper::businessListing();
         }
+
+        $seoTitle = $seo->seo_title;
+        $seoDescription = $seo->seo_description;
 
         return view('business.list', compact(
             'businesses',
@@ -71,7 +70,8 @@ class BusinessController extends Controller
             'cities',
             'params',
             'seoTitle',
-            'seoDescription'
+            'seoDescription',
+            'seo'
         ));
     }
 
@@ -141,11 +141,21 @@ class BusinessController extends Controller
             ];
         }
 
+        $seo = \App\Helpers\SeoHelper::businessDetail(
+            $business->name,
+            $business->category ? $business->category->name : '',
+            $business->city ? $business->city->city : '',
+            $business->area_locality ?: '',
+            $business->slug,
+            false
+        );
+
         return view('business.detail', compact(
             'business',
             'relatedJobs',
             'similarBusinesses',
-            'schemaJson'
+            'schemaJson',
+            'seo'
         ));
     }
 

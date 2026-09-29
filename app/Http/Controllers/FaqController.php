@@ -41,8 +41,7 @@ class FaqController extends Controller
                 ->orderBy('faqs.sort_order', 'ASC')
                 ->orderBy('faqs.id', 'ASC')
                 ->get();
-        $seo = SEO::where('seo.page_title', 'like', 'faq')->first();
-        //print_r($seo);exit;
+        $seo = \App\Helpers\SeoHelper::faq();
         return view('faq.list_faq')->with('faqs', $faqs)->with('seo', $seo);
     }
 

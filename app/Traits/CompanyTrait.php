@@ -59,42 +59,16 @@ trait CompanyTrait
 
     private function getCompanySEO($company)
     {
-        $title = $company->name;
-		
-		$description = 'Company ';
-        $keywords = '';
+        $city    = $company->getCity('city') ?? '';
+        $industry = $company->getIndustry('industry') ?? '';
+        $slug    = $company->slug ?? '';
 
-        $description .= ' ' . $company->name;
-        $keywords .= $company->name . ',';
-
-        $description .= ' ' . $company->getIndustry('industry');
-        $keywords .= $company->getIndustry('industry') . ',';
-
-        $description .= ' ' . $company->getOwnershipType('ownership_type');
-        $keywords .= $company->getOwnershipType('ownership_type') . ',';
-
-        $description .= ' ' . $company->location;
-        $keywords .= $company->location . ',';
-
-        //$description .= ' ' . $company->description;
-        //$keywords .= $company->description . ',';
-
-        $description .= ' ' . $company->getCountry('country');
-        $keywords .= $company->getCountry('country') . ',';
-
-        $description .= ' ' . $company->getState('state');
-        $keywords .= $company->getState('state') . ',';
-
-        $description .= ' ' . $company->getCity('city');
-        $keywords .= $company->getCity('city') . ',';
-
-        $seo = (object) array(
-                    'seo_title' => $title,
-                    'seo_description' => $description,
-                    'seo_keywords' => $keywords,
-                    'seo_other' => ''
+        return \App\Helpers\SeoHelper::companyDetail(
+            $company->name,
+            $city,
+            $industry,
+            $slug
         );
-        return $seo;
     }
 
 }

@@ -51,6 +51,7 @@ class PricingController extends Controller
             ->with('employerPackages', $employerPackages)
             ->with('businessPackages', $businessPackages)
             ->with('activeTab', $activeTab)
-            ->with('currentPackage', $currentPackage);
+            ->with('currentPackage', $currentPackage)
+            ->with('seo', \App\Helpers\SeoHelper::pricing());
     }
 }

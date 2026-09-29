@@ -30,7 +30,7 @@ class BlogController extends Controller
             ->paginate(10);
             
         $data['categories'] = Blog_category::get();
-        $data['seo'] = Seo::where('page_title', 'like', 'blogs')->first();
+        $data['seo'] = \App\Helpers\SeoHelper::blogListing();
         
         return view('blog')->with($data);
     }
@@ -73,21 +73,21 @@ class BlogController extends Controller
             ->get();
 
         // Comprehensive SEO Object
-        $data['seo'] = (object)[
-            'seo_title' => !empty($blog->meta_title) ? $blog->meta_title : $blog->heading,
-            'seo_description' => !empty($blog->meta_descriptions) ? $blog->meta_descriptions : strip_tags(substr($blog->content, 0, 160)),
-            'seo_keywords' => !empty($blog->meta_keywords) ? $blog->meta_keywords : $blog->focus_keyword,
-            'seo_other' => '',
-            'canonical_url' => $blog->getCanonicalUrl(),
-            'robots' => ($blog->robots_index ?: 'index') . ', ' . ($blog->robots_follow ?: 'follow'),
-            'og_title' => $blog->getOgTitle(),
-            'og_description' => $blog->getOgDescription(),
-            'og_image' => $blog->getOgImage(),
-            'twitter_card' => $blog->twitter_card ?: 'summary_large_image',
-            'twitter_title' => $blog->getTwitterTitle(),
-            'twitter_description' => $blog->getTwitterDescription(),
-            'twitter_image' => $blog->getTwitterImage(),
-        ];
+        $data['seo'] = \App\Helpers\SeoHelper::blogDetail(
+            !empty($blog->meta_title) ? $blog->meta_title : $blog->heading,
+            !empty($blog->meta_descriptions) ? $blog->meta_descriptions : strip_tags(substr($blog->content, 0, 160)),
+            !empty($blog->meta_keywords) ? $blog->meta_keywords : $blog->focus_keyword,
+            $blog->slug
+        );
+        // Preserve blog-specific extra meta (OG / Twitter) on top of base SeoHelper object
+        $data['seo']->robots         = ($blog->robots_index ?: 'index') . ', ' . ($blog->robots_follow ?: 'follow');
+        $data['seo']->og_title       = $blog->getOgTitle();
+        $data['seo']->og_description = $blog->getOgDescription();
+        $data['seo']->og_image       = $blog->getOgImage();
+        $data['seo']->twitter_card   = $blog->twitter_card ?: 'summary_large_image';
+        $data['seo']->twitter_title  = $blog->getTwitterTitle();
+        $data['seo']->twitter_description = $blog->getTwitterDescription();
+        $data['seo']->twitter_image  = $blog->getTwitterImage();
 
         return view('blog_detail')->with($data);
     }
@@ -107,12 +107,7 @@ class BlogController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        $data['seo'] = (object)[
-            'seo_title' => $category->heading . ' - Career Articles & Guides',
-            'seo_description' => 'Explore the latest career guides and advice in ' . $category->heading,
-            'seo_keywords' => $category->heading . ', jobs, career advice',
-            'seo_other' => ''
-        ];
+        $data['seo'] = \App\Helpers\SeoHelper::blogCategory($category->heading, $slug);
 
         return view('blog_categories_details')->with($data);
     }

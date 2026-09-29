@@ -936,8 +936,18 @@ if (!empty(Request::get('search'))) {
                         </div>
                     @endif
                 @else
+                    @php
+                        // Build H1: "Latest Jobs in India" for /jobs, or "{Search} Jobs" when filtered
+                        $h1Label = 'Latest Jobs in India';
+                        if (!empty(Request::get('search'))) {
+                            $h1Label = ucfirst(Request::get('search')) . ' Jobs in India';
+                        } elseif (!empty(Request::get('functional_area_id'))) {
+                            $firstFa = App\FunctionalArea::where('functional_area_id', ((array)Request::get('functional_area_id'))[0])->lang()->first();
+                            if ($firstFa) $h1Label = $firstFa->functional_area . ' Jobs in India';
+                        }
+                    @endphp
                     <h1 class="apna-main-heading">
-                        {{ $titlePrefix }} Jobs - <span class="apna-verified-badge">{{ $jobs->total() }} Verified Vacancies</span>
+                        {{ $h1Label }} <span class="apna-verified-badge">— {{ $jobs->total() }} Verified Vacancies</span>
                     </h1>
                 @endif
             </div>

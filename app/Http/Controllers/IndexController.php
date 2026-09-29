@@ -128,9 +128,8 @@ class IndexController extends Controller
             return Slider::langSliders();
         });
 
-        $seo = \Cache::remember('home_seo', 3600, function () {
-            return SEO::where('seo.page_title', 'like', 'front_index_page')->first();
-        });
+        // Phase 1 SEO: Use centrally managed SeoHelper for the homepage
+        $seo = \App\Helpers\SeoHelper::homepage();
 
         return view('welcome')
             ->with('topCompanyIds', $topCompanyIds)

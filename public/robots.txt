@@ -1,4 +1,21 @@
+# ============================================================
+# robots.txt for JobNBiz — Production: https://jobnbiz.com/
+# ============================================================
+# IMPORTANT FOR STAGING TEAM:
+#   The staging domain (mistyrose-raven-562155.hostingersite.com)
+#   already sends <meta name="robots" content="noindex,nofollow">
+#   on every page, so Google will NOT index it even if you forget
+#   to swap this file. However, to be safe, replace this file
+#   on staging with a Disallow: / block (see below).
+#
+# On staging use:
+#   User-agent: *
+#   Disallow: /
+# ============================================================
+
 User-agent: *
+
+# --- Private / Auth pages (never index) ---
 Disallow: /admin/
 Disallow: /admin
 Disallow: /login
@@ -14,10 +31,18 @@ Disallow: /business/leads
 Disallow: /password/
 Disallow: /email-verification/
 Disallow: /company-email-verification/
+Disallow: /home
 
-# Allow all public crawlable sections
+# --- API / internal routes ---
+Disallow: /api/
+Disallow: /get-areas-by-city
+Disallow: /subscribe-alert
+
+# --- Public / crawlable sections ---
 Allow: /
 Allow: /jobs
+Allow: /jobs-in-
+Allow: /jobs/category/
 Allow: /job/
 Allow: /companies
 Allow: /company/
@@ -29,6 +54,7 @@ Allow: /blog/
 Allow: /contact-us
 Allow: /faq
 Allow: /terms-of-use
+Allow: /pricing
 
-Sitemap: {{ url('/sitemap.xml') }}
-
+# --- Sitemap ---
+Sitemap: https://jobnbiz.com/sitemap.xml

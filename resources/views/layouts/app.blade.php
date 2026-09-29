@@ -1,7 +1,27 @@
 <?php
 if (!isset($seo)) {
-    $seo = (object)array('seo_title' => $siteSetting->site_name, 'seo_description' => $siteSetting->site_name, 'seo_keywords' => $siteSetting->site_name, 'seo_other' => '');
+    $seo = (object)[
+        'seo_title'       => $siteSetting->site_name,
+        'seo_description' => $siteSetting->site_name,
+        'seo_keywords'    => $siteSetting->site_name,
+        'seo_other'       => '',
+        'canonical'       => null,
+        'robots'          => null,
+    ];
 }
+// Robots: prefer $seo->robots if set; otherwise auto-detect staging vs production
+if (!empty($seo->robots)) {
+    $metaRobots = $seo->robots;
+} else {
+    $appUrl = rtrim(config('app.url', ''), '/');
+    $metaRobots = (
+        str_contains($appUrl, 'hostingersite.com') ||
+        str_contains($appUrl, 'localhost') ||
+        in_array(config('app.env'), ['local', 'staging', 'testing'])
+    ) ? 'noindex,nofollow' : 'index,follow';
+}
+// Canonical: prefer $seo->canonical if set; otherwise current URL
+$metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() . (request()->filled('lang') ? '?lang=' . request('lang') : ''));
 ?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="{{ (session('localeDir', 'ltr'))}}" dir="{{ (session('localeDir', 'ltr'))}}">
@@ -11,8 +31,18 @@ if (!isset($seo)) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{__($seo->seo_title) }}</title>
-    <meta name="Description" content="{!! $seo->seo_description !!}">
-    <link rel="canonical" href="{{ url()->current() . (request()->filled('lang') ? '?lang=' . request('lang') : '') }}" />
+    <meta name="description" content="{!! $seo->seo_description !!}">
+    @if(!empty($seo->seo_keywords))
+    <meta name="keywords" content="{{ $seo->seo_keywords }}">
+    @endif
+    <meta name="robots" content="{{ $metaRobots }}">
+    <link rel="canonical" href="{{ $metaCanonical }}" />
+    @if(!empty($seo->geo_meta))
+    {!! $seo->geo_meta !!}
+    @endif
+    @if(!empty($seo->seo_other))
+    {!! $seo->seo_other !!}
+    @endif
 
     {{-- Multilingual SEO hreflang Alternate Tags --}}
     @if(isset($siteLanguages) && count($siteLanguages) > 1)

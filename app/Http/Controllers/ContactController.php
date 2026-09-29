@@ -34,7 +34,7 @@ class ContactController extends Controller
 
     public function index()
     {
-        $seo = SEO::where('seo.page_title', 'like', 'contact')->first();
+        $seo = \App\Helpers\SeoHelper::contactUs();
         return view('contact.contact_page')->with('seo', $seo);
     }
 
@@ -61,7 +61,7 @@ class ContactController extends Controller
 
     public function thanks()
     {
-        $seo = SEO::where('seo.page_title', 'like', 'contact')->first();
+        $seo = \App\Helpers\SeoHelper::contactUs();
         return view('contact.contact_page_thanks')->with('seo', $seo);
     }
 

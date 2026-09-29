@@ -70,7 +70,7 @@ class CompaniesController extends Controller
        
 
         $data['companies'] = $query->paginate(20);
-        $data['seo'] = \App\Seo::where('page_title', 'like', 'companies')->first();
+        $data['seo'] = \App\Helpers\SeoHelper::companiesListing();
         return view('company.listing')->with($data);
     }
 

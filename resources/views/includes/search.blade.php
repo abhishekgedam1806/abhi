@@ -237,9 +237,12 @@
                 </div>
                 @endif
 
+                {{-- SEO H1: "Find Latest Jobs in India" — text updated for Phase 1 SEO.
+                     All font, size, position and design are unchanged.
+                     Admin can override via hero_title_line1 / hero_title_line2 site settings. --}}
                 <h1 class="apna-hero-title">
-                    {{ $siteSetting->hero_title_line1 ?: 'Find the right job.' }}<br class="d-none d-md-inline"> 
-                    <span class="apna-hero-highlight">{{ $siteSetting->hero_title_line2 ?: 'Build your next opportunity.' }}</span>
+                    {{ $siteSetting->hero_title_line1 ?: 'Find Latest Jobs in India' }}<br class="d-none d-md-inline"> 
+                    <span class="apna-hero-highlight">{{ $siteSetting->hero_title_line2 ?: 'Fresher, IT & Work From Home Jobs' }}</span>
                 </h1>
                 <p class="apna-hero-sub">
                     {{ $siteSetting->hero_subtitle ?: 'Search top jobs, connect with trusted employers and discover local businesses near you.' }}
