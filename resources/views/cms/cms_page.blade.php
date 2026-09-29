@@ -356,12 +356,6 @@
                     <span style="color: #FFFFFF; font-weight: 600;">{{ $cmsContent->page_title }}</span>
                 </div>
 
-                {{-- Category Badge --}}
-                <div class="cms-hero-badge">
-                    <i class="fas {{ $iconClass }}"></i>
-                    <span>{{ $categoryBadge }}</span>
-                </div>
-
                 {{-- Heading --}}
                 <h1 class="cms-hero-title">{{ $cmsContent->page_title }}</h1>
                 <p class="cms-hero-subtitle">{{ $subtitle }}</p>
