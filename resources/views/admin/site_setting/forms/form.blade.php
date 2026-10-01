@@ -9,8 +9,18 @@
                 </label>
                 <div class="fileinput fileinput-new" data-provides="fileinput">
                     <div class="fileinput-new thumbnail" style="width: 200px; height: 70px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 8px;"> 
-                        @if(isset($siteSetting) && !empty($siteSetting->site_logo))
-                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="Logo" style="max-height: 52px; max-width: 180px; object-fit: contain;" onerror="this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}'" />
+                        @php
+                            $adminFormLogoUrl = '';
+                            if (isset($siteSetting) && !empty($siteSetting->site_logo)) {
+                                if (file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
+                                    $adminFormLogoUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo) . '?v=' . @filemtime(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo));
+                                } elseif (file_exists(public_path('sitesetting_images/' . $siteSetting->site_logo))) {
+                                    $adminFormLogoUrl = asset('sitesetting_images/' . $siteSetting->site_logo) . '?v=' . @filemtime(public_path('sitesetting_images/' . $siteSetting->site_logo));
+                                }
+                            }
+                        @endphp
+                        @if($adminFormLogoUrl)
+                            <img src="{{ $adminFormLogoUrl }}" alt="Logo" style="max-height: 52px; max-width: 180px; object-fit: contain;" />
                         @else
                             <img src="{{ asset('/') }}admin_assets/no-image.png" alt="No Logo" />
                         @endif
@@ -32,9 +42,9 @@
         <div class="col-md-6">
             <label class="bold" style="font-size: 12px; color: #64748B;">Current Active Logo:</label>
             <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
-                @if(isset($siteSetting) && !empty($siteSetting->site_logo))
+                @if($adminFormLogoUrl)
                 <div style="padding: 10px 16px; border-radius: 10px; border: 1.5px solid #CBD5E1; background: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="Site Logo" style="max-height: 48px; max-width: 180px; object-fit: contain;" onerror="this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}'" />
+                    <img src="{{ $adminFormLogoUrl }}" alt="Site Logo" style="max-height: 48px; max-width: 180px; object-fit: contain;" />
                 </div>
                 <div>
                     <code style="font-size: 11px; color: #64748B;">{{ $siteSetting->site_logo }}</code><br>
@@ -56,9 +66,21 @@
                 <label class="bold" style="font-size: 13.5px; color: #0F172A; margin-bottom: 6px; display: block;">
                     <i class="fa fa-star text-warning"></i> Website Favicon (.ico / .png / .jpg / .webp)
                 </label>
+                @php
+                    $adminFavIconUrl = '';
+                    if (!empty($siteSetting->favicon) && file_exists(public_path('sitesetting_images/' . $siteSetting->favicon))) {
+                        $adminFavIconUrl = asset('sitesetting_images/' . $siteSetting->favicon) . '?v=' . @filemtime(public_path('sitesetting_images/' . $siteSetting->favicon));
+                    } elseif (!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
+                        $adminFavIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo) . '?v=' . @filemtime(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo));
+                    }
+                @endphp
                 <div class="fileinput fileinput-new" data-provides="fileinput">
                     <div class="fileinput-new thumbnail" style="width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 10px;"> 
-                        <img src="{{ asset('favicon.ico') }}?v={{ time() }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" onerror="this.src='{{ asset('favicon.png') }}?v={{ time() }}'" /> 
+                        @if($adminFavIconUrl)
+                            <img src="{{ $adminFavIconUrl }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" /> 
+                        @else
+                            <i class="fa fa-image text-muted" style="font-size: 24px;"></i>
+                        @endif
                     </div>
                     <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 72px; max-height: 72px;"> </div>
                     <div style="margin-top: 8px;"> 
@@ -78,10 +100,21 @@
             <label class="bold" style="font-size: 12px; color: #64748B;">Active Favicon Preview:</label>
             <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
                 <div style="width: 54px; height: 54px; border-radius: 10px; border: 1.5px solid #CBD5E1; display: flex; align-items: center; justify-content: center; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                    <img src="{{ asset('favicon.ico') }}?v={{ time() }}" alt="Favicon" style="max-width: 36px; max-height: 36px; object-fit: contain;" onerror="this.src='{{ asset('favicon.png') }}?v={{ time() }}'">
+                    @if($adminFavIconUrl)
+                        <img src="{{ $adminFavIconUrl }}" alt="Favicon" style="max-width: 36px; max-height: 36px; object-fit: contain;">
+                    @else
+                        <i class="fa fa-image text-muted"></i>
+                    @endif
                 </div>
                 <div style="font-size: 12px; color: #64748B;">
-                    <strong style="color: #0F172A;">Public URL:</strong> <code>{{ url('favicon.ico') }}</code><br>
+                    <strong style="color: #0F172A;">Current Favicon:</strong> 
+                    @if(!empty($siteSetting->favicon))
+                        <code>{{ $siteSetting->favicon }}</code><br>
+                    @elseif(!empty($siteSetting->site_logo))
+                        <code>{{ $siteSetting->site_logo }}</code> (Auto-fallback)<br>
+                    @else
+                        <code>None</code><br>
+                    @endif
                     <small class="text-muted"><i class="fa fa-info-circle text-primary"></i> Browser tabs cache favicons aggressively. Hard-refresh (<code>Ctrl + F5</code>) to see updates.</small>
                 </div>
             </div>
