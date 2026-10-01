@@ -141,8 +141,8 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
     <!-- Core Critical Stylesheets -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/apna-theme.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/main.css') }}?v=1.1" rel="stylesheet">
+    <link href="{{ asset('css/apna-theme.css') }}?v=1.1" rel="stylesheet">
 
     <!-- Secondary / Component Styles (Asynchronous) -->
     <link href="{{ asset('css/owl.carousel.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
