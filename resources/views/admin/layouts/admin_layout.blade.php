@@ -84,7 +84,7 @@
 
         <!-- END PAGE LEVEL PLUGINS -->
 
-        <link type="text/css" rel="stylesheet" media="all" href="{{ asset('/') }}admin_assets/custom.css" />
+        <link type="text/css" rel="stylesheet" media="all" href="{{ asset('/') }}admin_assets/custom.css?v={{ time() }}" />
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />

@@ -42,7 +42,6 @@ h1, h2, h3, h4, h5, h6,
   font-family: 'Poppins', sans-serif !important;
   font-weight: 600 !important;
 }
-
 /* =====================================================
    1. TOP NAVBAR
    ===================================================== */
@@ -56,25 +55,93 @@ h1, h2, h3, h4, h5, h6,
 
 .page-header.navbar .page-logo {
   background: #0F172A !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: space-between !important;
   height: 54px !important;
   width: 235px !important;
+  transition: width 0.2s ease !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .page-header.navbar .page-logo a {
   display: flex !important;
   align-items: center !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
 }
 
 .page-header.navbar .page-logo a img {
   max-height: 32px !important;
   width: auto !important;
   background: #ffffff !important;
-  padding: 3px 10px !important;
+  padding: 3px 8px !important;
   border-radius: 6px !important;
+}
+
+/* Modern Hamburger Sidebar Toggler */
+.page-header.navbar .menu-toggler.sidebar-toggler {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+  float: none !important;
+  background-image: none !important;
+  position: relative !important;
+}
+
+.page-header.navbar .menu-toggler.sidebar-toggler:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.page-header.navbar .menu-toggler.sidebar-toggler::before {
+  content: "\f0c9" !important;
+  font-family: "FontAwesome" !important;
+  color: #94A3B8 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.page-header.navbar .menu-toggler.sidebar-toggler:hover::before {
+  color: #FFFFFF !important;
+}
+
+/* Responsive Mobile Sidebar Toggler */
+.page-header.navbar .menu-toggler.responsive-toggler {
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer !important;
+  margin: 11px 12px 0 0 !important;
+  background-image: none !important;
+  position: relative !important;
+  float: right !important;
+}
+
+.page-header.navbar .menu-toggler.responsive-toggler::before {
+  content: "\f0c9" !important;
+  font-family: "FontAwesome" !important;
+  color: #94A3B8 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 991px) {
+  .page-header.navbar .menu-toggler.responsive-toggler {
+    display: flex !important;
+  }
 }
 
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-user > .dropdown-toggle {
@@ -119,11 +186,12 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* =====================================================
-   2. SIDEBAR NAVIGATION
+   2. SIDEBAR NAVIGATION — EXPANDED MODE
    ===================================================== */
 .page-sidebar-wrapper,
 .page-sidebar {
   background-color: var(--admin-sidebar-bg) !important;
+  width: 235px;
 }
 
 .page-sidebar .page-sidebar-menu {
@@ -141,11 +209,25 @@ h1, h2, h3, h4, h5, h6,
   border-radius: 4px;
 }
 
-/* Section Headings */
+/* Remove legacy Metronic triangle pseudo-element completely */
+.page-sidebar .selected,
+.page-sidebar .page-sidebar-menu > li > a > .selected,
+.page-sidebar .page-sidebar-menu > li.active > a > .selected,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu > li > a .selected,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a .selected {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Section Headings in Expanded Mode */
 .page-sidebar .page-sidebar-menu > li.heading {
   padding: 14px 10px 4px 10px !important;
   margin-top: 6px !important;
   border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  overflow: hidden !important;
 }
 .page-sidebar .page-sidebar-menu > li.heading:first-of-type {
   border-top: none !important;
@@ -162,29 +244,39 @@ h1, h2, h3, h4, h5, h6,
   align-items: center !important;
   gap: 6px !important;
   margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-/* Top-level Nav Links */
+.page-sidebar .page-sidebar-menu > li.heading > h3 i {
+  font-size: 11px !important;
+  opacity: 0.7 !important;
+}
+
+/* Top-level Nav Links in Expanded Mode */
 .page-sidebar .page-sidebar-menu > li > a {
   border: none !important;
   color: #94A3B8 !important;
-  border-radius: 6px !important;
-  padding: 7px 11px !important;
-  margin: 1px 2px !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  margin: 2px 4px !important;
   font-size: 12.5px !important;
   font-weight: 500 !important;
   transition: all 0.15s ease !important;
   display: flex !important;
   align-items: center !important;
+  text-decoration: none !important;
 }
 
 .page-sidebar .page-sidebar-menu > li > a > i {
   color: #64748B !important;
-  font-size: 13.5px !important;
-  margin-right: 8px !important;
+  font-size: 14px !important;
+  margin-right: 10px !important;
   width: 18px !important;
   text-align: center !important;
   transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
 }
 
 .page-sidebar .page-sidebar-menu > li > a > span.title {
@@ -197,6 +289,7 @@ h1, h2, h3, h4, h5, h6,
 .page-sidebar .page-sidebar-menu > li > a > .arrow {
   font-size: 10px !important;
   margin-left: auto !important;
+  transition: transform 0.2s ease !important;
 }
 
 .page-sidebar .page-sidebar-menu > li:hover > a,
@@ -212,47 +305,48 @@ h1, h2, h3, h4, h5, h6,
 
 .page-sidebar .page-sidebar-menu > li.active > a,
 .page-sidebar .page-sidebar-menu > li.active.open > a {
-  background: #2563EB !important;
+  background: linear-gradient(135deg, #1B4FD8 0%, #2563EB 100%) !important;
   color: #FFFFFF !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(27, 79, 216, 0.35) !important;
 }
 
 .page-sidebar .page-sidebar-menu > li.active > a > i {
   color: #FFFFFF !important;
 }
 
-/* Submenu styling (Level 1, 2, 3) */
+/* Submenu styling (Level 1, 2, 3) in Expanded Mode */
 .page-sidebar .page-sidebar-menu .sub-menu {
   background: rgba(11, 17, 32, 0.95) !important;
   border-radius: 6px !important;
-  padding: 3px !important;
-  margin: 1px 2px 4px 4px !important;
-  border-left: 2px solid rgba(37, 99, 235, 0.4) !important;
+  padding: 4px !important;
+  margin: 2px 4px 6px 6px !important;
+  border-left: 2px solid rgba(37, 99, 235, 0.5) !important;
   list-style: none !important;
 }
 
 .page-sidebar .page-sidebar-menu .sub-menu > li > a {
   color: #94A3B8 !important;
-  padding: 6px 10px 6px 14px !important;
-  border-radius: 4px !important;
+  padding: 7px 10px 7px 12px !important;
+  border-radius: 5px !important;
   font-size: 12px !important;
   transition: all 0.15s ease !important;
   display: flex !important;
   align-items: center !important;
+  text-decoration: none !important;
 }
 
 .page-sidebar .page-sidebar-menu .sub-menu > li > a > i {
   font-size: 12px !important;
   width: 16px !important;
-  margin-right: 6px !important;
+  margin-right: 8px !important;
   color: #64748B !important;
 }
 
 .page-sidebar .page-sidebar-menu .sub-menu > li:hover > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li.active > a,
 .page-sidebar .page-sidebar-menu .sub-menu > li.open > a {
-  background: rgba(255, 255, 255, 0.07) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: #38BDF8 !important;
   font-weight: 600 !important;
 }
@@ -281,6 +375,150 @@ h1, h2, h3, h4, h5, h6,
 .page-sidebar .page-sidebar-menu .sub-menu .sub-menu > li.active > a {
   color: #FFFFFF !important;
   background: rgba(37, 99, 235, 0.25) !important;
+}
+
+/* =====================================================
+   2B. SIDEBAR NAVIGATION — COLLAPSED (ICON-ONLY) MODE
+   ===================================================== */
+/* Shrink header logo box */
+.page-sidebar-closed .page-header.navbar .page-logo {
+  width: 54px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+.page-sidebar-closed .page-header.navbar .page-logo a {
+  display: none !important;
+}
+
+.page-sidebar-closed .page-header.navbar .menu-toggler.sidebar-toggler {
+  margin: 0 auto !important;
+}
+
+/* Collapse sidebar container */
+.page-sidebar-closed .page-sidebar-wrapper,
+.page-sidebar-closed .page-sidebar {
+  width: 54px !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed {
+  width: 54px !important;
+  padding: 8px 4px 30px 4px !important;
+}
+
+/* Content margin when sidebar closed */
+.page-sidebar-closed .page-content-wrapper .page-content {
+  margin-left: 54px !important;
+}
+
+/* Completely HIDE all section headings text & icons when collapsed */
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.heading {
+  display: block !important;
+  padding: 0 !important;
+  margin: 8px 6px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  height: 1px !important;
+  min-height: 1px !important;
+  max-height: 1px !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.heading > h3,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.heading > h3 * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Collapsed top-level links: clean centered icon buttons */
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li {
+  position: relative !important;
+  display: block !important;
+  width: 46px !important;
+  margin: 0 auto 3px auto !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 46px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a > i {
+  font-size: 16px !important;
+  margin: 0 !important;
+  width: auto !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+/* Hide text, badges, arrows in collapsed links */
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a > span.title,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a > span.arrow,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a > span.badge,
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > a > span.selected {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Active item in collapsed mode */
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.active > a {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.active > a > i {
+  color: #FFFFFF !important;
+}
+
+/* Hover flyout submenu on collapsed items */
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li:hover {
+  box-shadow: none !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li:hover > .sub-menu {
+  display: block !important;
+  position: absolute !important;
+  left: 50px !important;
+  top: 0 !important;
+  width: 230px !important;
+  background: #0F172A !important;
+  border: 1px solid #1E293B !important;
+  border-left: 3px solid #2563EB !important;
+  border-radius: 0 10px 10px 0 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45) !important;
+  padding: 6px !important;
+  z-index: 10000 !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li:hover > .sub-menu > li > a {
+  padding: 8px 12px !important;
+  color: #94A3B8 !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li:hover > .sub-menu > li > a:hover {
+  background: rgba(37, 99, 235, 0.15) !important;
+  color: #38BDF8 !important;
+}
+
+.page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li:hover > .sub-menu > li > a > span.title {
+  display: inline-block !important;
+  visibility: visible !important;
 }
 
 /* =====================================================
