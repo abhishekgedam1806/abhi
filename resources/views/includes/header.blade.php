@@ -404,7 +404,6 @@
 .header-logo-area .logo img {
     height: 38px !important;
     width: auto !important;
-    filter: brightness(0) invert(1) !important;
     transition: opacity 0.2s ease !important;
 }
 .header-logo-area .logo img:hover {
