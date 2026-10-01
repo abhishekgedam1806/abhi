@@ -162,33 +162,10 @@ class SiteSettingController extends Controller
         }
 
         if ($request->hasFile('favicon')) {
-            $file = $request->file('favicon');
-            $tempPath = $file->getRealPath();
-            $ext = strtolower($file->getClientOriginalExtension());
-
-            // Target all possible public directory paths on hostinger / cpanel
-            $targetDirs = array_filter(array_unique([
-                rtrim(public_path(), '/\\'),
-                rtrim(ImgUploader::real_public_path(), '/\\'),
-                rtrim(base_path('public'), '/\\'),
-                rtrim(base_path('public_html'), '/\\'),
-            ]), function($d) {
-                return !empty($d) && is_dir($d);
-            });
-
-            foreach ($targetDirs as $dir) {
-                @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.ico');
-                @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.png');
-                if ($ext === 'ico') {
-                    @copy($tempPath, $dir . DIRECTORY_SEPARATOR . 'favicon.ico');
-                }
-            }
-
-            try {
-                $file->move(public_path(), 'favicon.ico');
-            } catch (\Throwable $moveEx) {
-                // Already copied above
-            }
+            $this->deleteSiteSettingFavicon($id);
+            $favicon_name = $request->input('site_name') . '_favicon';
+            $fileName = ImgUploader::UploadImage('sitesetting_images', $request->file('favicon'), $favicon_name);
+            $siteSetting->favicon = $fileName;
         }
 
         if ($request->hasFile('hero_image')) {
@@ -443,6 +420,23 @@ class SiteSettingController extends Controller
             $siteSetting = SiteSetting::find($id) ?: SiteSetting::first();
             if (!$siteSetting) return 'ok';
             $image = $siteSetting->site_logo;
+            if (!empty($image)) {
+                File::delete(ImgUploader::real_public_path() . 'sitesetting_images/thumb/' . $image);
+                File::delete(ImgUploader::real_public_path() . 'sitesetting_images/mid/' . $image);
+                File::delete(ImgUploader::real_public_path() . 'sitesetting_images/' . $image);
+            }
+            return 'ok';
+        } catch (\Throwable $e) {
+            return 'notok';
+        }
+    }
+
+    private function deleteSiteSettingFavicon($id)
+    {
+        try {
+            $siteSetting = SiteSetting::find($id) ?: SiteSetting::first();
+            if (!$siteSetting) return 'ok';
+            $image = $siteSetting->favicon;
             if (!empty($image)) {
                 File::delete(ImgUploader::real_public_path() . 'sitesetting_images/thumb/' . $image);
                 File::delete(ImgUploader::real_public_path() . 'sitesetting_images/mid/' . $image);
