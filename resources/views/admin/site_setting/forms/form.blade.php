@@ -66,8 +66,6 @@
                     $adminFavIconVersion = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1');
                     if (!empty($siteSetting->favicon)) {
                         $adminFavIconUrl = asset('sitesetting_images/' . $siteSetting->favicon) . $adminFavIconVersion;
-                    } elseif (!empty($siteSetting->site_logo)) {
-                        $adminFavIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo) . $adminFavIconVersion;
                     } else {
                         $adminFavIconUrl = '';
                     }
@@ -75,7 +73,7 @@
                 <div class="fileinput fileinput-new" data-provides="fileinput">
                     <div class="fileinput-new thumbnail" style="width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 10px;"> 
                         @if($adminFavIconUrl)
-                            <img src="{{ $adminFavIconUrl }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}{{ $adminFavIconVersion }}';" /> 
+                            <img src="{{ $adminFavIconUrl }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" /> 
                         @else
                             <i class="fa fa-image text-muted" style="font-size: 24px;"></i>
                         @endif
@@ -108,8 +106,6 @@
                     <strong style="color: #0F172A;">Current Favicon:</strong> 
                     @if(!empty($siteSetting->favicon))
                         <code>{{ $siteSetting->favicon }}</code><br>
-                    @elseif(!empty($siteSetting->site_logo))
-                        <code>{{ $siteSetting->site_logo }}</code> (Auto-fallback)<br>
                     @else
                         <code>None</code><br>
                     @endif

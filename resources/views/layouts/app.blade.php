@@ -113,8 +113,6 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
         $favVersion = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1');
         if (!empty($siteSetting->favicon)) {
             $favIconUrl = asset('sitesetting_images/' . $siteSetting->favicon);
-        } elseif (!empty($siteSetting->site_logo)) {
-            $favIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo);
         } else {
             $favIconUrl = asset('favicon.ico');
         }
