@@ -71,14 +71,31 @@ h1, h2, h3, h4, h5, h6,
   align-items: center !important;
   text-decoration: none !important;
   overflow: hidden !important;
+  max-width: 175px !important;
+  height: 38px !important;
 }
 
-.page-header.navbar .page-logo a img {
-  max-height: 32px !important;
+.page-header.navbar .page-logo a img,
+.page-header.navbar .page-logo .admin-site-logo {
+  max-height: 36px !important;
+  max-width: 165px !important;
   width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
   background: #ffffff !important;
   padding: 3px 8px !important;
   border-radius: 6px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+  display: block !important;
+}
+
+.page-header.navbar .page-logo .admin-text-logo {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  font-family: 'Poppins', sans-serif !important;
+  letter-spacing: -0.2px !important;
+  white-space: nowrap !important;
 }
 
 /* Modern Hamburger Sidebar Toggler */

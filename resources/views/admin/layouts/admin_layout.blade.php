@@ -114,14 +114,15 @@
 
                 <!-- BEGIN LOGO -->
 
-                <div class="page-logo" style="display: flex; align-items: center;"> 
-                    <a href="{{ route('admin.home') }}" style="display: flex; align-items: center; text-decoration: none; padding: 6px 0;"> 
-                        @if(!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo)))
-                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="{{ $siteSetting->site_name ?? 'Logo' }}" style="max-width:160px; max-height:36px; object-fit: contain;" />
-                        @elseif(!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/' . $siteSetting->site_logo)))
-                            <img src="{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}" alt="{{ $siteSetting->site_name ?? 'Logo' }}" style="max-width:160px; max-height:36px; object-fit: contain;" />
+                <div class="page-logo"> 
+                    <a href="{{ route('admin.home') }}" class="logo-link"> 
+                        @if(!empty($siteSetting->site_logo))
+                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" 
+                                 alt="{{ $siteSetting->site_name ?? 'Logo' }}" 
+                                 class="admin-site-logo" 
+                                 onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}';" />
                         @else
-                            <span style="font-size: 18px; font-weight: 800; color: #FFFFFF; font-family: 'Poppins', sans-serif; letter-spacing: -0.3px;">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
+                            <span class="admin-text-logo">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
                         @endif
                     </a>
                     <div class="menu-toggler sidebar-toggler"> </div>
