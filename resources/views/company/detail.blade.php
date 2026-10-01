@@ -138,10 +138,6 @@
                             <button type="button" onclick="send_message()" style="background: #2563EB; color: #FFFFFF; font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
                                 <i class="fa fa-envelope"></i> {{__('Send Message')}}
                             </button>
-
-                            <a href="{{route('report.abuse.company', $company->slug)}}" style="background: #FFFFFF; color: #DC2626; border: 1.5px solid #FCA5A5; font-size: 12.5px; font-weight: 600; padding: 10px 12px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                <i class="fa fa-flag-o"></i>
-                            </a>
                         </div>
 
                         <!-- Direct HR Contact Buttons if allowed & logged in -->
