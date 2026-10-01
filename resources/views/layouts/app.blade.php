@@ -111,16 +111,23 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
     <!-- Fav Icon & PWA Manifest -->
     @php
         $favIconUrl = asset('favicon.ico');
-        if (!empty($siteSetting->favicon)) {
+        $favVersion = '';
+        if (!empty($siteSetting->favicon) && file_exists(public_path('sitesetting_images/' . $siteSetting->favicon))) {
             $favIconUrl = asset('sitesetting_images/' . $siteSetting->favicon);
-        } elseif (!empty($siteSetting->site_logo)) {
+            $favVersion = '?v=' . @filemtime(public_path('sitesetting_images/' . $siteSetting->favicon));
+        } elseif (!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
             $favIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo);
+            $favVersion = '?v=' . @filemtime(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo));
+        } else {
+            if (file_exists(public_path('favicon.ico'))) {
+                $favVersion = '?v=' . @filemtime(public_path('favicon.ico'));
+            }
         }
     @endphp
-    <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ time() }}">
-    <link rel="icon" type="image/x-icon" href="{{ $favIconUrl }}?v={{ time() }}">
-    <link rel="icon" type="image/png" href="{{ $favIconUrl }}?v={{ time() }}">
-    <link rel="apple-touch-icon" href="{{ $favIconUrl }}?v={{ time() }}">
+    <link rel="shortcut icon" href="{{ $favIconUrl }}{{ $favVersion }}">
+    <link rel="icon" type="image/x-icon" href="{{ $favIconUrl }}{{ $favVersion }}">
+    <link rel="icon" type="image/png" href="{{ $favIconUrl }}{{ $favVersion }}">
+    <link rel="apple-touch-icon" href="{{ $favIconUrl }}{{ $favVersion }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#2563EB">
     <meta name="mobile-web-app-capable" content="yes">

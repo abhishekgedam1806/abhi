@@ -116,11 +116,20 @@
 
                 <div class="page-logo"> 
                     <a href="{{ route('admin.home') }}" class="logo-link"> 
-                        @if(!empty($siteSetting->site_logo))
-                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ time() }}" 
+                        @php
+                            $adminLogoPath = '';
+                            if (!empty($siteSetting->site_logo)) {
+                                if (file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
+                                    $adminLogoPath = 'sitesetting_images/thumb/' . $siteSetting->site_logo;
+                                } elseif (file_exists(public_path('sitesetting_images/' . $siteSetting->site_logo))) {
+                                    $adminLogoPath = 'sitesetting_images/' . $siteSetting->site_logo;
+                                }
+                            }
+                        @endphp
+                        @if($adminLogoPath)
+                            <img src="{{ asset($adminLogoPath) }}?v={{ @filemtime(public_path($adminLogoPath)) }}" 
                                  alt="{{ $siteSetting->site_name ?? 'Logo' }}" 
-                                 class="admin-site-logo" 
-                                 onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ time() }}';" />
+                                 class="admin-site-logo" />
                         @else
                             <span class="admin-text-logo">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
                         @endif
