@@ -4,20 +4,14 @@
         <div class="header-logo-area">
             <a href="{{url('/')}}" class="logo">
                 @php
-                    $logoPath = '';
-                    if (!empty($siteSetting->site_logo)) {
-                        if (file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
-                            $logoPath = 'sitesetting_images/thumb/' . $siteSetting->site_logo;
-                        } elseif (file_exists(public_path('sitesetting_images/' . $siteSetting->site_logo))) {
-                            $logoPath = 'sitesetting_images/' . $siteSetting->site_logo;
-                        }
-                    }
+                    $logoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1';
                 @endphp
-                @if($logoPath)
-                    <img src="{{ asset($logoPath) }}?v={{ @filemtime(public_path($logoPath)) }}" 
+                @if(!empty($siteSetting->site_logo))
+                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ $logoVersion }}" 
                          alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
                          width="160" height="40" 
                          style="max-height: 40px; width: auto; object-fit: contain;" 
+                         onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ $logoVersion }}';"
                          decoding="async" />
                 @else
                     <span style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Poppins', sans-serif;">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>

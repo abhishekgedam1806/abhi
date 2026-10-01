@@ -110,18 +110,13 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
 
     <!-- Fav Icon & PWA Manifest -->
     @php
-        $favIconUrl = asset('favicon.ico');
-        $favVersion = '';
-        if (!empty($siteSetting->favicon) && file_exists(public_path('sitesetting_images/' . $siteSetting->favicon))) {
+        $favVersion = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1');
+        if (!empty($siteSetting->favicon)) {
             $favIconUrl = asset('sitesetting_images/' . $siteSetting->favicon);
-            $favVersion = '?v=' . @filemtime(public_path('sitesetting_images/' . $siteSetting->favicon));
-        } elseif (!empty($siteSetting->site_logo) && file_exists(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo))) {
+        } elseif (!empty($siteSetting->site_logo)) {
             $favIconUrl = asset('sitesetting_images/thumb/' . $siteSetting->site_logo);
-            $favVersion = '?v=' . @filemtime(public_path('sitesetting_images/thumb/' . $siteSetting->site_logo));
         } else {
-            if (file_exists(public_path('favicon.ico'))) {
-                $favVersion = '?v=' . @filemtime(public_path('favicon.ico'));
-            }
+            $favIconUrl = asset('favicon.ico');
         }
     @endphp
     <link rel="shortcut icon" href="{{ $favIconUrl }}{{ $favVersion }}">
