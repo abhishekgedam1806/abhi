@@ -144,9 +144,9 @@ class JobController extends Controller
                     <a href="' . $jobUrl . '" target="_blank" class="btn-job-view" title="View Job Live on Website">
                         <i class="fa fa-eye" aria-hidden="true"></i> View
                     </a>
-					<div class="btn-group">
+					<div class="btn-group dropup">
 						<button type="button" class="btn-job-action dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							Action <i class="fa fa-angle-down" aria-hidden="true"></i>
+							Action <i class="fa fa-angle-up" aria-hidden="true"></i>
 						</button>
 						<ul class="dropdown-menu dropdown-menu-right job-action-menu" role="menu">
 							<li>

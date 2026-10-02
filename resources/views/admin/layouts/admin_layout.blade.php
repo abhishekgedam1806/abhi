@@ -104,18 +104,37 @@
                 overflow: visible !important;
             }
             .table-scrollable .btn-group {
-                position: relative;
+                position: relative !important;
             }
-            .table-scrollable .dropdown-menu, .job-action-menu {
-                z-index: 99999 !important;
-                position: absolute !important;
+            /* Upward opening menu (Dropup) styling so options never get cut off at table bottom */
+            .table-scrollable .btn-group.dropup .dropdown-menu,
+            .table-scrollable .job-action-menu,
+            .table-container .btn-group.dropup .dropdown-menu {
+                top: auto !important;
+                bottom: 100% !important;
+                margin-bottom: 6px !important;
                 right: 0 !important;
                 left: auto !important;
-                margin-top: 2px !important;
+                z-index: 99999 !important;
                 border-radius: 8px !important;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18) !important;
+                box-shadow: 0 12px 35px rgba(15, 23, 42, 0.2) !important;
                 border: 1px solid #E2E8F0 !important;
                 background: #FFFFFF !important;
+                padding: 6px 0 !important;
+                min-width: 175px !important;
+            }
+            .table-scrollable .btn-group.dropup .dropdown-menu > li > a {
+                padding: 8px 14px !important;
+                font-weight: 500 !important;
+                font-size: 13px !important;
+                color: #1E293B !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }
+            .table-scrollable .btn-group.dropup .dropdown-menu > li > a:hover {
+                background-color: #F1F5F9 !important;
+                color: #1B4FD8 !important;
             }
         </style>
         @stack('css')
