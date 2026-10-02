@@ -107,6 +107,21 @@
             .table-scrollable .btn-group, .table-container .btn-group {
                 position: relative !important;
             }
+            /* Common Dropdown Menu styling */
+            .table-scrollable .btn-group .dropdown-menu,
+            .table-container .btn-group .dropdown-menu {
+                right: 0 !important;
+                left: auto !important;
+                width: 185px !important;
+                min-width: 185px !important;
+                max-width: 185px !important;
+                z-index: 99999 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
+                border: 1px solid #E2E8F0 !important;
+                background: #FFFFFF !important;
+                padding: 6px 0 !important;
+            }
             /* Default DOWNWARD opening menu (1st row & upper rows) */
             .table-scrollable .btn-group:not(.dropup) .dropdown-menu,
             .table-container .btn-group:not(.dropup) .dropdown-menu {
@@ -114,15 +129,6 @@
                 bottom: auto !important;
                 margin-top: 4px !important;
                 margin-bottom: 0 !important;
-                right: 0 !important;
-                left: auto !important;
-                z-index: 99999 !important;
-                border-radius: 8px !important;
-                box-shadow: 0 12px 35px rgba(15, 23, 42, 0.2) !important;
-                border: 1px solid #E2E8F0 !important;
-                background: #FFFFFF !important;
-                padding: 6px 0 !important;
-                min-width: 175px !important;
             }
             /* UPWARD opening menu (Dropup) for bottom/last rows */
             .table-scrollable .btn-group.dropup .dropdown-menu,
@@ -131,15 +137,6 @@
                 bottom: 100% !important;
                 margin-bottom: 6px !important;
                 margin-top: 0 !important;
-                right: 0 !important;
-                left: auto !important;
-                z-index: 99999 !important;
-                border-radius: 8px !important;
-                box-shadow: 0 12px 35px rgba(15, 23, 42, 0.2) !important;
-                border: 1px solid #E2E8F0 !important;
-                background: #FFFFFF !important;
-                padding: 6px 0 !important;
-                min-width: 175px !important;
             }
             .table-scrollable .btn-group .dropdown-menu > li > a,
             .table-container .btn-group .dropdown-menu > li > a {
@@ -150,6 +147,7 @@
                 display: flex !important;
                 align-items: center !important;
                 gap: 8px !important;
+                white-space: nowrap !important;
             }
             .table-scrollable .btn-group .dropdown-menu > li > a:hover,
             .table-container .btn-group .dropdown-menu > li > a:hover {
@@ -359,52 +357,22 @@ $('#flash-overlay-modal').modal();
 
             $(document).on('show.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
                 var $btnGroup = $(this);
-                var $menu = $btnGroup.children('.dropdown-menu');
-                if (!$menu.length) return;
-
                 var $tr = $btnGroup.closest('tr');
                 var $tbody = $tr.closest('tbody');
                 var isFirstRow = $tr.is(':first-child');
                 var isLastRow = $tr.is(':last-child');
                 var totalRows = $tbody.find('tr').length;
 
-                $btnGroup.data('dropdown-menu', $menu);
-                $('body').append($menu);
+                $btnGroup.closest('.table-scrollable, .table-container, .portlet-body').css('overflow', 'visible');
 
-                var btnOffset = $btnGroup.offset();
-                var btnWidth = $btnGroup.outerWidth();
-                var btnHeight = $btnGroup.outerHeight();
-                var menuWidth = $menu.outerWidth() || 180;
-                var menuHeight = $menu.outerHeight() || 220;
-
-                var isDropup = (isLastRow && totalRows > 1 && !isFirstRow);
-                var topPos = isDropup ? (btnOffset.top - menuHeight - 4) : (btnOffset.top + btnHeight + 4);
-                var leftPos = btnOffset.left + btnWidth - menuWidth;
-
-                if (isDropup) {
+                // Rule: Rows 1 to N-1 open DOWNWARDS (.dropdown)
+                // ONLY the last row (if totalRows > 1 and not 1st row) opens UPWARDS (.dropup)
+                if (isLastRow && totalRows > 1 && !isFirstRow) {
                     $btnGroup.addClass('dropup');
                     $btnGroup.find('.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-up');
                 } else {
                     $btnGroup.removeClass('dropup');
                     $btnGroup.find('.fa-angle-up').removeClass('fa-angle-up').addClass('fa-angle-down');
-                }
-
-                $menu.css({
-                    'position': 'absolute',
-                    'top': topPos + 'px',
-                    'left': leftPos + 'px',
-                    'display': 'block',
-                    'z-index': '9999999',
-                    'margin': '0'
-                });
-            });
-
-            $(document).on('hide.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
-                var $btnGroup = $(this);
-                var $menu = $btnGroup.data('dropdown-menu');
-                if ($menu) {
-                    $menu.css('display', 'none');
-                    $btnGroup.append($menu);
                 }
             });
 
