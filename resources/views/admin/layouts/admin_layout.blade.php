@@ -91,11 +91,31 @@
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" />
 
         <style>
-            /* Fix for datatable Action dropdowns getting cut off */
-            .table-scrollable, .table-container, .dataTables_scrollBody {
-                min-height: 400px !important;
-                padding-bottom: 150px !important;
-                overflow-x: auto;
+            /* Fix for datatable Action dropdowns and clean scrollbar layout */
+            .table-scrollable {
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+                border: none !important;
+                margin: 10px 0 !important;
+                min-height: auto !important;
+                padding-bottom: 0 !important;
+            }
+            .dataTables_wrapper, .table-container, .portlet-body, .portlet.light {
+                overflow: visible !important;
+            }
+            .table-scrollable .btn-group {
+                position: relative;
+            }
+            .table-scrollable .dropdown-menu, .job-action-menu {
+                z-index: 99999 !important;
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                margin-top: 2px !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18) !important;
+                border: 1px solid #E2E8F0 !important;
+                background: #FFFFFF !important;
             }
         </style>
         @stack('css')
@@ -297,6 +317,10 @@ $('#flash-overlay-modal').modal();
             $(document).ready(function(){
 
             $(document).scrollTo('.msg_cls_for_focus', 2000);
+
+            $(document).on('show.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group', function() {
+                $(this).closest('.table-scrollable, .table-container, .portlet-body').css('overflow', 'visible');
+            });
 
             });
 
