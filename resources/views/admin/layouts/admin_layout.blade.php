@@ -103,16 +103,16 @@
             .dataTables_wrapper, .table-container, .portlet-body, .portlet.light {
                 overflow: visible !important;
             }
-            .table-scrollable .btn-group {
+            .table-scrollable .btn-group, .table-container .btn-group {
                 position: relative !important;
             }
-            /* Upward opening menu (Dropup) styling so options never get cut off at table bottom */
-            .table-scrollable .btn-group.dropup .dropdown-menu,
-            .table-scrollable .job-action-menu,
-            .table-container .btn-group.dropup .dropdown-menu {
-                top: auto !important;
-                bottom: 100% !important;
-                margin-bottom: 6px !important;
+            /* Default DOWNWARD opening menu (1st row & upper rows) */
+            .table-scrollable .btn-group:not(.dropup) .dropdown-menu,
+            .table-container .btn-group:not(.dropup) .dropdown-menu {
+                top: 100% !important;
+                bottom: auto !important;
+                margin-top: 4px !important;
+                margin-bottom: 0 !important;
                 right: 0 !important;
                 left: auto !important;
                 z-index: 99999 !important;
@@ -123,7 +123,25 @@
                 padding: 6px 0 !important;
                 min-width: 175px !important;
             }
-            .table-scrollable .btn-group.dropup .dropdown-menu > li > a {
+            /* UPWARD opening menu (Dropup) for bottom/last rows */
+            .table-scrollable .btn-group.dropup .dropdown-menu,
+            .table-container .btn-group.dropup .dropdown-menu {
+                top: auto !important;
+                bottom: 100% !important;
+                margin-bottom: 6px !important;
+                margin-top: 0 !important;
+                right: 0 !important;
+                left: auto !important;
+                z-index: 99999 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 12px 35px rgba(15, 23, 42, 0.2) !important;
+                border: 1px solid #E2E8F0 !important;
+                background: #FFFFFF !important;
+                padding: 6px 0 !important;
+                min-width: 175px !important;
+            }
+            .table-scrollable .btn-group .dropdown-menu > li > a,
+            .table-container .btn-group .dropdown-menu > li > a {
                 padding: 8px 14px !important;
                 font-weight: 500 !important;
                 font-size: 13px !important;
@@ -132,7 +150,8 @@
                 align-items: center !important;
                 gap: 8px !important;
             }
-            .table-scrollable .btn-group.dropup .dropdown-menu > li > a:hover {
+            .table-scrollable .btn-group .dropdown-menu > li > a:hover,
+            .table-container .btn-group .dropdown-menu > li > a:hover {
                 background-color: #F1F5F9 !important;
                 color: #1B4FD8 !important;
             }
@@ -337,8 +356,23 @@ $('#flash-overlay-modal').modal();
 
             $(document).scrollTo('.msg_cls_for_focus', 2000);
 
-            $(document).on('show.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group', function() {
-                $(this).closest('.table-scrollable, .table-container, .portlet-body').css('overflow', 'visible');
+            $(document).on('show.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
+                var $btnGroup = $(this);
+                var offset = $btnGroup.offset();
+                var windowHeight = $(window).height();
+                var scrollTop = $(window).scrollTop();
+                var spaceBelow = windowHeight - (offset.top - scrollTop) - $btnGroup.outerHeight();
+
+                $btnGroup.closest('.table-scrollable, .table-container, .portlet-body').css('overflow', 'visible');
+
+                // If space below button is less than 240px (last row / bottom rows), open UPWARDS (.dropup), otherwise open DOWNWARDS
+                if (spaceBelow < 240) {
+                    $btnGroup.addClass('dropup');
+                    $btnGroup.find('.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-up');
+                } else {
+                    $btnGroup.removeClass('dropup');
+                    $btnGroup.find('.fa-angle-up').removeClass('fa-angle-up').addClass('fa-angle-down');
+                }
             });
 
             });
