@@ -668,6 +668,7 @@ class SiteSettingController extends Controller
 
             // Direct ALTER TABLE statements for MySQL (with IF NOT EXISTS or column checks)
             $columns = [
+                'favicon' => "VARCHAR(255) NULL",
                 'page_title_bg_image' => "VARCHAR(255) NULL",
                 'hero_badge_text' => "VARCHAR(150) NULL DEFAULT 'INDIA #1 JOB PLATFORM'",
                 'hero_title_line1' => "VARCHAR(150) NULL DEFAULT 'Your job search'",
