@@ -91,17 +91,12 @@
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" />
 
         <style>
-            /* Fix for datatable Action dropdowns to overflow OUTSIDE the card box cleanly */
-            .table-scrollable, .table-container, .dataTables_wrapper, .portlet-body, .portlet.light, .portlet.light.bordered {
-                overflow: visible !important;
-                overflow-x: visible !important;
-                overflow-y: visible !important;
-            }
-            .table-scrollable {
+            /* Clean table card layout with dropdown support */
+            .table-scrollable, .table-container {
+                overflow-x: auto !important;
+                padding-bottom: 220px !important;
+                margin-bottom: -170px !important;
                 border: none !important;
-                margin: 10px 0 !important;
-                min-height: auto !important;
-                padding-bottom: 0 !important;
             }
             .table-scrollable .btn-group, .table-container .btn-group {
                 position: relative !important;

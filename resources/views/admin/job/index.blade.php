@@ -81,12 +81,10 @@
     }
 
     /* Table Container & Layout */
-    .table-container, .table-scrollable {
-        overflow: visible !important;
-        overflow-x: visible !important;
-        overflow-y: visible !important;
-        min-height: 260px !important;
-        padding-bottom: 20px !important;
+    .table-container {
+        overflow-x: auto !important;
+        padding-bottom: 220px !important;
+        margin-bottom: -170px !important;
         border-radius: 12px !important;
     }
     #jobDatatableAjax {
