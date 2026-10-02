@@ -359,22 +359,52 @@ $('#flash-overlay-modal').modal();
 
             $(document).on('show.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
                 var $btnGroup = $(this);
+                var $menu = $btnGroup.children('.dropdown-menu');
+                if (!$menu.length) return;
+
                 var $tr = $btnGroup.closest('tr');
                 var $tbody = $tr.closest('tbody');
                 var isFirstRow = $tr.is(':first-child');
                 var isLastRow = $tr.is(':last-child');
                 var totalRows = $tbody.find('tr').length;
 
-                $btnGroup.closest('.table-scrollable, .table-container, .portlet-body').css('overflow', 'visible');
+                $btnGroup.data('dropdown-menu', $menu);
+                $('body').append($menu);
 
-                // Rule: 1st row to second-to-last row -> ALWAYS DOWNWARDS (.dropdown)
-                // ONLY the last row (if totalRows > 1 and not 1st row) -> UPWARDS (.dropup)
-                if (isLastRow && totalRows > 1 && !isFirstRow) {
+                var btnOffset = $btnGroup.offset();
+                var btnWidth = $btnGroup.outerWidth();
+                var btnHeight = $btnGroup.outerHeight();
+                var menuWidth = $menu.outerWidth() || 180;
+                var menuHeight = $menu.outerHeight() || 220;
+
+                var isDropup = (isLastRow && totalRows > 1 && !isFirstRow);
+                var topPos = isDropup ? (btnOffset.top - menuHeight - 4) : (btnOffset.top + btnHeight + 4);
+                var leftPos = btnOffset.left + btnWidth - menuWidth;
+
+                if (isDropup) {
                     $btnGroup.addClass('dropup');
                     $btnGroup.find('.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-up');
                 } else {
                     $btnGroup.removeClass('dropup');
                     $btnGroup.find('.fa-angle-up').removeClass('fa-angle-up').addClass('fa-angle-down');
+                }
+
+                $menu.css({
+                    'position': 'absolute',
+                    'top': topPos + 'px',
+                    'left': leftPos + 'px',
+                    'display': 'block',
+                    'z-index': '9999999',
+                    'margin': '0'
+                });
+            });
+
+            $(document).on('hide.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
+                var $btnGroup = $(this);
+                var $menu = $btnGroup.data('dropdown-menu');
+                if ($menu) {
+                    $menu.css('display', 'none');
+                    $btnGroup.append($menu);
                 }
             });
 
