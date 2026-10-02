@@ -90,6 +90,14 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" />
 
+        <style>
+            /* Fix for datatable Action dropdowns getting cut off */
+            .table-scrollable, .table-container, .dataTables_scrollBody {
+                min-height: 400px !important;
+                padding-bottom: 150px !important;
+                overflow-x: auto;
+            }
+        </style>
         @stack('css')
 
         <script>

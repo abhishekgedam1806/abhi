@@ -8,7 +8,7 @@
                     <i class="fa fa-picture-o text-primary"></i> Site Logo (PNG / SVG / JPG)
                 </label>
                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-new thumbnail" style="width: 200px; height: 70px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 8px;"> 
+                    <div class="fileinput-new thumbnail" style="width: 200px; height: 70px; text-align: center; line-height: 60px; padding: 0; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 8px;"> 
                         @php
                             $adminFormLogoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1';
                         @endphp
@@ -71,7 +71,7 @@
                     }
                 @endphp
                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-new thumbnail" style="width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 10px;"> 
+                    <div class="fileinput-new thumbnail" style="width: 72px; height: 72px; text-align: center; line-height: 60px; padding: 0; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 10px;"> 
                         @if($adminFavIconUrl)
                             <img src="{{ $adminFavIconUrl }}" alt="Favicon" style="max-height: 48px; max-width: 48px; object-fit: contain;" /> 
                         @else

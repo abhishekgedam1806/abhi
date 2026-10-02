@@ -132,8 +132,17 @@ class SiteSettingController extends Controller
 
 
     public function updateSiteSetting(SiteSettingFormRequest $request)
-
     {
+        try {
+            if (!\Schema::hasColumn('site_settings', 'favicon')) {
+                \Schema::table('site_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->string('favicon', 255)->nullable()->after('site_logo');
+                });
+            }
+        } catch (\Throwable $e) {
+            \Log::error("Failed to add favicon column: " . $e->getMessage());
+        }
+
         $this->ensureSchemaUpdated();
 
         $siteSetting = SiteSetting::first();
