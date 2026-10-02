@@ -51,9 +51,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::middleware('web')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+        $path = base_path('routes/web.php');
+        if (file_exists($path)) {
+            Route::middleware('web')
+                    ->namespace($this->namespace)
+                    ->group($path);
+        }
     }
 
     /**
@@ -65,10 +68,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapAdminRoutes()
     {
-        Route::prefix('admin')
-                ->middleware(['web', 'admin', 'auth:admin', 'checkAdminRoles'])
-                ->namespace($this->namespace)
-                ->group(base_path('routes/admin.php'));
+        $path = base_path('routes/admin.php');
+        if (file_exists($path)) {
+            Route::prefix('admin')
+                    ->middleware(['web', 'admin', 'auth:admin', 'checkAdminRoles'])
+                    ->namespace($this->namespace)
+                    ->group($path);
+        }
     }
 
     /**
@@ -80,10 +86,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
+        $path = base_path('routes/api.php');
+        if (file_exists($path)) {
+            Route::prefix('api')
+                    ->middleware('api')
+                    ->namespace($this->namespace)
+                    ->group($path);
+        }
     }
 
 }
