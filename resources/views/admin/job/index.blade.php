@@ -80,13 +80,13 @@
         border-color: #DC2626 !important;
     }
 
-    /* Unified Professional Card & Table Layout */
+    /* Unified Professional Flush Card & Table Layout */
     .portlet.light.bordered {
         background: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
         border-radius: 14px !important;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
-        padding: 20px 24px !important;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+        padding: 0 !important;
         overflow: visible !important;
     }
     .portlet.light.bordered > .portlet-body {
@@ -97,13 +97,16 @@
         border: none !important;
         background: transparent !important;
         box-shadow: none !important;
-        overflow: visible !important;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
         margin: 0 !important;
         padding: 0 !important;
         border-radius: 0 !important;
+        width: 100% !important;
     }
     .dataTables_length {
-        margin-bottom: 16px !important;
+        padding: 18px 24px 14px 24px !important;
+        margin: 0 !important;
         color: #475569 !important;
         font-size: 13px !important;
         font-weight: 500 !important;
@@ -144,6 +147,8 @@
     #jobDatatableAjax {
         width: 100% !important;
         max-width: 100% !important;
+        margin: 0 !important;
+        border-collapse: collapse !important;
     }
     #jobDatatableAjax thead tr.heading th {
         background: #F8FAFC !important;
@@ -153,8 +158,17 @@
         text-transform: uppercase !important;
         letter-spacing: 0.6px !important;
         padding: 14px 16px !important;
-        border-bottom: 2px solid #E2E8F0 !important;
+        border-top: 1px solid #E2E8F0 !important;
+        border-bottom: 1.5px solid #E2E8F0 !important;
         vertical-align: middle !important;
+    }
+    #jobDatatableAjax thead tr.heading th:first-child,
+    #jobDatatableAjax tbody tr td:first-child {
+        padding-left: 24px !important;
+    }
+    #jobDatatableAjax thead tr.heading th:last-child,
+    #jobDatatableAjax tbody tr td:last-child {
+        padding-right: 24px !important;
     }
     #jobDatatableAjax thead tr.filter td {
         background: #F1F5F9 !important;
@@ -183,6 +197,9 @@
     }
     #jobDatatableAjax tbody tr:hover {
         background-color: #F8FAFC !important;
+    }
+    .dataTables_info, .dataTables_paginate {
+        padding: 16px 24px !important;
     }
 
     /* Action Buttons in Table */
