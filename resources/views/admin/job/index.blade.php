@@ -80,16 +80,49 @@
         border-color: #DC2626 !important;
     }
 
-    /* Table Container & Layout */
-    .portlet.light.bordered, .portlet-body, .dataTables_wrapper, .table-scrollable {
+    /* Unified Professional Card & Table Layout */
+    .portlet.light.bordered {
+        background: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+        padding: 20px 24px !important;
         overflow: visible !important;
     }
-    .table-container {
+    .portlet.light.bordered > .portlet-body {
+        overflow: visible !important;
+        padding: 0 !important;
+    }
+    .dataTables_wrapper, .table-scrollable, .table-container {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
-        border-radius: 12px !important;
-        padding-bottom: 10px !important;
-        margin-bottom: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
+    .dataTables_length {
+        margin-bottom: 16px !important;
+        color: #475569 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    .dataTables_length select {
+        height: 38px !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #CBD5E1 !important;
+        padding: 4px 12px !important;
+        font-size: 13px !important;
+        color: #0F172A !important;
+        background-color: #FFFFFF !important;
+        outline: none !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
     }
     .btn-group.dropup .dropdown-menu.job-action-menu {
         top: auto !important;
