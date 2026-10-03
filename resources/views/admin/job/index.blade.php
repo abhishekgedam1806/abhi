@@ -97,8 +97,7 @@
         border: none !important;
         background: transparent !important;
         box-shadow: none !important;
-        overflow-x: auto !important;
-        overflow-y: visible !important;
+        overflow: visible !important;
         margin: 0 !important;
         padding: 0 !important;
         border-radius: 0 !important;
@@ -124,12 +123,23 @@
         box-shadow: none !important;
         cursor: pointer !important;
     }
+    .btn-group {
+        position: relative !important;
+    }
+    .dropdown-menu.job-action-menu {
+        right: 0 !important;
+        left: auto !important;
+        top: 100% !important;
+        min-width: 185px !important;
+        z-index: 10050 !important;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
+    }
     .btn-group.dropup .dropdown-menu.job-action-menu {
         top: auto !important;
         bottom: 100% !important;
         margin-top: 0 !important;
         margin-bottom: 4px !important;
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.18) !important;
     }
     #jobDatatableAjax {
         width: 100% !important;
@@ -402,49 +412,21 @@
             ]
         });
 
-        // Body-Detach Dropdown Listener: Detaches dropdown menu to body on open so menu NEVER clips regardless of scroll container or table height
-        $(document).on('show.bs.dropdown', '.table-container .btn-group, #jobDatatableAjax .btn-group', function () {
+        // Dynamic Auto-Dropup Listener so menu opens upwards when near bottom of viewport while staying perfectly aligned to the Action button
+        $(document).on('show.bs.dropdown', '#jobDatatableAjax .btn-group', function () {
             var $btnGroup = $(this);
-            var $dropdownMenu = $btnGroup.find('.dropdown-menu');
-            if ($dropdownMenu.length === 0) return;
-            
-            $dropdownMenu.data('parent-group', $btnGroup);
-            $('body').append($dropdownMenu);
-            
             var btnOffset = $btnGroup.offset();
-            var btnWidth = $btnGroup.outerWidth();
-            var btnHeight = $btnGroup.outerHeight();
-            var menuWidth = $dropdownMenu.outerWidth() || 180;
-            var menuHeight = $dropdownMenu.outerHeight() || 220;
+            if (!btnOffset) return;
             var windowHeight = $(window).height();
             var scrollTop = $(window).scrollTop();
-            
-            var top = btnOffset.top + btnHeight + 2;
-            var left = btnOffset.left + btnWidth - menuWidth;
-            
-            if ((top + menuHeight - scrollTop) > windowHeight && (btnOffset.top - scrollTop) > menuHeight) {
-                top = btnOffset.top - menuHeight - 2;
-            }
-            
-            $dropdownMenu.css({
-                'display': 'block',
-                'position': 'absolute',
-                'top': top + 'px',
-                'left': left + 'px',
-                'z-index': 999999,
-                'margin': '0'
-            });
-        });
+            var btnTopRelative = btnOffset.top - scrollTop;
+            var spaceBelow = windowHeight - (btnTopRelative + $btnGroup.outerHeight());
 
-        $(document).on('hide.bs.dropdown', '.table-container .btn-group, #jobDatatableAjax .btn-group', function () {
-            var $btnGroup = $(this);
-            $('body > .dropdown-menu.job-action-menu').each(function () {
-                var parent = $(this).data('parent-group');
-                if (parent && parent.is($btnGroup)) {
-                    $(this).css({'display': '', 'position': '', 'top': '', 'left': '', 'z-index': '', 'margin': ''});
-                    $btnGroup.append($(this));
-                }
-            });
+            if (spaceBelow < 220 && btnTopRelative > 220) {
+                $btnGroup.addClass('dropup');
+            } else {
+                $btnGroup.removeClass('dropup');
+            }
         });
 
         // Select / Deselect All
