@@ -412,21 +412,49 @@
             ]
         });
 
-        // Dynamic Auto-Dropup Listener so menu opens upwards when near bottom of viewport while staying perfectly aligned to the Action button
+        // Viewport Fixed Position Listener: Positions dropdown menu floating on top of everything (z-index 999999) perfectly aligned under Action button
         $(document).on('show.bs.dropdown', '#jobDatatableAjax .btn-group', function () {
             var $btnGroup = $(this);
-            var btnOffset = $btnGroup.offset();
-            if (!btnOffset) return;
-            var windowHeight = $(window).height();
-            var scrollTop = $(window).scrollTop();
-            var btnTopRelative = btnOffset.top - scrollTop;
-            var spaceBelow = windowHeight - (btnTopRelative + $btnGroup.outerHeight());
+            var $button = $btnGroup.find('.dropdown-toggle');
+            var $menu = $btnGroup.find('.dropdown-menu');
+            if ($button.length === 0 || $menu.length === 0) return;
 
-            if (spaceBelow < 220 && btnTopRelative > 220) {
-                $btnGroup.addClass('dropup');
-            } else {
-                $btnGroup.removeClass('dropup');
-            }
+            setTimeout(function () {
+                var btnRect = $button[0].getBoundingClientRect();
+                var menuWidth = $menu.outerWidth() || 185;
+                var menuHeight = $menu.outerHeight() || 220;
+                var windowHeight = $(window).height();
+
+                var top = btnRect.bottom + 4;
+                var left = btnRect.right - menuWidth;
+
+                if (btnRect.bottom + menuHeight > windowHeight && btnRect.top > menuHeight) {
+                    top = btnRect.top - menuHeight - 4;
+                }
+
+                $menu.css({
+                    'position': 'fixed',
+                    'top': top + 'px',
+                    'left': left + 'px',
+                    'right': 'auto',
+                    'bottom': 'auto',
+                    'z-index': '999999',
+                    'margin': '0'
+                });
+            }, 10);
+        });
+
+        $(document).on('hide.bs.dropdown', '#jobDatatableAjax .btn-group', function () {
+            var $menu = $(this).find('.dropdown-menu');
+            $menu.css({
+                'position': '',
+                'top': '',
+                'left': '',
+                'right': '',
+                'bottom': '',
+                'z-index': '',
+                'margin': ''
+            });
         });
 
         // Select / Deselect All
