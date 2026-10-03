@@ -81,11 +81,22 @@
     }
 
     /* Table Container & Layout */
+    .portlet.light.bordered, .portlet-body, .dataTables_wrapper, .table-scrollable {
+        overflow: visible !important;
+    }
     .table-container {
-        overflow-x: auto !important;
-        padding-bottom: 220px !important;
-        margin-bottom: -170px !important;
+        overflow: visible !important;
+        min-height: 420px !important;
+        padding-bottom: 60px !important;
+        margin-bottom: 0 !important;
         border-radius: 12px !important;
+    }
+    .btn-group.dropup .dropdown-menu.job-action-menu {
+        top: auto !important;
+        bottom: 100% !important;
+        margin-top: 0 !important;
+        margin-bottom: 4px !important;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15) !important;
     }
     #jobDatatableAjax {
         width: 100% !important;
@@ -332,6 +343,7 @@
             serverSide: true,
             stateSave: false,
             searching: false,
+            order: [], // Preserve server-side newest-first ordering (jobs.id DESC)
             drawCallback: function () {
                 $('#selectAllCheckbox').prop('checked', false);
                 updateBulkDeleteBtn();
@@ -355,6 +367,25 @@
                 {data: 'city_id', name: 'city_id'},
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
             ]
+        });
+
+        // Dynamic Smart Dropup Listener so action menu never clips when bottom/single row
+        $(document).on('show.bs.dropdown', '.btn-group', function () {
+            var $btnGroup = $(this);
+            var $menu = $btnGroup.find('.dropdown-menu');
+            var btnOffset = $btnGroup.offset();
+            if (!btnOffset) return;
+            var windowHeight = $(window).height();
+            var scrollTop = $(window).scrollTop();
+            var btnTopRelative = btnOffset.top - scrollTop;
+            var menuHeight = 220;
+            var spaceBelow = windowHeight - (btnTopRelative + $btnGroup.outerHeight());
+
+            if (spaceBelow < menuHeight && btnTopRelative > menuHeight) {
+                $btnGroup.addClass('dropup');
+            } else {
+                $btnGroup.removeClass('dropup');
+            }
         });
 
         // Select / Deselect All
