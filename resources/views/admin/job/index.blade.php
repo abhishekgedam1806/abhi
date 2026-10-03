@@ -143,7 +143,7 @@
     }
     #jobDatatableAjax {
         width: 100% !important;
-        min-width: 1050px !important;
+        max-width: 100% !important;
     }
     #jobDatatableAjax thead tr.heading th {
         background: #F8FAFC !important;
@@ -357,14 +357,14 @@
                             <table class="table table-striped table-hover" id="jobDatatableAjax">
                                 <thead>
                                     <tr role="row" class="heading">
-                                        <th style="width:40px;text-align:center;">
+                                        <th style="width:36px;text-align:center;">
                                             <input type="checkbox" id="selectAllCheckbox" style="cursor:pointer;width:17px;height:17px;accent-color:#1B4FD8;" title="Select All" />
                                         </th>
-                                        <th style="min-width:180px;">Company</th>
-                                        <th style="min-width:250px;">Job Title & Status</th>
-                                        <th style="min-width:220px;">Description</th>
-                                        <th style="min-width:180px;">Location</th>
-                                        <th style="width:170px;min-width:170px;text-align:center;">Actions</th>
+                                        <th style="min-width:130px;">Company</th>
+                                        <th style="min-width:190px;">Job Title & Status</th>
+                                        <th style="min-width:160px;">Description</th>
+                                        <th style="min-width:130px;">Location</th>
+                                        <th style="width:145px;min-width:145px;text-align:center;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
