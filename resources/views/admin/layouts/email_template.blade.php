@@ -118,7 +118,11 @@
                             <td class="content" align="left" style="padding-top:0px;padding-bottom:12px;background-color:#f8f8f8;"><table border="0" cellpadding="0" cellspacing="0" class="force-row" style="width:100%;">
                                     <tr>
                                         <td align="center" valign="middle" class="content-wrapper" style="padding-left:24px;padding-right:24px"><br>
-                                            <a href="{{ url('/login') }}"><img src="{{ asset('/') }}sitesetting_images/thumb/{{ $siteSetting->site_logo }}" /></a></td>
+                                            @if(!empty($siteSetting->site_logo))
+                                            <a href="{{ url('/login') }}"><img src="{{ asset('/') }}sitesetting_images/thumb/{{ $siteSetting->site_logo }}" alt="{{ $siteSetting->site_name ?? '' }}" style="max-height:50px;" /></a>
+                                            @else
+                                            <a href="{{ url('/login') }}" style="font-size:18px; font-weight:bold; color:#2563EB; text-decoration:none;">{{ $siteSetting->site_name ?? 'Job Portal' }}</a>
+                                            @endif</td>
                                     </tr>
                                 </table></td>
                         </tr>

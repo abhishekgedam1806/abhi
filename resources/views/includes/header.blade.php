@@ -4,18 +4,24 @@
         <div class="header-logo-area">
             <a href="{{url('/')}}" class="logo">
                 @php
-                    $logoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1';
+                    $logoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time();
+                    $logoFile = !empty($siteSetting->site_logo) ? $siteSetting->site_logo : '';
+                    if (!empty($logoFile) && file_exists(public_path('sitesetting_images/thumb/' . $logoFile))) {
+                        $primaryLogo = asset('sitesetting_images/thumb/' . $logoFile);
+                    } elseif (!empty($logoFile) && file_exists(public_path('sitesetting_images/' . $logoFile))) {
+                        $primaryLogo = asset('sitesetting_images/' . $logoFile);
+                    } elseif (file_exists(public_path('images/jobnbiz-logo.png'))) {
+                        $primaryLogo = asset('images/jobnbiz-logo.png');
+                    } else {
+                        $primaryLogo = asset('images/logo.png');
+                    }
                 @endphp
-                @if(!empty($siteSetting->site_logo))
-                    <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ $logoVersion }}" 
-                         alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
-                         width="160" height="40" 
-                         style="max-height: 40px; width: auto; object-fit: contain;" 
-                         onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ $logoVersion }}';"
-                         decoding="async" />
-                @else
-                    <span style="font-size: 22px; font-weight: 800; color: #FFFFFF; font-family: 'Poppins', sans-serif;">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
-                @endif
+                <img src="{{ $primaryLogo }}?v={{ $logoVersion }}" 
+                     alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
+                     width="160" height="40" 
+                     style="max-height: 40px; width: auto; object-fit: contain;" 
+                     onerror="this.onerror=null; this.src='{{ asset('images/jobnbiz-logo.png') }}';"
+                     decoding="async" />
             </a>
         </div>
 

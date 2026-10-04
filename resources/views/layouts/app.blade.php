@@ -52,20 +52,30 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
     <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}" />
     @endif
 
+    @php
+        $metaLogoFile = !empty($siteSetting->site_logo) ? $siteSetting->site_logo : '';
+        if (!empty($metaLogoFile) && file_exists(public_path('sitesetting_images/thumb/' . $metaLogoFile))) {
+            $metaLogoUrl = asset('sitesetting_images/thumb/' . $metaLogoFile);
+        } elseif (!empty($metaLogoFile) && file_exists(public_path('sitesetting_images/' . $metaLogoFile))) {
+            $metaLogoUrl = asset('sitesetting_images/' . $metaLogoFile);
+        } else {
+            $metaLogoUrl = asset('images/jobnbiz-logo.png');
+        }
+    @endphp
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ __($seo->seo_title) }}">
     <meta property="og:description" content="{!! strip_tags($seo->seo_description) !!}">
     <meta property="og:site_name" content="{{ $siteSetting->site_name }}">
-    <meta property="og:image" content="{{ asset('sitesetting_images/thumb/' . ($siteSetting->site_logo ?? '')) }}">
+    <meta property="og:image" content="{{ $metaLogoUrl }}">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
     <meta name="twitter:title" content="{{ __($seo->seo_title) }}">
     <meta name="twitter:description" content="{!! strip_tags($seo->seo_description) !!}">
-    <meta name="twitter:image" content="{{ asset('sitesetting_images/thumb/' . ($siteSetting->site_logo ?? '')) }}">
+    <meta name="twitter:image" content="{{ $metaLogoUrl }}">
 
     <!-- Global WebSite & Organization JSON-LD Schema -->
     <script type="application/ld+json">
@@ -95,7 +105,7 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
           "url": "{{ url('/') }}",
           "logo": {
             "@type": "ImageObject",
-            "url": "{{ asset('sitesetting_images/thumb/' . ($siteSetting->site_logo ?? '')) }}"
+            "url": "{{ $metaLogoUrl }}"
           },
           "contactPoint": {
             "@type": "ContactPoint",

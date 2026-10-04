@@ -1,6 +1,6 @@
 {
-  "name": "Jobs Portal - Career & Recruitment Platform",
-  "short_name": "JobsPortal",
+  "name": "JobNBiz – Jobs in India",
+  "short_name": "JobNBiz",
   "description": "Find verified jobs, connect directly with HR recruiters, and apply for career opportunities across India.",
   "start_url": "/?source=pwa",
   "scope": "/",

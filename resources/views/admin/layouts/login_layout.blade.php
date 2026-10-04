@@ -22,9 +22,15 @@
         <link href="{{ asset('/') }}admin_assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
-        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" /> 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" /> 
-        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" /> 
+        @php
+            $loginFavV = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time());
+            $loginFavUrl = !empty($siteSetting->favicon)
+                ? asset('sitesetting_images/' . $siteSetting->favicon)
+                : asset('favicon.ico');
+        @endphp
+        <link rel="shortcut icon" href="{{ $loginFavUrl }}{{ $loginFavV }}" />
+        <link rel="icon" type="image/x-icon" href="{{ $loginFavUrl }}{{ $loginFavV }}" />
+        <link rel="icon" type="image/png" href="{{ !empty($siteSetting->favicon) ? asset('sitesetting_images/' . $siteSetting->favicon) : asset('favicon.png') }}{{ $loginFavV }}" />
     </head>
     <body class="admin-login-body">
         <div class="admin-auth-wrapper">

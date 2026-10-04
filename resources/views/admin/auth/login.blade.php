@@ -5,12 +5,24 @@
     <!-- Brand / Logo Header -->
     <div class="admin-auth-header">
         <div class="admin-auth-logo-box">
-            <a href="{{ url('/') }}" title="{{ $siteSetting->site_name ?? 'Job Portal' }}">
-                @if(!empty($siteSetting->site_logo))
-                    <img src="{{ asset('/') }}sitesetting_images/mid/{{ $siteSetting->site_logo }}" alt="{{ $siteSetting->site_name ?? 'Job Portal' }}" />
-                @else
-                    <span class="admin-auth-brand-text">{{ $siteSetting->site_name ?? 'Job Portal' }}</span>
-                @endif
+            <a href="{{ url('/') }}" title="{{ $siteSetting->site_name ?? 'JobNBiz' }}">
+                @php
+                    $authLogoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time();
+                    $authLogoFile = !empty($siteSetting->site_logo) ? $siteSetting->site_logo : '';
+                    if (!empty($authLogoFile) && file_exists(public_path('sitesetting_images/thumb/' . $authLogoFile))) {
+                        $authPrimaryLogo = asset('sitesetting_images/thumb/' . $authLogoFile);
+                    } elseif (!empty($authLogoFile) && file_exists(public_path('sitesetting_images/' . $authLogoFile))) {
+                        $authPrimaryLogo = asset('sitesetting_images/' . $authLogoFile);
+                    } elseif (file_exists(public_path('images/jobnbiz-logo-dark.png'))) {
+                        $authPrimaryLogo = asset('images/jobnbiz-logo-dark.png');
+                    } else {
+                        $authPrimaryLogo = asset('images/logo.png');
+                    }
+                @endphp
+                <img src="{{ $authPrimaryLogo }}?v={{ $authLogoVersion }}" 
+                     alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
+                     style="max-height: 48px; width: auto; object-fit: contain;"
+                     onerror="this.onerror=null; this.src='{{ asset('images/jobnbiz-logo-dark.png') }}';" />
             </a>
         </div>
         <div class="admin-auth-badge">

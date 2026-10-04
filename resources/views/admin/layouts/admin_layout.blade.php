@@ -86,9 +86,15 @@
 
         <link type="text/css" rel="stylesheet" media="all" href="{{ asset('/') }}admin_assets/custom.css?v={{ time() }}" />
 
-        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ time() }}" />
-        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ time() }}" />
+        @php
+            $adminFavV = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time());
+            $adminFavUrl = !empty($siteSetting->favicon)
+                ? asset('sitesetting_images/' . $siteSetting->favicon)
+                : asset('favicon.ico');
+        @endphp
+        <link rel="shortcut icon" href="{{ $adminFavUrl }}{{ $adminFavV }}" />
+        <link rel="icon" type="image/x-icon" href="{{ $adminFavUrl }}{{ $adminFavV }}" />
+        <link rel="icon" type="image/png" href="{{ !empty($siteSetting->favicon) ? asset('sitesetting_images/' . $siteSetting->favicon) : asset('favicon.png') }}{{ $adminFavV }}" />
 
         <style>
             /* Clean table card layout with dropdown support */
@@ -176,16 +182,23 @@
                 <div class="page-logo"> 
                     <a href="{{ route('admin.home') }}" class="logo-link"> 
                         @php
-                            $adminLogoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : '1';
+                            $adminLogoVersion = isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time();
+                            $adminLogoFile = !empty($siteSetting->site_logo) ? $siteSetting->site_logo : '';
+                            if (!empty($adminLogoFile) && file_exists(public_path('sitesetting_images/thumb/' . $adminLogoFile))) {
+                                $adminPrimaryLogo = asset('sitesetting_images/thumb/' . $adminLogoFile);
+                            } elseif (!empty($adminLogoFile) && file_exists(public_path('sitesetting_images/' . $adminLogoFile))) {
+                                $adminPrimaryLogo = asset('sitesetting_images/' . $adminLogoFile);
+                            } elseif (file_exists(public_path('images/jobnbiz-logo.png'))) {
+                                $adminPrimaryLogo = asset('images/jobnbiz-logo.png');
+                            } else {
+                                $adminPrimaryLogo = asset('images/logo.png');
+                            }
                         @endphp
-                        @if(!empty($siteSetting->site_logo))
-                            <img src="{{ asset('sitesetting_images/thumb/' . $siteSetting->site_logo) }}?v={{ $adminLogoVersion }}" 
-                                 alt="{{ $siteSetting->site_name ?? 'Logo' }}" 
-                                 class="admin-site-logo" 
-                                 onerror="this.onerror=null; this.src='{{ asset('sitesetting_images/' . $siteSetting->site_logo) }}?v={{ $adminLogoVersion }}';" />
-                        @else
-                            <span class="admin-text-logo">{{ $siteSetting->site_name ?? 'JobNBiz' }}</span>
-                        @endif
+                        <img src="{{ $adminPrimaryLogo }}?v={{ $adminLogoVersion }}" 
+                             alt="{{ $siteSetting->site_name ?? 'JobNBiz' }}" 
+                             class="admin-site-logo" 
+                             style="max-height: 38px; width: auto; object-fit: contain;"
+                             onerror="this.onerror=null; this.src='{{ asset('images/jobnbiz-logo.png') }}';" />
                     </a>
                     <div class="menu-toggler sidebar-toggler"> </div>
                 </div>
