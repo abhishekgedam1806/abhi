@@ -66,9 +66,9 @@ $allActiveFunctionalAreas = $priorityCategories->merge($otherCategories);
 $allActiveJobTypes = App\JobType::lang()->active()->orderBy('job_type', 'asc')->get();
 
 // Top 8 Metro Cities
-$metroCityNames = ['Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad', 'Kolkata'];
+$metroCityNames = ['Nagpur', 'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad'];
 $featuredCities = \App\City::whereIn('city', $metroCityNames)
-    ->orderByRaw("FIELD(city, 'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad', 'Kolkata')")
+    ->orderByRaw("FIELD(city, 'Nagpur', 'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad')")
     ->get();
 
 if ($featuredCities->isEmpty()) {
@@ -559,7 +559,7 @@ if ($featuredCities->isEmpty()) {
             <div class="row">
                 @foreach($featuredCities as $c)
                     @php
-                        $cityJobs = App\Job::where('city_id', $c->city_id)->where('is_active', 1)->where('expiry_date', '>', \Carbon\Carbon::now())->count();
+                        $cityJobs = App\Job::where('city_id', $c->city_id)->where('is_active', 1)->notExpire()->count();
                         $slug = \Illuminate\Support\Str::slug($c->city);
                     @endphp
                     <div class="col-lg-3 col-md-4 col-6">

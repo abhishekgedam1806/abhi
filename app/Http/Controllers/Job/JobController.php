@@ -256,7 +256,7 @@ class JobController extends Controller
         }
 
         return [
-            'city_ids' => [-999999], // Unmatched city returns 0 jobs cleanly instead of all jobs
+            'city_ids' => [],
             'name' => ucwords($clean)
         ];
     }
@@ -276,20 +276,31 @@ class JobController extends Controller
 
         // 2. Keyword check for popular industries/roles
         $keywords = [
-            'software' => ['name' => 'IT & Software', 'fa_ids' => [587, 431, 365, 126, 127], 'kw' => 'Software'],
-            'it' => ['name' => 'IT & Software', 'fa_ids' => [587, 431, 365, 126, 127], 'kw' => 'IT'],
-            'developer' => ['name' => 'Developer', 'fa_ids' => [587, 332, 126], 'kw' => 'Developer'],
-            'accounts' => ['name' => 'Accounts & Finance', 'fa_ids' => [589, 1, 594], 'kw' => 'Account'],
-            'finance' => ['name' => 'Accounts & Finance', 'fa_ids' => [589, 1, 594], 'kw' => 'Finance'],
-            'sales' => ['name' => 'Sales & Marketing', 'fa_ids' => [118, 439, 440, 377, 70], 'kw' => 'Sales'],
-            'marketing' => ['name' => 'Marketing', 'fa_ids' => [377, 69, 70, 378], 'kw' => 'Marketing'],
-            'bpo' => ['name' => 'BPO & Customer Support', 'fa_ids' => [588, 17, 428], 'kw' => 'Customer Support'],
-            'customer' => ['name' => 'Customer Support', 'fa_ids' => [588, 17, 428], 'kw' => 'Customer'],
-            'telecaller' => ['name' => 'Telecaller', 'fa_ids' => [588, 434, 17], 'kw' => 'Telecaller'],
-            'hr' => ['name' => 'HR & Recruitment', 'fa_ids' => [590, 411, 413], 'kw' => 'HR'],
-            'delivery' => ['name' => 'Logistics & Delivery', 'fa_ids' => [592, 376], 'kw' => 'Delivery'],
-            'driver' => ['name' => 'Driving', 'fa_ids' => [591], 'kw' => 'Driver'],
-            'back office' => ['name' => 'Back Office', 'fa_ids' => [345, 398, 3], 'kw' => 'Back Office'],
+            'software' => ['name' => 'IT & Software', 'fa_ids' => [128, 129, 144, 148, 587, 431, 365, 126, 127], 'kw' => 'Software'],
+            'it' => ['name' => 'IT & Software', 'fa_ids' => [128, 129, 144, 148, 587, 431, 365, 126, 127], 'kw' => 'IT'],
+            'developer' => ['name' => 'Developer', 'fa_ids' => [128, 144, 587, 332, 126], 'kw' => 'Developer'],
+            'web' => ['name' => 'Web Development', 'fa_ids' => [128, 144, 23, 40], 'kw' => 'Web'],
+            'design' => ['name' => 'Design & Creative', 'fa_ids' => [23, 40, 71, 72], 'kw' => 'Design'],
+            'graphic' => ['name' => 'Graphic Design', 'fa_ids' => [40, 23], 'kw' => 'Graphic'],
+            'creative' => ['name' => 'Creative Design', 'fa_ids' => [23, 40], 'kw' => 'Creative'],
+            'accounts' => ['name' => 'Accounts & Finance', 'fa_ids' => [1, 2, 12, 589, 594], 'kw' => 'Account'],
+            'finance' => ['name' => 'Accounts & Finance', 'fa_ids' => [1, 2, 12, 589, 594], 'kw' => 'Finance'],
+            'sales' => ['name' => 'Sales & Marketing', 'fa_ids' => [69, 70, 118, 439, 440, 377], 'kw' => 'Sales'],
+            'marketing' => ['name' => 'Marketing', 'fa_ids' => [69, 70, 377, 378], 'kw' => 'Marketing'],
+            'bpo' => ['name' => 'BPO & Customer Support', 'fa_ids' => [17, 428, 588], 'kw' => 'Customer Support'],
+            'customer' => ['name' => 'Customer Support', 'fa_ids' => [17, 428, 588], 'kw' => 'Customer'],
+            'telecaller' => ['name' => 'Telecaller', 'fa_ids' => [17, 434, 588], 'kw' => 'Telecaller'],
+            'hr' => ['name' => 'HR & Recruitment', 'fa_ids' => [48, 49, 104, 105, 151, 590, 411, 413], 'kw' => 'HR'],
+            'delivery' => ['name' => 'Logistics & Delivery', 'fa_ids' => [30, 62, 140, 152, 592, 376], 'kw' => 'Delivery'],
+            'driver' => ['name' => 'Driving', 'fa_ids' => [152, 591], 'kw' => 'Driver'],
+            'back office' => ['name' => 'Back Office', 'fa_ids' => [3, 26, 27, 345, 398], 'kw' => 'Back Office'],
+            'admin' => ['name' => 'Administration', 'fa_ids' => [3, 26, 27], 'kw' => 'Admin'],
+            'engineering' => ['name' => 'Engineering', 'fa_ids' => [32, 129], 'kw' => 'Engineer'],
+            'engineer' => ['name' => 'Engineering', 'fa_ids' => [32, 129], 'kw' => 'Engineer'],
+            'management' => ['name' => 'Business Management', 'fa_ids' => [14, 15], 'kw' => 'Management'],
+            'fresher' => ['name' => 'Internship / Fresher', 'fa_ids' => [54, 55, 157], 'kw' => 'Fresher'],
+            'internship' => ['name' => 'Internship / Fresher', 'fa_ids' => [54, 55, 157], 'kw' => 'Internship'],
+            'work from home' => ['name' => 'Work From Home', 'fa_ids' => [156], 'kw' => 'Remote'],
         ];
 
         foreach ($keywords as $kw => $info) {
@@ -310,8 +321,7 @@ class JobController extends Controller
 
     public function jobDetail(Request $request, $job_slug)
     {
-
-        $job = Job::where('slug', 'like', $job_slug)->firstOrFail();
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->firstOrFail();
         /*         * ************************************************** */
         $search = '';
         $job_titles = array();
@@ -389,7 +399,7 @@ class JobController extends Controller
         }
 
         $user = Auth::user();
-        $job = Job::where('slug', 'like', $job_slug)->first();
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->first();
         
         if (!$job) {
             flash(__('Job not found'))->error();
@@ -437,7 +447,7 @@ class JobController extends Controller
 
         $user = Auth::user();
         $user_id = $user->id;
-        $job = Job::where('slug', 'like', $job_slug)->first();
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->first();
 
         $jobApply = new JobApply();
         $jobApply->user_id = $user_id;

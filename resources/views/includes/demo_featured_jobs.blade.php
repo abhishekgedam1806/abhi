@@ -5,7 +5,7 @@ $validFeaturedJobs = collect();
 if (isset($featuredJobs) && count($featuredJobs)) {
     foreach ($featuredJobs as $fj) {
         $comp = $fj->getCompany();
-        if ($comp && $comp->is_active && $fj->is_active && (!$fj->expiry_date || \Carbon\Carbon::parse($fj->expiry_date)->isFuture())) {
+        if ($comp && $comp->is_active && $fj->is_active && (!$fj->expiry_date || \Carbon\Carbon::parse($fj->expiry_date)->gte(\Carbon\Carbon::today()))) {
             $validFeaturedJobs->push($fj);
         }
     }
@@ -17,7 +17,7 @@ if ($validFeaturedJobs->count() < 4 && isset($latestJobs)) {
         if ($validFeaturedJobs->count() >= 6) break;
         if (!$validFeaturedJobs->contains('id', $lj->id)) {
             $comp = $lj->getCompany();
-            if ($comp && $comp->is_active && $lj->is_active && (!$lj->expiry_date || \Carbon\Carbon::parse($lj->expiry_date)->isFuture())) {
+            if ($comp && $comp->is_active && $lj->is_active && (!$lj->expiry_date || \Carbon\Carbon::parse($lj->expiry_date)->gte(\Carbon\Carbon::today()))) {
                 $validFeaturedJobs->push($lj);
             }
         }

@@ -40,7 +40,7 @@ trait CompanyTrait
     private function getIndustryIdsFromCompanies($limit = 16)
     {
         $companies = Company::select('industry_id')->active()->whereHas('jobs', function ($query) {
-                    $query->where('expiry_date', '>' ,Carbon::now())->active()->notExpire();
+                    $query->active()->notExpire();
                 })->withCount(['jobs' => function ($query) {
                         $query->active()->notExpire();
                     }])->get();

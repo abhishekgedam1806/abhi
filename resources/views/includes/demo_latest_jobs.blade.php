@@ -5,7 +5,7 @@ $validLatestJobs = collect();
 if (isset($latestJobs) && count($latestJobs)) {
     foreach ($latestJobs as $lj) {
         $comp = $lj->getCompany();
-        if ($comp && $comp->is_active && $lj->is_active && (!$lj->expiry_date || \Carbon\Carbon::parse($lj->expiry_date)->isFuture())) {
+        if ($comp && $comp->is_active && $lj->is_active && (!$lj->expiry_date || \Carbon\Carbon::parse($lj->expiry_date)->gte(\Carbon\Carbon::today()))) {
             $validLatestJobs->push($lj);
         }
     }

@@ -37,6 +37,10 @@ class DataArrayHelper
 
     public static function defaultStatesArray($country_id)
     {
+        $country_id = is_array($country_id) ? (int)(reset($country_id) ?: 0) : (int)$country_id;
+        if ($country_id <= 0) {
+            return [];
+        }
         return \Cache::remember("dd_def_states_{$country_id}", 3600, function () use ($country_id) {
             return State::select('states.state', 'states.state_id')
                 ->where('states.country_id', '=', $country_id)
@@ -52,6 +56,10 @@ class DataArrayHelper
 
     public static function defaultCitiesArray($state_id)
     {
+        $state_id = is_array($state_id) ? (int)(reset($state_id) ?: 0) : (int)$state_id;
+        if ($state_id <= 0) {
+            return [];
+        }
         return \Cache::remember("dd_def_cities_{$state_id}", 3600, function () use ($state_id) {
             return City::select('cities.city', 'cities.city_id')
                 ->where('cities.state_id', '=', $state_id)
@@ -67,6 +75,10 @@ class DataArrayHelper
 
     public static function langStatesArray($country_id)
     {
+        $country_id = is_array($country_id) ? (int)(reset($country_id) ?: 0) : (int)$country_id;
+        if ($country_id <= 0) {
+            return [];
+        }
         return \Cache::remember("dd_lang_states_{$country_id}", 3600, function () use ($country_id) {
             $array = State::select('states.state', 'states.state_id')
                 ->where('states.country_id', '=', $country_id)
@@ -86,6 +98,10 @@ class DataArrayHelper
 
     public static function langCitiesArray($state_id)
     {
+        $state_id = is_array($state_id) ? (int)(reset($state_id) ?: 0) : (int)$state_id;
+        if ($state_id <= 0) {
+            return [];
+        }
         return \Cache::remember("dd_lang_cities_{$state_id}", 3600, function () use ($state_id) {
             $array = City::select('cities.city', 'cities.city_id')
                 ->where('cities.state_id', '=', $state_id)
@@ -105,12 +121,20 @@ class DataArrayHelper
 
     public static function defaultDegreeTypesArray($degree_level_id)
     {
+        $degree_level_id = is_array($degree_level_id) ? (int)(reset($degree_level_id) ?: 0) : (int)$degree_level_id;
+        if ($degree_level_id <= 0) {
+            return [];
+        }
         $array = DegreeType::select('degree_types.degree_type', 'degree_types.degree_type_id')->where('degree_level_id', '=', $degree_level_id)->isDefault()->active()->sorted()->pluck('degree_types.degree_type', 'degree_types.degree_type_id')->toArray();
         return $array;
     }
 
     public static function langDegreeTypesArray($degree_level_id)
     {
+        $degree_level_id = is_array($degree_level_id) ? (int)(reset($degree_level_id) ?: 0) : (int)$degree_level_id;
+        if ($degree_level_id <= 0) {
+            return [];
+        }
         $array = DegreeType::select('degree_types.degree_type', 'degree_types.degree_type_id')->where('degree_level_id', '=', $degree_level_id)->lang()->active()->sorted()->pluck('degree_types.degree_type', 'degree_types.degree_type_id')->toArray();
         if ((int) count($array) === 0) {
             $array = self::defaultDegreeTypesArray($degree_level_id);
@@ -343,8 +367,9 @@ class DataArrayHelper
 
     public static function defaultJobSkillsArray($functional_area_id = null)
     {
+        $functional_area_id = is_array($functional_area_id) ? (int)(reset($functional_area_id) ?: 0) : ($functional_area_id ? (int)$functional_area_id : null);
         $query = JobSkill::select('job_skills.job_skill', 'job_skills.job_skill_id')->isDefault()->active()->sorted();
-        if (!empty($functional_area_id)) {
+        if (!empty($functional_area_id) && $functional_area_id > 0) {
             $query->where('functional_area_id', $functional_area_id);
         }
         return $query->pluck('job_skills.job_skill', 'job_skills.job_skill_id')->toArray();
@@ -352,8 +377,9 @@ class DataArrayHelper
 
     public static function langJobSkillsArray($functional_area_id = null)
     {
+        $functional_area_id = is_array($functional_area_id) ? (int)(reset($functional_area_id) ?: 0) : ($functional_area_id ? (int)$functional_area_id : null);
         $query = JobSkill::select('job_skills.job_skill', 'job_skills.job_skill_id')->lang()->active()->sorted();
-        if (!empty($functional_area_id)) {
+        if (!empty($functional_area_id) && $functional_area_id > 0) {
             $query->where('functional_area_id', $functional_area_id);
         }
         $array = $query->pluck('job_skills.job_skill', 'job_skills.job_skill_id')->toArray();
