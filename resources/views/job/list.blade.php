@@ -1254,6 +1254,11 @@ if (!empty(Request::get('search'))) {
 
                                     {{-- Bottom Tags Row matching screenshot --}}
                                     <div class="apna-job-pills-row">
+                                        @if($job->created_at)
+                                        <span class="apna-pill-tag" style="background: #F1F5F9; color: #475569;" title="Posted: {{ $job->created_at->format('d M Y, h:i A') }}">
+                                            <i class="fa fa-calendar-o"></i> {{ $job->created_at->diffForHumans() }}
+                                        </span>
+                                        @endif
                                         <span class="apna-pill-tag">
                                             <i class="fa fa-clock-o"></i> {{ $job->getJobType('job_type') ?: 'Full Time' }}
                                         </span>
@@ -1278,6 +1283,11 @@ if (!empty(Request::get('search'))) {
                                         @if($job->is_featured)
                                         <span class="apna-pill-tag apna-pill-featured">
                                             <i class="fa fa-bolt"></i> Urgent Hiring
+                                        </span>
+                                        @endif
+                                        @if($job->expiry_date)
+                                        <span class="apna-pill-tag" style="background: #FFF1F2; color: #E11D48; border-color: #FECDD3;" title="Expires on {{ $job->expiry_date->format('d M Y') }}">
+                                            <i class="fa fa-hourglass-half"></i> Exp: {{ $job->expiry_date->format('d M') }}
                                         </span>
                                         @endif
                                         <span class="apna-pill-tag apna-pill-verified">

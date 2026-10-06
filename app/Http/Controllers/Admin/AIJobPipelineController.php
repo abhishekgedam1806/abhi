@@ -451,6 +451,92 @@ class AIJobPipelineController extends Controller
     }
 
     /**
+     * Bulk Publish Selected Jobs to the Live Portal
+     */
+    public function bulkPublishJobs(Request $request)
+    {
+        $ids = $request->input('selected_ids', []);
+
+        if (empty($ids) || !is_array($ids)) {
+            flash('No jobs were selected for publishing.')->warning();
+            return back();
+        }
+
+        $published = 0;
+        $failed = 0;
+
+        foreach ($ids as $id) {
+            $rawJob = RawJob::find($id);
+            if (!$rawJob) continue;
+
+            try {
+                // If not yet enriched, auto-enrich first with Gemini
+                if ($rawJob->status === 'pending' || !$rawJob->aiData) {
+                    $this->enricher->enrichRawJob($rawJob);
+                    $rawJob->refresh();
+                }
+
+                $this->publisher->publish($rawJob);
+                $published++;
+            } catch (Exception $e) {
+                $failed++;
+            }
+        }
+
+        if ($published > 0) {
+            $msg = "🚀 Successfully published {$published} selected job(s) live to the portal!";
+            if ($failed > 0) {
+                $msg .= " ({$failed} job(s) encountered errors and were skipped).";
+            }
+            flash($msg)->success();
+        } else {
+            flash("Failed to publish selected jobs. Please check API settings or job data.")->error();
+        }
+
+        return redirect()->route('admin.ai.pipeline', ['tab' => 'published']);
+    }
+
+    /**
+     * Bulk Enrich Selected Raw Jobs with Gemini AI
+     */
+    public function bulkEnrichJobs(Request $request)
+    {
+        $ids = $request->input('selected_ids', []);
+
+        if (empty($ids) || !is_array($ids)) {
+            flash('No jobs were selected for AI enrichment.')->warning();
+            return back();
+        }
+
+        $enriched = 0;
+        $failed = 0;
+
+        foreach ($ids as $id) {
+            $rawJob = RawJob::find($id);
+            if (!$rawJob || $rawJob->status === 'published') continue;
+
+            try {
+                $res = $this->enricher->enrichRawJob($rawJob);
+                if (!empty($res['success'])) {
+                    $enriched++;
+                } else {
+                    $failed++;
+                }
+            } catch (Exception $e) {
+                $failed++;
+            }
+        }
+
+        if ($enriched > 0) {
+            flash("✓ Successfully enriched {$enriched} selected job(s) with Gemini AI!")->success();
+        } else {
+            flash("AI enrichment could not be completed for selected jobs.")->error();
+        }
+
+        return redirect()->route('admin.ai.pipeline', ['tab' => 'enriched']);
+    }
+
+    /**
      * Seed 4–5 sample quality raw jobs for demonstration
      */
     public function seedSampleJobs()

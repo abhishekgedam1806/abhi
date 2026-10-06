@@ -322,6 +322,7 @@ class JobController extends Controller
     public function jobDetail(Request $request, $job_slug)
     {
         $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->firstOrFail();
+        $job->increment('num_of_views');
         /*         * ************************************************** */
         $search = '';
         $job_titles = array();

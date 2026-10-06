@@ -62,7 +62,10 @@ $company = $job->getCompany();
 
                             <div style="display: flex; align-items: center; gap: 14px; font-size: 13px; color: #64748B; flex-wrap: wrap;">
                                 <span><i class="fa fa-map-marker text-danger"></i> {{ $job->is_freelance ? __('Freelance / Remote') : (!empty($job->area_name) ? $job->area_name . ', ' : '') . ($job->getLocation() ?: __('Location Not Specified')) }}</span>
-                                <span><i class="fa fa-clock-o"></i> {{ __('Posted') }} {{ $job->created_at ? $job->created_at->diffForHumans() : '' }}</span>
+                                <span><i class="fa fa-calendar-check-o text-primary"></i> <strong>{{ __('Posted:') }}</strong> {{ $job->created_at ? $job->created_at->format('d M Y, h:i A') . ' (' . $job->created_at->diffForHumans() . ')' : __('Recently') }}</span>
+                                @if($job->expiry_date)
+                                    <span><i class="fa fa-hourglass-end text-danger"></i> <strong>{{ __('Expires:') }}</strong> {{ $job->expiry_date->format('d M Y') }}</span>
+                                @endif
                                 <span><i class="fa fa-eye"></i> {{ (int)$job->num_of_views }} {{ __('Views') }}</span>
                             </div>
                         </div>

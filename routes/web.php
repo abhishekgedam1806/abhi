@@ -162,8 +162,8 @@ Route::get('/sitemap-pages.xml', 'SitemapController@pages')->name('sitemap.pages
 Route::get('/sitemap-jobs.xml', 'SitemapController@jobs')->name('sitemap.jobs');
 Route::get('/sitemap-companies.xml', 'SitemapController@companies')->name('sitemap.companies');
 Route::get('/sitemap-businesses.xml', 'SitemapController@businesses')->name('sitemap.businesses');
-Route::get('/sitemap', 'SitemapController@index');
-Route::get('/sitemap/companies', 'SitemapController@companies');
+Route::get('/sitemap', 'SitemapController@index')->name('sitemap');
+Route::get('/sitemap/companies', 'SitemapController@companies')->name('sitemap.companies.html');
 
 
 

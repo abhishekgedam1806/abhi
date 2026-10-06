@@ -34,6 +34,8 @@ Route::post('ai-job-pipeline/add-selected', array_merge(['uses' => 'Admin\AIJobP
 Route::put('ai-job-pipeline/raw/{id}/update', array_merge(['uses' => 'Admin\AIJobPipelineController@updateRawJob'], $all_users))->name('admin.ai.pipeline.raw.update');
 Route::delete('ai-job-pipeline/raw/{id}/delete', array_merge(['uses' => 'Admin\AIJobPipelineController@deleteRawJob'], $all_users))->name('admin.ai.pipeline.raw.delete');
 Route::post('ai-job-pipeline/raw/bulk-delete', array_merge(['uses' => 'Admin\AIJobPipelineController@bulkDeleteRawJobs'], $all_users))->name('admin.ai.pipeline.raw.bulk_delete');
+Route::post('ai-job-pipeline/bulk-publish', array_merge(['uses' => 'Admin\AIJobPipelineController@bulkPublishJobs'], $all_users))->name('admin.ai.pipeline.bulk_publish');
+Route::post('ai-job-pipeline/bulk-enrich', array_merge(['uses' => 'Admin\AIJobPipelineController@bulkEnrichJobs'], $all_users))->name('admin.ai.pipeline.bulk_enrich');
 Route::post('ai-job-pipeline/seed-samples', array_merge(['uses' => 'Admin\AIJobPipelineController@seedSampleJobs'], $all_users))->name('admin.ai.pipeline.seed_samples');
 Route::post('ai-job-pipeline/settings/update', array_merge(['uses' => 'Admin\AIJobPipelineController@updateSettings'], $all_users))->name('admin.ai.pipeline.update_settings');
 

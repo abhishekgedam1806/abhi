@@ -731,17 +731,24 @@
                 @if($tab == 'enriched')
 
                     @if($jobs->count() > 0)
-                        <!-- Standalone Bulk Delete Form -->
+                        <!-- Standalone Bulk Actions Forms -->
                         <form id="bulkDeleteEnrichedForm" action="{{ route('admin.ai.pipeline.raw.bulk_delete') }}" method="POST" style="display: none;">
                             @csrf
                             <div id="bulkDeleteEnrichedInputs"></div>
+                        </form>
+                        <form id="bulkPublishEnrichedForm" action="{{ route('admin.ai.pipeline.bulk_publish') }}" method="POST" style="display: none;">
+                            @csrf
+                            <div id="bulkPublishEnrichedInputs"></div>
                         </form>
 
                         <div class="bulk-selection-bar">
                             <div style="font-size: 13px; font-weight: 600; color: #475569;">
                                 <span id="selectedCountBadgeEnriched" class="badge" style="background: #2563EB; font-size: 11px; padding: 4px 8px;">0 selected</span>
                             </div>
-                            <div>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" id="bulkPublishBtnEnriched" class="btn btn-sm btn-success" style="border-radius: 6px; font-weight: 700; background: #03855c; border-color: #03855c; display: none;" onclick="submitBulkPublishEnriched()" disabled>
+                                    <i class="fa fa-rocket"></i> Publish Selected Jobs
+                                </button>
                                 <button type="button" id="bulkDeleteBtnEnriched" class="btn btn-sm btn-danger" style="border-radius: 6px; font-weight: 600; display: none;" onclick="submitBulkDeleteEnriched()" disabled>
                                     <i class="fa fa-trash"></i> Delete Selected Jobs
                                 </button>
@@ -861,18 +868,31 @@
 
                 <!-- TAB 2: RAW INGESTION QUEUE -->
                 @elseif($tab == 'raw')
-                    @if($jobs->count() > 0)
-                        <!-- Standalone Bulk Delete Form -->
+                        <!-- Standalone Bulk Actions Forms -->
                         <form id="bulkDeleteRawForm" action="{{ route('admin.ai.pipeline.raw.bulk_delete') }}" method="POST" style="display: none;">
                             @csrf
                             <div id="bulkDeleteRawInputs"></div>
+                        </form>
+                        <form id="bulkPublishRawForm" action="{{ route('admin.ai.pipeline.bulk_publish') }}" method="POST" style="display: none;">
+                            @csrf
+                            <div id="bulkPublishRawInputs"></div>
+                        </form>
+                        <form id="bulkEnrichRawForm" action="{{ route('admin.ai.pipeline.bulk_enrich') }}" method="POST" style="display: none;">
+                            @csrf
+                            <div id="bulkEnrichRawInputs"></div>
                         </form>
 
                         <div class="bulk-selection-bar">
                             <div style="font-size: 13px; font-weight: 600; color: #475569;">
                                 <span id="selectedCountBadge" class="badge" style="background: #2563EB; font-size: 11px; padding: 4px 8px;">0 selected</span>
                             </div>
-                            <div>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" id="bulkPublishBtnRaw" class="btn btn-sm btn-success" style="border-radius: 6px; font-weight: 700; background: #03855c; border-color: #03855c; display: none;" onclick="submitBulkPublishRaw()" disabled>
+                                    <i class="fa fa-rocket"></i> Publish Selected Jobs
+                                </button>
+                                <button type="button" id="bulkEnrichBtnRaw" class="btn btn-sm btn-info" style="border-radius: 6px; font-weight: 700; background: #2563EB; border-color: #2563EB; display: none;" onclick="submitBulkEnrichRaw()" disabled>
+                                    <i class="fa fa-bolt"></i> Enrich Selected Jobs
+                                </button>
                                 <button type="button" id="bulkDeleteBtn" class="btn btn-sm btn-danger" style="border-radius: 6px; font-weight: 600; display: none;" onclick="submitBulkDeleteRaw()" disabled>
                                     <i class="fa fa-trash"></i> Delete Selected Jobs
                                 </button>
@@ -1685,8 +1705,12 @@
         $('#selectedCountBadge').text(selected + ' selected');
         
         if (selected > 0) {
+            $('#bulkPublishBtnRaw').show().prop('disabled', false).html('<i class="fa fa-rocket"></i> Publish Selected (' + selected + ')');
+            $('#bulkEnrichBtnRaw').show().prop('disabled', false).html('<i class="fa fa-bolt"></i> Enrich Selected (' + selected + ')');
             $('#bulkDeleteBtn').show().prop('disabled', false).html('<i class="fa fa-trash"></i> Delete Selected (' + selected + ')');
         } else {
+            $('#bulkPublishBtnRaw').hide().prop('disabled', true);
+            $('#bulkEnrichBtnRaw').hide().prop('disabled', true);
             $('#bulkDeleteBtn').hide().prop('disabled', true);
         }
 
@@ -1709,8 +1733,10 @@
         $('#selectedCountBadgeEnriched').text(selected + ' selected');
         
         if (selected > 0) {
+            $('#bulkPublishBtnEnriched').show().prop('disabled', false).html('<i class="fa fa-rocket"></i> Publish Selected (' + selected + ')');
             $('#bulkDeleteBtnEnriched').show().prop('disabled', false).html('<i class="fa fa-trash"></i> Delete Selected (' + selected + ')');
         } else {
+            $('#bulkPublishBtnEnriched').hide().prop('disabled', true);
             $('#bulkDeleteBtnEnriched').hide().prop('disabled', true);
         }
 
@@ -1749,6 +1775,45 @@
         if (window.jQuery && $.uniform) {
             $.uniform.update($('#selectAllPublished'));
         }
+    }
+
+    function submitBulkPublishEnriched() {
+        var checked = $('.enriched-checkbox:checked');
+        if (checked.length === 0) return;
+        if (!confirm('Are you sure you want to publish the ' + checked.length + ' selected job(s) live to the portal?')) return;
+
+        var container = $('#bulkPublishEnrichedInputs');
+        container.empty();
+        checked.each(function() {
+            container.append('<input type="hidden" name="selected_ids[]" value="' + $(this).val() + '">');
+        });
+        $('#bulkPublishEnrichedForm').submit();
+    }
+
+    function submitBulkPublishRaw() {
+        var checked = $('.raw-checkbox:checked');
+        if (checked.length === 0) return;
+        if (!confirm('Are you sure you want to auto-enrich and publish the ' + checked.length + ' selected raw job(s) live to the portal?')) return;
+
+        var container = $('#bulkPublishRawInputs');
+        container.empty();
+        checked.each(function() {
+            container.append('<input type="hidden" name="selected_ids[]" value="' + $(this).val() + '">');
+        });
+        $('#bulkPublishRawForm').submit();
+    }
+
+    function submitBulkEnrichRaw() {
+        var checked = $('.raw-checkbox:checked');
+        if (checked.length === 0) return;
+        if (!confirm('Run Gemini AI enrichment on the ' + checked.length + ' selected raw job(s)?')) return;
+
+        var container = $('#bulkEnrichRawInputs');
+        container.empty();
+        checked.each(function() {
+            container.append('<input type="hidden" name="selected_ids[]" value="' + $(this).val() + '">');
+        });
+        $('#bulkEnrichRawForm').submit();
     }
 
     function submitBulkDeleteRaw() {
