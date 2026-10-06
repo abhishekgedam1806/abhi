@@ -33,11 +33,22 @@ class JobPublisher
         // 1. Resolve or Create Company
         $companyName = !empty($rawJob->raw_company) ? trim($rawJob->raw_company) : 'Featured Employer';
         $company = Company::where('name', $companyName)->first();
+
+        // Extract website and email from raw_payload if available
+        $payload = !empty($rawJob->raw_payload) ? json_decode($rawJob->raw_payload, true) : [];
+        $payloadWebsite = is_array($payload) && !empty($payload['website']) ? trim($payload['website']) : null;
+        $payloadEmail = is_array($payload) && !empty($payload['email']) ? trim($payload['email']) : null;
+
+        $cleanSlug = substr(Str::slug($companyName), 0, 40);
+        $cleanDomain = str_replace('-', '', $cleanSlug) ?: 'company';
+        $defaultWebsite = 'https://www.' . $cleanDomain . '.com';
+        $defaultEmail = 'careers@' . $cleanDomain . '.com';
+
         if (!$company) {
-            $cleanSlug = substr(Str::slug($companyName), 0, 40);
             $company = new Company();
             $company->name = substr($companyName, 0, 190);
-            $company->email = 'contact@' . ($cleanSlug ?: 'company') . '.com';
+            $company->email = $payloadEmail ?: $defaultEmail;
+            $company->website = $payloadWebsite ?: $defaultWebsite;
             $company->slug = ($cleanSlug ?: 'company') . '-' . uniqid();
             $company->is_active = 1;
             $company->verified = 1;
@@ -45,6 +56,22 @@ class JobPublisher
             $company->jobs_quota = 100;
             $company->availed_jobs_quota = 1;
             $company->save();
+        } else {
+            $dirty = false;
+            if (!empty($payloadWebsite) && empty($company->website)) {
+                $company->website = $payloadWebsite;
+                $dirty = true;
+            } elseif (empty($company->website)) {
+                $company->website = $defaultWebsite;
+                $dirty = true;
+            }
+            if (!empty($payloadEmail) && (empty($company->email) || Str::contains($company->email, ['@company.com', 'contact@company.com']))) {
+                $company->email = $payloadEmail;
+                $dirty = true;
+            }
+            if ($dirty) {
+                $company->save();
+            }
         }
 
         // 2. Resolve Category / Functional Area

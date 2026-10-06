@@ -47,7 +47,7 @@ class AIJobPipelineController extends Controller
 
         // Query based on tab — search filter applied when $search is present
         if ($tab == 'raw') {
-            $query = RawJob::where('status', 'pending');
+            $query = RawJob::where('status', 'pending')->with(['publishedJob.company', 'aiData']);
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('raw_title',    'like', "%{$search}%")
@@ -60,7 +60,7 @@ class AIJobPipelineController extends Controller
 
 
         } elseif ($tab == 'published') {
-            $query = RawJob::where('status', 'published')->with('publishedJob', 'aiData');
+            $query = RawJob::where('status', 'published')->with(['publishedJob.company', 'aiData']);
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('raw_title',    'like', "%{$search}%")
@@ -81,7 +81,7 @@ class AIJobPipelineController extends Controller
 
         } else {
             // Default: enriched & ready to publish
-            $query = RawJob::where('status', 'enriched')->with('aiData');
+            $query = RawJob::where('status', 'enriched')->with(['publishedJob.company', 'aiData']);
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('raw_title',    'like', "%{$search}%")
@@ -360,28 +360,90 @@ class AIJobPipelineController extends Controller
         $rawJob = RawJob::findOrFail($id);
 
         $request->validate([
-            'title' => 'required|string|max:200',
-            'company' => 'nullable|string|max:150',
-            'location' => 'nullable|string|max:100',
-            'description' => 'required|string',
+            'title'           => 'required|string|max:200',
+            'company'         => 'nullable|string|max:150',
+            'location'        => 'nullable|string|max:100',
+            'source_url'      => 'nullable|string|max:1500',
+            'company_website' => 'nullable|string|max:255',
+            'company_email'   => 'nullable|string|max:150',
+            'description'     => 'required|string',
         ]);
 
-        $company = $request->input('company', $rawJob->raw_company ?: 'Direct Employer');
-        $title = $request->input('title');
-        $location = $request->input('location', $rawJob->raw_location ?: 'Nagpur, India');
+        $companyName = trim($request->input('company', $rawJob->raw_company ?: 'Direct Employer'));
+        $title       = trim($request->input('title'));
+        $location    = trim($request->input('location', $rawJob->raw_location ?: 'Nagpur, India'));
+        $sourceUrl   = trim($request->input('source_url', ''));
+        $website     = trim($request->input('company_website', ''));
+        $email       = trim($request->input('company_email', ''));
+
+        // Format website URL if missing protocol
+        if (!empty($website) && !preg_match("~^(?:f|ht)tps?://~i", $website)) {
+            $website = "https://" . $website;
+        }
 
         // Regenerate Hash
-        $contentHash = JobDuplicateDetector::generateHash($company, $title, $location);
+        $contentHash = JobDuplicateDetector::generateHash($companyName, $title, $location);
 
-        $rawJob->raw_title = $title;
-        $rawJob->raw_company = $company;
-        $rawJob->raw_location = $location;
+        $rawJob->raw_title       = $title;
+        $rawJob->raw_company     = $companyName;
+        $rawJob->raw_location    = $location;
+        $rawJob->source_url      = $sourceUrl;
         $rawJob->raw_description = $request->input('description');
-        $rawJob->content_hash = $contentHash;
+        $rawJob->content_hash    = $contentHash;
+
+        // Update raw_payload with website & email
+        $payload = !empty($rawJob->raw_payload) ? json_decode($rawJob->raw_payload, true) : [];
+        if (!is_array($payload)) {
+            $payload = [];
+        }
+        if (!empty($website)) {
+            $payload['website'] = $website;
+        }
+        if (!empty($email)) {
+            $payload['email'] = $email;
+        }
+        $rawJob->raw_payload = json_encode($payload);
         $rawJob->save();
 
-        flash('✓ Raw Job "' . $rawJob->raw_title . '" updated successfully.')->success();
-        return redirect()->route('admin.ai.pipeline', ['tab' => 'raw']);
+        // If job is already published to live portal, synchronize live Job & Company
+        if ($rawJob->job_id) {
+            $job = Job::find($rawJob->job_id);
+            if ($job) {
+                $job->title       = $title;
+                $job->description = $rawJob->raw_description;
+                $job->search      = $title . ' ' . $location . ' ' . $companyName;
+                $job->save();
+
+                $company = $job->company;
+                if ($company) {
+                    $company->name = $companyName;
+                    if (!empty($website)) {
+                        $company->website = $website;
+                    }
+                    if (!empty($email)) {
+                        $company->email = $email;
+                    }
+                    $company->save();
+                }
+            }
+        } else {
+            // Also check if company exists in DB with this name, update website/email if provided
+            $company = Company::where('name', $companyName)->first();
+            if ($company) {
+                if (!empty($website)) {
+                    $company->website = $website;
+                }
+                if (!empty($email)) {
+                    $company->email = $email;
+                }
+                $company->save();
+            }
+        }
+
+        $currentTab = $rawJob->status === 'published' ? 'published' : ($rawJob->status === 'enriched' ? 'enriched' : 'raw');
+
+        flash('✓ Job "' . $rawJob->raw_title . '" updated successfully.')->success();
+        return redirect()->route('admin.ai.pipeline', ['tab' => $currentTab]);
     }
 
     /**

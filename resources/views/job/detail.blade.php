@@ -351,6 +351,39 @@ $company = $job->getCompany();
                         </p>
                     @endif
 
+                    <!-- Company Official Website & Email Details -->
+                    @php
+                        $companyWebsite = $company->website;
+                        if (!empty($companyWebsite) && !preg_match("~^(?:f|ht)tps?://~i", $companyWebsite)) {
+                            $companyWebsite = "https://" . $companyWebsite;
+                        }
+                    @endphp
+
+                    @if(!empty($companyWebsite) || !empty($company->email))
+                        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; text-align: left;">
+                            @if(!empty($companyWebsite))
+                                <div style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <span style="font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 6px; font-size: 12.5px;">
+                                        <i class="fa fa-globe text-primary"></i> {{ __('Website') }}
+                                    </span>
+                                    <a href="{{ $companyWebsite }}" target="_blank" rel="noopener noreferrer" style="color: #2563EB; font-weight: 700; text-decoration: none; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;" title="{{ $companyWebsite }}">
+                                        {{ __('Visit Website') }} <i class="fa fa-external-link" style="font-size: 11px;"></i>
+                                    </a>
+                                </div>
+                            @endif
+                            @if(!empty($company->email) && !\Illuminate\Support\Str::contains($company->email, ['@company.com', 'contact@company.com']))
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <span style="font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 6px; font-size: 12.5px;">
+                                        <i class="fa fa-envelope-o text-success"></i> {{ __('Contact') }}
+                                    </span>
+                                    <a href="mailto:{{ $company->email }}" style="color: #475569; font-weight: 600; text-decoration: none; font-size: 12px; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $company->email }}">
+                                        {{ $company->email }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <a href="{{route('company.detail', $company->slug)}}" style="display: block; width: 100%; text-align: center; background: #F8FAFC; border: 1px solid #CBD5E1; color: #2563EB; font-size: 13px; font-weight: 700; padding: 9px; border-radius: 10px; text-decoration: none;">
                         {{ App\Company::countNumJobs('company_id', $company->id) }} {{__('Open Positions')}} &rarr;
                     </a>

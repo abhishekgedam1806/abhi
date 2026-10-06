@@ -1577,7 +1577,7 @@
             <div class="modal-header" style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; padding: 18px 24px;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" style="font-weight: 800; color: #0F172A; margin: 0;">
-                    <i class="fa fa-pencil" style="color: #2563EB; margin-right: 6px;"></i> Edit Job Details
+                    <i class="fa fa-pencil" style="color: #2563EB; margin-right: 6px;"></i> Edit Job Details & Application Destination
                 </h4>
             </div>
             <form id="editRawJobForm" method="POST">
@@ -1586,25 +1586,63 @@
                 <div class="modal-body" style="padding: 24px;">
                     <div class="form-group">
                         <label><strong>Job Title <span class="text-danger">*</span></strong></label>
-                        <input type="text" name="title" id="editJobTitle" class="form-control" required style="border-radius: 8px; height: 40px;">
+                        <input type="text" name="title" id="editJobTitle" class="form-control" required style="border-radius: 8px; height: 40px;" placeholder="e.g. Senior Software Engineer">
                     </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label><strong>Company / Employer Name</strong></label>
-                                <input type="text" name="company" id="editJobCompany" class="form-control" style="border-radius: 8px; height: 40px;">
+                                <input type="text" name="company" id="editJobCompany" class="form-control" style="border-radius: 8px; height: 40px;" placeholder="e.g. Speechify, Google, Microsoft">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label><strong>Location</strong></label>
-                                <input type="text" name="location" id="editJobLocation" class="form-control" style="border-radius: 8px; height: 40px;">
+                                <input type="text" name="location" id="editJobLocation" class="form-control" style="border-radius: 8px; height: 40px;" placeholder="e.g. Pune, Maharashtra / Remote">
                             </div>
                         </div>
                     </div>
+
+                    <!-- Official Apply Destination Endpoint / Landing URL -->
+                    <div class="form-group" style="background: #EFF6FF; border: 1.5px dashed #93C5FD; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;">
+                        <label style="color: #1E40AF; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <i class="fa fa-external-link"></i> Official Apply Landing Endpoint / Redirect URL
+                        </label>
+                        <p style="font-size: 12px; color: #475569; margin-bottom: 8px; line-height: 1.4;">
+                            When jobseekers click <strong>"Apply on Official Website"</strong>, they will land on this exact link. You can paste LinkedIn, Indeed, Company ATS portal, or any external application page.
+                        </p>
+                        <div class="input-group">
+                            <span class="input-group-addon" style="background: #FFFFFF; border-color: #BFDBFE; color: #2563EB; font-weight: bold;"><i class="fa fa-link"></i></span>
+                            <input type="url" name="source_url" id="editJobSourceUrl" class="form-control" placeholder="https://www.linkedin.com/jobs/view/... or https://company.com/careers/apply" style="border-radius: 0 8px 8px 0; height: 40px; border-color: #BFDBFE;">
+                        </div>
+                    </div>
+
+                    <!-- Company Official Website & HR Email -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-globe text-primary"></i> Official Company Website
+                                </label>
+                                <input type="text" name="company_website" id="editJobWebsite" class="form-control" placeholder="https://speechify.com" style="border-radius: 8px; height: 40px;">
+                                <span class="help-block" style="font-size: 11.5px; color: #64748B; margin-top: 3px;">Displayed on job detail page for candidates to verify employer details.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa fa-envelope-o text-success"></i> Official Company / HR Email
+                                </label>
+                                <input type="email" name="company_email" id="editJobEmail" class="form-control" placeholder="careers@speechify.com" style="border-radius: 8px; height: 40px;">
+                                <span class="help-block" style="font-size: 11.5px; color: #64748B; margin-top: 3px;">Used for candidate contact & 1-click direct resume email dispatch.</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label><strong>Job Description <span class="text-danger">*</span></strong></label>
-                        <textarea name="description" id="editJobDescription" class="form-control" rows="8" required style="border-radius: 8px;"></textarea>
+                        <textarea name="description" id="editJobDescription" class="form-control" rows="7" required style="border-radius: 8px;"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer" style="background: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 14px 24px;">
@@ -1677,6 +1715,20 @@
         document.getElementById('editJobTitle').value = raw.raw_title || '';
         document.getElementById('editJobCompany').value = raw.raw_company || '';
         document.getElementById('editJobLocation').value = raw.raw_location || '';
+        document.getElementById('editJobSourceUrl').value = raw.source_url || '';
+        
+        var compWebsite = raw.company_website || '';
+        if (!compWebsite && raw.published_job && raw.published_job.company) {
+            compWebsite = raw.published_job.company.website || '';
+        }
+        document.getElementById('editJobWebsite').value = compWebsite;
+
+        var compEmail = raw.company_email || '';
+        if (!compEmail && raw.published_job && raw.published_job.company) {
+            compEmail = raw.published_job.company.email || '';
+        }
+        document.getElementById('editJobEmail').value = compEmail;
+
         document.getElementById('editJobDescription').value = raw.raw_description || '';
         
         var updateUrl = "{{ url('admin/ai-job-pipeline/raw') }}/" + raw.id + "/update";
