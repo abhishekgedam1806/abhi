@@ -229,7 +229,7 @@ class AdzunaJobFetcher
      * Preview jobs by keyword — NO DB writes, returns raw job data for admin review.
      * Admin selects which jobs to add; addSelectedToQueue() handles the actual save.
      */
-    public function previewByKeyword(string $keyword, string $country = 'in', string $location = '', int $limit = 10, int $maxDays = 30): array
+    public function previewByKeyword(string $keyword, string $country = 'in', string $location = '', int $limit = 10, int $maxDays = 30, string $jobType = ''): array
     {
         if (empty($this->appId) || empty($this->appKey)) {
             return ['success' => false, 'jobs' => [], 'message' => 'ADZUNA_APP_ID and ADZUNA_APP_KEY are not configured in .env.'];
@@ -239,15 +239,36 @@ class AdzunaJobFetcher
 
         try {
             $endpoint = "https://api.adzuna.com/v1/api/jobs/{$country}/search/1";
+            $searchWhat = trim($keyword);
+
+            if ($jobType === 'remote' || $jobType === 'work_from_home') {
+                if (stripos($searchWhat, 'remote') === false && stripos($searchWhat, 'work from home') === false && stripos($searchWhat, 'wfh') === false) {
+                    $searchWhat .= ' remote';
+                }
+            } elseif ($jobType === 'internship') {
+                if (stripos($searchWhat, 'intern') === false) {
+                    $searchWhat .= ' internship';
+                }
+            }
+
             $params   = [
                 'app_id'           => $this->appId,
                 'app_key'          => $this->appKey,
-                'what'             => trim($keyword),
+                'what'             => $searchWhat,
                 'results_per_page' => min(50, max(5, $limit * 2)),
                 'sort_by'          => 'date',
                 'max_days_old'     => $maxDays,
                 'content-type'     => 'application/json',
             ];
+
+            if ($jobType === 'full_time') {
+                $params['full_time'] = 1;
+            } elseif ($jobType === 'part_time') {
+                $params['part_time'] = 1;
+            } elseif ($jobType === 'contract') {
+                $params['contract'] = 1;
+            }
+
             if (!empty(trim($location))) {
                 $params['where'] = trim($location);
             }
@@ -350,7 +371,7 @@ class AdzunaJobFetcher
      * @param int    $maxDays  Max age in days
      * @return array
      */
-    public function fetchByKeyword(string $keyword, string $country = 'in', string $location = '', int $limit = 10, int $maxDays = 30): array
+    public function fetchByKeyword(string $keyword, string $country = 'in', string $location = '', int $limit = 10, int $maxDays = 30, string $jobType = ''): array
     {
         if (empty($this->appId) || empty($this->appKey)) {
             return [
@@ -375,14 +396,35 @@ class AdzunaJobFetcher
 
         try {
             $endpoint    = "https://api.adzuna.com/v1/api/jobs/{$country}/search/1";
+            $searchWhat  = trim($keyword);
+
+            if ($jobType === 'remote' || $jobType === 'work_from_home') {
+                if (stripos($searchWhat, 'remote') === false && stripos($searchWhat, 'work from home') === false && stripos($searchWhat, 'wfh') === false) {
+                    $searchWhat .= ' remote';
+                }
+            } elseif ($jobType === 'internship') {
+                if (stripos($searchWhat, 'intern') === false) {
+                    $searchWhat .= ' internship';
+                }
+            }
+
             $params      = [
                 'app_id'           => $this->appId,
                 'app_key'          => $this->appKey,
-                'what'             => trim($keyword),
+                'what'             => $searchWhat,
                 'results_per_page' => min(50, max(5, $limit * 2)), // buffer for dupes
                 'sort_by'          => 'date',
                 'max_days_old'     => $maxDays,
             ];
+
+            if ($jobType === 'full_time') {
+                $params['full_time'] = 1;
+            } elseif ($jobType === 'part_time') {
+                $params['part_time'] = 1;
+            } elseif ($jobType === 'contract') {
+                $params['contract'] = 1;
+            }
+
             if (!empty(trim($location))) {
                 $params['where'] = trim($location);
             }

@@ -1280,10 +1280,45 @@
                         <span style="margin-left:auto; color:#7C3AED; font-weight:600; font-size:11px;"><i class="fa fa-eye"></i> Search → Preview Info (Date, Req, Desc) → Select → Add to Queue</span>
                     </div>
 
-                    {{-- Quick chips --}}
+                    {{-- Quick chips: Work Modes & Employment Types --}}
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label style="font-size:12px; font-weight:700; color:#334155; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                            <i class="fa fa-briefcase" style="color:#2563EB;"></i> 
+                            <span>Work Mode &amp; Employment Categories</span>
+                            <span style="font-size:11px; font-weight:normal; color:#64748B;">(Click to filter by type)</span>
+                        </label>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                            <button type="button" onclick="setWorkMode('work_from_home', 'Work From Home')" class="kw-mode-chip-btn" data-mode="work_from_home"
+                                style="padding:5px 12px; border:1.5px solid #A7F3D0; border-radius:20px; font-size:12px; font-weight:700; color:#065F46; background:#ECFDF5; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-home"></i> 🏠 Work From Home
+                            </button>
+                            <button type="button" onclick="setWorkMode('remote', 'Remote Work')" class="kw-mode-chip-btn" data-mode="remote"
+                                style="padding:5px 12px; border:1.5px solid #BFDBFE; border-radius:20px; font-size:12px; font-weight:700; color:#1D4ED8; background:#EFF6FF; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-globe"></i> 🌐 Remote Work
+                            </button>
+                            <button type="button" onclick="setWorkMode('full_time', 'Full Time')" class="kw-mode-chip-btn" data-mode="full_time"
+                                style="padding:5px 12px; border:1.5px solid #E2E8F0; border-radius:20px; font-size:12px; font-weight:700; color:#334155; background:#F8FAFC; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-clock-o text-primary"></i> ⏱️ Full Time
+                            </button>
+                            <button type="button" onclick="setWorkMode('part_time', 'Part Time')" class="kw-mode-chip-btn" data-mode="part_time"
+                                style="padding:5px 12px; border:1.5px solid #E2E8F0; border-radius:20px; font-size:12px; font-weight:700; color:#334155; background:#F8FAFC; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-hourglass-half text-warning"></i> ⏳ Part Time
+                            </button>
+                            <button type="button" onclick="setWorkMode('internship', 'Internship')" class="kw-mode-chip-btn" data-mode="internship"
+                                style="padding:5px 12px; border:1.5px solid #FBCFE8; border-radius:20px; font-size:12px; font-weight:700; color:#9D174D; background:#FDF2F8; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-graduation-cap"></i> 🎓 Internship / Intern
+                            </button>
+                            <button type="button" onclick="setWorkMode('contract', 'Contract / Freelance')" class="kw-mode-chip-btn" data-mode="contract"
+                                style="padding:5px 12px; border:1.5px solid #E2E8F0; border-radius:20px; font-size:12px; font-weight:700; color:#334155; background:#F8FAFC; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fa fa-file-text-o text-info"></i> 📋 Contract / Freelance
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Quick chips: Popular Roles --}}
                     <div class="form-group" style="margin-bottom:14px;">
                         <label style="font-size:12px; font-weight:700; color:#334155; margin-bottom:8px; display:block;">
-                            <i class="fa fa-bolt" style="color:#7C3AED; margin-right:4px;"></i> Quick-Pick Roles
+                            <i class="fa fa-bolt" style="color:#7C3AED; margin-right:4px;"></i> Quick-Pick Role Keywords
                         </label>
                         <div style="display:flex; flex-wrap:wrap; gap:6px;">
                             @foreach([
@@ -1292,7 +1327,8 @@
                                 'React Developer','Python Developer','UI/UX Designer',
                                 'Content Writer','Data Analyst','DevOps Engineer',
                                 'Flutter Developer','Android Developer','iOS Developer',
-                                'Project Manager','HR Manager','Sales Manager'
+                                'Project Manager','HR Manager','Sales Executive',
+                                'Telecaller / BPO','Accountant / Finance'
                             ] as $chip)
                             <button type="button" onclick="setKeyword('{{ $chip }}')" class="kw-chip-btn"
                                 style="padding:4px 11px; border:1.5px solid #C4B5FD; border-radius:20px; font-size:12px; font-weight:600; color:#5B21B6; background:#F5F3FF; cursor:pointer; transition:all .15s;">
@@ -1311,7 +1347,7 @@
                             <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#7C3AED; pointer-events:none; font-size:15px; z-index:3;">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <input type="text" id="kwKeyword" required placeholder="e.g. SEO Specialist, Software Engineer, Digital Marketing..." class="form-control"
+                            <input type="text" id="kwKeyword" required placeholder="e.g. SEO Specialist, Web Developer, Content Writer Work From Home..." class="form-control"
                                 style="padding-left:44px !important; padding-right:96px !important; border-radius:10px !important; height:46px !important; font-weight:600 !important; border:1.5px solid #C4B5FD !important; font-size:14px !important; color:#0F172A !important; background:#FFFFFF !important; box-shadow:0 2px 6px rgba(124,58,237,0.06) !important;"
                                 onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 3px rgba(124,58,237,0.15)';"
                                 onblur="this.style.borderColor='#C4B5FD'; this.style.boxShadow='0 2px 6px rgba(124,58,237,0.06)';"
@@ -1327,7 +1363,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label style="font-size:12px; font-weight:700; color:#334155;">
                                     <i class="fa fa-globe" style="color:#2563EB;"></i> Target Country
@@ -1346,7 +1382,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label style="font-size:12px; font-weight:700; color:#334155;">
                                     <i class="fa fa-map-marker" style="color:#DC2626;"></i> City / Location <span style="color:#94A3B8; font-weight:400;">(optional)</span>
@@ -1355,11 +1391,27 @@
                                     <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#DC2626; pointer-events:none; font-size:13px; z-index:2;">
                                         <i class="fa fa-map-marker"></i>
                                     </span>
-                                    <input type="text" id="kwLocation" placeholder="e.g. Mumbai, Delhi, Bangalore..." class="form-control" style="padding-left:32px !important; border-radius:8px !important; height:40px !important; font-size:13px !important;">
+                                    <input type="text" id="kwLocation" placeholder="e.g. Mumbai, Pune, Nagpur..." class="form-control" style="padding-left:32px !important; border-radius:8px !important; height:40px !important; font-size:13px !important;">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label style="font-size:12px; font-weight:700; color:#334155;">
+                                    <i class="fa fa-filter" style="color:#03855c;"></i> Work Mode / Type
+                                </label>
+                                <select id="kwJobType" class="form-control" style="border-radius:8px !important; height:40px !important; font-weight:700 !important; font-size:13px !important;">
+                                    <option value="">All Types &amp; Modes</option>
+                                    <option value="work_from_home">🏠 Work From Home</option>
+                                    <option value="remote">🌐 Remote Work</option>
+                                    <option value="full_time">⏱️ Full Time</option>
+                                    <option value="part_time">⏳ Part Time</option>
+                                    <option value="internship">🎓 Internship / Intern</option>
+                                    <option value="contract">📋 Contract / Freelance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label style="font-size:12px; font-weight:700; color:#334155;">
                                     <i class="fa fa-list-ol" style="color:#7C3AED;"></i> Preview Limit
@@ -1888,6 +1940,25 @@
     }
 
     // ── Keyword Search 2-Step Preview System ──
+    function setWorkMode(mode, label) {
+        var select = document.getElementById('kwJobType');
+        if (select) {
+            select.value = (select.value === mode) ? '' : mode; // toggle
+            var activeMode = select.value;
+            document.querySelectorAll('.kw-mode-chip-btn').forEach(function(btn) {
+                if (btn.getAttribute('data-mode') === activeMode && activeMode !== '') {
+                    btn.style.background  = '#03855c';
+                    btn.style.color       = '#ffffff';
+                    btn.style.borderColor = '#03855c';
+                } else {
+                    btn.style.background  = '#F8FAFC';
+                    btn.style.color       = '#334155';
+                    btn.style.borderColor = '#E2E8F0';
+                }
+            });
+        }
+    }
+
     function setKeyword(kw) {
         var input = document.getElementById('kwKeyword');
         if (input) {
@@ -1917,6 +1988,7 @@
 
         var country  = document.getElementById('kwCountry').value || 'in';
         var location = (document.getElementById('kwLocation').value || '').trim();
+        var jobType  = (document.getElementById('kwJobType') ? document.getElementById('kwJobType').value : '');
         var limit    = parseInt(document.getElementById('kwLimit').value, 10) || 10;
         var maxDays  = parseInt(document.getElementById('kwMaxDays').value, 10) || 30;
 
@@ -1925,7 +1997,7 @@
         document.getElementById('kwStep2').style.display = 'block';
 
         document.getElementById('kwLoading').style.display = 'block';
-        document.getElementById('kwLoadingKw').innerText = keyword;
+        document.getElementById('kwLoadingKw').innerText = keyword + (jobType ? ' • ' + jobType.replace(/_/g, ' ') : '');
         document.getElementById('kwError').style.display = 'none';
         document.getElementById('kwEmpty').style.display = 'none';
         document.getElementById('kwSuccess').style.display = 'none';
@@ -1939,6 +2011,7 @@
             keyword: keyword,
             country: country,
             location: location,
+            job_type: jobType,
             limit: limit,
             max_days: maxDays
         };

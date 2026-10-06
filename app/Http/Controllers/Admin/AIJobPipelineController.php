@@ -168,6 +168,7 @@ class AIJobPipelineController extends Controller
             'location' => 'nullable|string|max:100',
             'limit'    => 'nullable|integer|min:1|max:50',
             'max_days' => 'nullable|integer|min:1|max:90',
+            'job_type' => 'nullable|string|max:50',
         ]);
 
         $keyword  = trim($request->input('keyword'));
@@ -175,9 +176,10 @@ class AIJobPipelineController extends Controller
         $location = trim($request->input('location', ''));
         $limit    = (int) $request->input('limit', 10);
         $maxDays  = (int) $request->input('max_days', 30);
+        $jobType  = trim($request->input('job_type', ''));
 
         $fetcher = app(AdzunaJobFetcher::class);
-        $result  = $fetcher->fetchByKeyword($keyword, $country, $location, $limit, $maxDays);
+        $result  = $fetcher->fetchByKeyword($keyword, $country, $location, $limit, $maxDays, $jobType);
 
         if ($result['success']) {
             if ($result['inserted'] > 0) {
@@ -204,6 +206,7 @@ class AIJobPipelineController extends Controller
             'location' => 'nullable|string|max:100',
             'limit'    => 'nullable|integer|min:1|max:50',
             'max_days' => 'nullable|integer|min:1|max:90',
+            'job_type' => 'nullable|string|max:50',
         ]);
 
         $fetcher = app(AdzunaJobFetcher::class);
@@ -212,7 +215,8 @@ class AIJobPipelineController extends Controller
             trim($request->input('country', 'in')),
             trim($request->input('location', '')),
             (int) $request->input('limit', 10),
-            (int) $request->input('max_days', 30)
+            (int) $request->input('max_days', 30),
+            trim($request->input('job_type', ''))
         );
 
         return response()->json($result);
