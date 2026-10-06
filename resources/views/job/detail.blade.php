@@ -270,11 +270,51 @@ $company = $job->getCompany();
                             {{__('View Application Status')}} &rarr;
                         </a>
                     @else
-                        <a href="{{route('apply.job', $job->slug)}}" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #2563EB; color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(37,99,235,0.3); transition: all 0.15s ease; margin-bottom: 8px;">
-                            <i class="fa fa-paper-plane"></i>
-                            <span>{{__('Apply for this Job')}}</span>
-                        </a>
-                        <div style="font-size: 12px; color: #64748B;">{{__('Takes less than 1 minute to apply')}}</div>
+                        @php
+                            $hasExternalApply = $job->isExternalApply();
+                            $hrEmail = $job->getHrEmail();
+                            $hrPhone = $job->getHrPhone();
+                            $sourceUrl = $job->getSourceUrl();
+                        @endphp
+
+                        @if($hasExternalApply)
+                            <!-- AI / External Job Flow (Adzuna / Official Board) -->
+                            <a href="javascript:void(0);" onclick="handleExternalApply('{{ $job->slug }}', '{{ addslashes($sourceUrl) }}')" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(37,99,235,0.35); transition: all 0.15s ease; margin-bottom: 8px;">
+                                <i class="fa fa-external-link"></i>
+                                <span>{{__('Apply on Official Website')}}</span>
+                            </a>
+                            <div style="font-size: 11.5px; color: #64748B; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <i class="fa fa-check-circle text-success"></i> {{__('Verified external vacancy from hiring board')}}
+                            </div>
+                        @elseif(!empty($hrEmail))
+                            <!-- Manual / Imported Job Flow with Direct HR Email -->
+                            <a href="javascript:void(0);" onclick="openDirectEmailModal()" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #03855c; color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(3,133,92,0.3); transition: all 0.15s ease; margin-bottom: 8px;">
+                                <i class="fa fa-envelope"></i>
+                                <span>{{__('1-Click Email Resume to HR')}}</span>
+                            </a>
+                            @if(!empty($hrPhone))
+                                <a href="javascript:void(0);" onclick="handleWhatsappApply('{{ $job->slug }}')" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #25D366; color: #FFFFFF; font-size: 14px; font-weight: 800; padding: 11px 18px; border-radius: 10px; text-decoration: none; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.25);">
+                                    <i class="fa fa-whatsapp" style="font-size: 17px;"></i>
+                                    <span>{{__('Apply via WhatsApp')}}</span>
+                                </a>
+                            @endif
+                            <div style="font-size: 11.5px; color: #64748B;">
+                                <i class="fa fa-paper-plane text-primary"></i> {{__('Instant resume PDF dispatch directly to HR')}}
+                            </div>
+                        @else
+                            <!-- Standard Registered Employer Flow -->
+                            <a href="{{route('apply.job', $job->slug)}}" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #2563EB; color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(37,99,235,0.3); transition: all 0.15s ease; margin-bottom: 8px;">
+                                <i class="fa fa-paper-plane"></i>
+                                <span>{{__('Apply for this Job')}}</span>
+                            </a>
+                            @if(!empty($hrPhone))
+                                <a href="javascript:void(0);" onclick="handleWhatsappApply('{{ $job->slug }}')" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #25D366; color: #FFFFFF; font-size: 14px; font-weight: 800; padding: 11px 18px; border-radius: 10px; text-decoration: none; margin-bottom: 8px;">
+                                    <i class="fa fa-whatsapp" style="font-size: 17px;"></i>
+                                    <span>{{__('Apply via WhatsApp')}}</span>
+                                </a>
+                            @endif
+                            <div style="font-size: 12px; color: #64748B;">{{__('Takes less than 1 minute to apply')}}</div>
+                        @endif
                     @endif
                 </div>
 
@@ -423,6 +463,177 @@ $company = $job->getCompany();
     }
 }
 </style>
+
+<!-- 1-Click Direct Email Modal -->
+<div class="modal fade" id="directEmailModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: #03855c; color: #FFFFFF; padding: 18px 24px; border: none;">
+                <h5 class="modal-title" style="font-weight: 800; font-size: 16.5px; display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <i class="fa fa-paper-plane-o"></i> {{__('Send Application & Resume to HR')}}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #FFFFFF; opacity: 0.9; font-size: 24px; margin-top: -8px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                @if(Auth::check() && !Auth::guard('company')->check())
+                    @php
+                        $userCvs = \App\ProfileCv::where('user_id', Auth::user()->id)->get();
+                    @endphp
+                    <div style="background: #F0FDF4; border: 1px solid #DCFCE7; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;">
+                        <div style="font-size: 13px; color: #15803D; font-weight: 700; margin-bottom: 2px;">
+                            {{__('Direct HR Recipient:')}} <span style="color: #0F172A;">{{ $job->getHrEmail() ?: ($company ? $company->email : 'HR Team') }}</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: #475569;">
+                            {{__('Your JobnBiz profile details & attached PDF resume will be emailed directly to the hiring manager.')}}
+                        </div>
+                    </div>
+
+                    <form id="directEmailForm">
+                        @csrf
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">{{__('Select Resume / CV to Attach')}}</label>
+                            @if($userCvs->count() > 0)
+                                <select name="cv_id" id="emailApplyCvId" class="form-control" style="border-radius: 8px; border-color: #CBD5E1; font-weight: 600;">
+                                    @foreach($userCvs as $cv)
+                                        <option value="{{ $cv->id }}" {{ $cv->is_default ? 'selected' : '' }}>
+                                            📄 {{ $cv->title }} {{ $cv->is_default ? ' (Default)' : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <div style="background: #FEF2F2; border: 1px solid #FECACA; padding: 10px; border-radius: 8px; font-size: 12px; color: #DC2626; margin-bottom: 8px;">
+                                    <i class="fa fa-warning"></i> {{__('No Resume found.')}} <a href="{{ route('my.profile') }}" style="color: #2563EB; font-weight: bold;">{{__('Upload CV in Profile')}}</a>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 18px;">
+                            <label style="font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">{{__('Quick Cover Note (Optional)')}}</label>
+                            <textarea name="cover_note" id="emailApplyCoverNote" class="form-control" rows="3" style="border-radius: 8px; border-color: #CBD5E1; font-size: 13px;" placeholder="{{__('Hi, I am interested in this role and have relevant experience...')}}"></textarea>
+                        </div>
+
+                        <div id="emailApplyStatus" style="display: none; margin-bottom: 14px; font-size: 13px; padding: 10px; border-radius: 8px;"></div>
+
+                        <button type="button" id="btnSubmitDirectEmail" onclick="submitDirectEmail('{{ $job->slug }}')" class="btn btn-block" style="background: #03855c; color: #FFFFFF; font-weight: 800; font-size: 14.5px; padding: 12px; border-radius: 10px;" {{ $userCvs->count() == 0 ? 'disabled' : '' }}>
+                            <i class="fa fa-paper-plane"></i> {{__('Confirm & Send Application')}}
+                        </button>
+                    </form>
+                @else
+                    <div style="text-align: center; padding: 16px 8px;">
+                        <div style="font-size: 40px; color: #2563EB; margin-bottom: 10px;"><i class="fa fa-user-circle-o"></i></div>
+                        <h4 style="font-weight: 800; color: #0F172A; font-size: 17px; margin-bottom: 6px;">{{__('Login to 1-Click Apply')}}</h4>
+                        <p style="font-size: 13px; color: #64748B; margin-bottom: 18px;">
+                            {{__('Login or create a free Job Seeker account so your Resume PDF can be automatically attached.')}}
+                        </p>
+                        <a href="{{ route('login') }}" class="btn btn-primary btn-block" style="background: #2563EB; font-weight: 800; padding: 11px; border-radius: 10px;">
+                            {{__('Login / Sign Up to Apply')}}
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function handleExternalApply(slug, fallbackUrl) {
+    const url = "{{ url('apply-external') }}/" + slug;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(r => r.json())
+    .then(data => {
+        const dest = data.redirect_url || fallbackUrl;
+        if (dest) {
+            window.open(dest, '_blank');
+        }
+    })
+    .catch(err => {
+        if (fallbackUrl) {
+            window.open(fallbackUrl, '_blank');
+        }
+    });
+}
+
+function handleWhatsappApply(slug) {
+    const url = "{{ url('apply-whatsapp') }}/" + slug;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.whatsapp_url) {
+            window.open(data.whatsapp_url, '_blank');
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+function openDirectEmailModal() {
+    $('#directEmailModal').modal('show');
+}
+
+function submitDirectEmail(slug) {
+    const btn = document.getElementById('btnSubmitDirectEmail');
+    const statusBox = document.getElementById('emailApplyStatus');
+    const cvId = document.getElementById('emailApplyCvId') ? document.getElementById('emailApplyCvId').value : null;
+    const coverNote = document.getElementById('emailApplyCoverNote') ? document.getElementById('emailApplyCoverNote').value : '';
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{__("Sending Application to HR...")}}';
+    statusBox.style.display = 'none';
+
+    fetch("{{ url('apply-direct-email') }}/" + slug, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cv_id: cvId, cover_note: coverNote })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            statusBox.className = 'alert alert-success';
+            statusBox.style.display = 'block';
+            statusBox.innerHTML = '✓ ' + data.message;
+            btn.innerHTML = '✓ {{__("Sent Successfully")}}';
+            setTimeout(() => {
+                $('#directEmailModal').modal('hide');
+                location.reload();
+            }, 2200);
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-paper-plane"></i> {{__("Confirm & Send Application")}}';
+            statusBox.className = 'alert alert-danger';
+            statusBox.style.display = 'block';
+            statusBox.innerHTML = '✕ ' + (data.message || 'Error sending application.');
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-paper-plane"></i> {{__("Confirm & Send Application")}}';
+        statusBox.className = 'alert alert-danger';
+        statusBox.style.display = 'block';
+        statusBox.innerHTML = '✕ Server error. Please try again.';
+    });
+}
+</script>
 
 @include('includes.footer')
 @endsection

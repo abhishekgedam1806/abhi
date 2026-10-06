@@ -36,6 +36,8 @@ use App\Http\Requests\Front\ApplyJobFormRequest;
 use App\Http\Controllers\Controller;
 use App\Traits\FetchJobs;
 use App\Events\JobApplied;
+use App\Mail\DirectHREmailMailable;
+use Illuminate\Support\Facades\Mail;
 
 class JobController extends Controller
 {
@@ -53,7 +55,11 @@ class JobController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['jobsBySearch', 'jobDetail', 'jobsByCity', 'jobsByCategory', 'jobsByCategoryAndCity', 'applyJob', 'postApplyJob', 'getAreasByCity']]);
+        $this->middleware('auth', ['except' => [
+            'jobsBySearch', 'jobDetail', 'jobsByCity', 'jobsByCategory', 
+            'jobsByCategoryAndCity', 'applyJob', 'postApplyJob', 'getAreasByCity',
+            'applyExternalJob', 'applyDirectEmail', 'applyWhatsappLog'
+        ]]);
 
         $this->functionalAreas = DataArrayHelper::langFunctionalAreasArray();
         $this->countries = DataArrayHelper::langCountriesArray();
@@ -550,6 +556,188 @@ class JobController extends Controller
             ->get(['id', 'area_name', 'pincode']);
             
         return response()->json($areas);
+    }
+
+    /**
+     * Handle External / AI Job Application (Lead Capture + External Redirect)
+     */
+    public function applyExternalJob(Request $request, $job_slug)
+    {
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->first();
+        if (!$job) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => __('Job opening not found.')], 404);
+            }
+            flash(__('Job not found'))->error();
+            return redirect()->route('job.list');
+        }
+
+        $sourceUrl = $job->getSourceUrl() ?: ($job->getCompany('website') ?: route('job.detail', $job->slug));
+
+        // If authenticated candidate, log the application lead in Super Admin DB
+        if (Auth::check() && !Auth::guard('company')->check()) {
+            $user = Auth::user();
+            $defaultCv = ProfileCv::where('user_id', $user->id)->where('is_default', 1)->first()
+                      ?: ProfileCv::where('user_id', $user->id)->first();
+
+            $existingApply = JobApply::where('user_id', $user->id)->where('job_id', $job->id)->first();
+            if (!$existingApply) {
+                $jobApply = new JobApply();
+                $jobApply->user_id = $user->id;
+                $jobApply->job_id = $job->id;
+                $jobApply->cv_id = $defaultCv ? $defaultCv->id : null;
+                $jobApply->current_salary = $user->current_salary ?: 0;
+                $jobApply->expected_salary = $user->expected_salary ?: 0;
+                $jobApply->salary_currency = $job->salary_currency ?: 'INR';
+                $jobApply->status = 'applied';
+                $jobApply->save();
+            }
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect_url' => $sourceUrl,
+                'is_logged_in' => Auth::check(),
+                'message' => __('Application logged! Opening official application page...')
+            ]);
+        }
+
+        return redirect()->away($sourceUrl);
+    }
+
+    /**
+     * Handle 1-Click Direct Email Application to HR with Attached Resume PDF
+     */
+    public function applyDirectEmail(Request $request, $job_slug)
+    {
+        if (Auth::guard('company')->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => __('You are currently logged in with a Company account. Only Job Seekers can apply.')
+            ], 403);
+        }
+
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'require_login' => true,
+                'login_url' => route('login'),
+                'message' => __('Please login or create a free Job Seeker account to apply.')
+            ], 401);
+        }
+
+        $user = Auth::user();
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->first();
+        if (!$job) {
+            return response()->json(['success' => false, 'message' => __('Job not found.')], 404);
+        }
+
+        // Get candidate CV
+        $cvId = $request->input('cv_id');
+        $profileCv = null;
+        if (!empty($cvId)) {
+            $profileCv = ProfileCv::where('user_id', $user->id)->where('id', $cvId)->first();
+        }
+        if (!$profileCv) {
+            $profileCv = ProfileCv::where('user_id', $user->id)->where('is_default', 1)->first()
+                      ?: ProfileCv::where('user_id', $user->id)->first();
+        }
+
+        if (!$profileCv) {
+            return response()->json([
+                'success' => false,
+                'require_cv' => true,
+                'message' => __('Please upload your Resume/CV before sending an application to HR.')
+            ], 422);
+        }
+
+        $hrEmail = $job->getHrEmail() ?: $job->getCompany('email');
+        if (empty($hrEmail)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('HR contact email is not available for this job.')
+            ], 422);
+        }
+
+        // Save application lead in database
+        $jobApply = JobApply::where('user_id', $user->id)->where('job_id', $job->id)->first();
+        if (!$jobApply) {
+            $jobApply = new JobApply();
+            $jobApply->user_id = $user->id;
+            $jobApply->job_id = $job->id;
+            $jobApply->cv_id = $profileCv->id;
+            $jobApply->current_salary = $request->input('current_salary', $user->current_salary ?: 0);
+            $jobApply->expected_salary = $request->input('expected_salary', $user->expected_salary ?: 0);
+            $jobApply->salary_currency = $job->salary_currency ?: 'INR';
+            $jobApply->status = 'applied';
+            $jobApply->save();
+        }
+
+        $coverNote = trim($request->input('cover_note', ''));
+
+        // Dispatch Email to HR with Attached Resume
+        try {
+            Mail::send(new DirectHREmailMailable($job, $user, $profileCv, $coverNote));
+        } catch (\Exception $e) {
+            \Log::error('Direct HR Apply Email Error: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => __('Your application and Resume PDF have been sent directly to HR (:email)!', ['email' => $hrEmail])
+        ]);
+    }
+
+    /**
+     * Handle 1-Click WhatsApp Application Connect (Lead Log + Direct WhatsApp Link)
+     */
+    public function applyWhatsappLog(Request $request, $job_slug)
+    {
+        $job = Job::where('slug', $job_slug)->orWhere('slug', 'like', $job_slug)->orWhere('id', $job_slug)->first();
+        if (!$job) {
+            return response()->json(['success' => false, 'message' => __('Job not found.')], 404);
+        }
+
+        $phone = $job->getHrPhone();
+        if (empty($phone)) {
+            return response()->json(['success' => false, 'message' => __('HR phone number is not available.')], 422);
+        }
+
+        // Clean phone number: extract digits
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($cleanPhone) == 10) {
+            $cleanPhone = '91' . $cleanPhone;
+        }
+
+        $user = Auth::user();
+        if ($user && !Auth::guard('company')->check()) {
+            $existing = JobApply::where('user_id', $user->id)->where('job_id', $job->id)->first();
+            if (!$existing) {
+                $defaultCv = ProfileCv::where('user_id', $user->id)->where('is_default', 1)->first()
+                          ?: ProfileCv::where('user_id', $user->id)->first();
+                $jobApply = new JobApply();
+                $jobApply->user_id = $user->id;
+                $jobApply->job_id = $job->id;
+                $jobApply->cv_id = $defaultCv ? $defaultCv->id : null;
+                $jobApply->status = 'applied';
+                $jobApply->save();
+            }
+        }
+
+        $seekerName = $user ? $user->getName() : 'Candidate';
+        $msg = "Hello HR,\nI saw your job opening for '{$job->title}' on JobnBiz.\nMy name is {$seekerName}. I would like to apply for this vacancy.\nView Job Opening: " . route('job.detail', $job->slug);
+
+        $whatsappUrl = "https://api.whatsapp.com/send?phone={$cleanPhone}&text=" . urlencode($msg);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'whatsapp_url' => $whatsappUrl
+            ]);
+        }
+
+        return redirect()->away($whatsappUrl);
     }
 
 }

@@ -3,6 +3,9 @@
 Route::get('job/{slug}', 'Job\JobController@jobDetail')->name('job.detail');
 Route::get('apply/{slug}', 'Job\JobController@applyJob')->name('apply.job');
 Route::post('apply/{slug}', 'Job\JobController@postApplyJob')->name('post.apply.job');
+Route::match(['get', 'post'], 'apply-external/{slug}', 'Job\JobController@applyExternalJob')->name('apply.external.job');
+Route::post('apply-direct-email/{slug}', 'Job\JobController@applyDirectEmail')->name('apply.direct.email');
+Route::match(['get', 'post'], 'apply-whatsapp/{slug}', 'Job\JobController@applyWhatsappLog')->name('apply.whatsapp.log');
 Route::get('jobs', 'Job\JobController@jobsBySearch')->name('job.list');
 Route::get('jobs-in-{city_slug}', 'Job\JobController@jobsByCity')->name('jobs.city');
 Route::get('jobs/category/{category_slug}', 'Job\JobController@jobsByCategory')->name('jobs.category');

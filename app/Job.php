@@ -29,6 +29,53 @@ class Job extends Model
         return $this->belongsTo('App\Company', 'company_id', 'id');
     }
 
+    public function rawJob()
+    {
+        return $this->hasOne('App\RawJob', 'job_id', 'id');
+    }
+
+    public function aiData()
+    {
+        return $this->hasOne('App\JobAIData', 'job_id', 'id');
+    }
+
+    public function getSourceUrl()
+    {
+        $raw = $this->relationLoaded('rawJob') ? $this->rawJob : $this->rawJob()->first();
+        if ($raw && !empty($raw->source_url)) {
+            return $raw->source_url;
+        }
+        return null;
+    }
+
+    public function isAIJob()
+    {
+        return $this->rawJob()->exists() || $this->aiData()->exists();
+    }
+
+    public function isExternalApply()
+    {
+        return !empty($this->getSourceUrl());
+    }
+
+    public function getHrEmail()
+    {
+        $company = $this->getCompany();
+        if ($company && !empty($company->email) && !\Illuminate\Support\Str::contains($company->email, ['@company.com', '@featured.com', 'contact@'])) {
+            return $company->email;
+        }
+        return null;
+    }
+
+    public function getHrPhone()
+    {
+        $company = $this->getCompany();
+        if ($company) {
+            return $company->phone ?: $company->whatsapp_number;
+        }
+        return null;
+    }
+
     public function getCompany($field = '')
     {
         $company = $this->relationLoaded('company') ? $this->company : $this->company()->first();
