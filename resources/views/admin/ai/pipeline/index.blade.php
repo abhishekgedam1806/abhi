@@ -868,6 +868,7 @@
 
                 <!-- TAB 2: RAW INGESTION QUEUE -->
                 @elseif($tab == 'raw')
+                    @if($jobs->count() > 0)
                         <!-- Standalone Bulk Actions Forms -->
                         <form id="bulkDeleteRawForm" action="{{ route('admin.ai.pipeline.raw.bulk_delete') }}" method="POST" style="display: none;">
                             @csrf
