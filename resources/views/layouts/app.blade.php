@@ -44,6 +44,20 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
     {!! $seo->seo_other !!}
     @endif
 
+    {{-- Global SEO & Tracking Scripts (Google Search Console, GTM, GA4, Meta Pixel) --}}
+    @if(isset($siteSetting) && !empty($siteSetting->google_search_console_code))
+    {!! $siteSetting->google_search_console_code !!}
+    @endif
+    @if(isset($siteSetting) && !empty($siteSetting->google_tag_manager_head))
+    {!! $siteSetting->google_tag_manager_head !!}
+    @endif
+    @if(isset($siteSetting) && !empty($siteSetting->meta_pixel_code))
+    {!! $siteSetting->meta_pixel_code !!}
+    @endif
+    @if(isset($siteSetting) && !empty($siteSetting->header_custom_scripts))
+    {!! $siteSetting->header_custom_scripts !!}
+    @endif
+
     {{-- Multilingual SEO hreflang Alternate Tags --}}
     @if(isset($siteLanguages) && count($siteLanguages) > 1)
         @foreach($siteLanguages as $sLang)
@@ -163,6 +177,9 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
 </head>
 
 <body>
+    @if(isset($siteSetting) && !empty($siteSetting->google_tag_manager_body))
+    {!! $siteSetting->google_tag_manager_body !!}
+    @endif
     @yield('content')
 
     @php
@@ -433,6 +450,9 @@ $metaCanonical = !empty($seo->canonical) ? $seo->canonical : (url()->current() .
             <button type="button" onclick="dismissPwaPrompt()" style="background: transparent; color: #94A3B8; border: none; font-size: 16px; cursor: pointer; padding: 4px 6px;">&times;</button>
         </div>
     </div>
+    @if(isset($siteSetting) && !empty($siteSetting->footer_custom_scripts))
+    {!! $siteSetting->footer_custom_scripts !!}
+    @endif
 </body>
 
 </html>

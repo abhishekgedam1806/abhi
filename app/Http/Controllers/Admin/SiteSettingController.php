@@ -400,6 +400,14 @@ class SiteSettingController extends Controller
             $siteSetting->journey_c3_btn_url = $request->input('journey_c3_btn_url');
         }
 
+        // Global SEO & Tracking Scripts (GSC, GTM, Meta Pixel, Analytics)
+        $siteSetting->google_search_console_code = $request->input('google_search_console_code');
+        $siteSetting->google_tag_manager_head = $request->input('google_tag_manager_head');
+        $siteSetting->google_tag_manager_body = $request->input('google_tag_manager_body');
+        $siteSetting->meta_pixel_code = $request->input('meta_pixel_code');
+        $siteSetting->header_custom_scripts = $request->input('header_custom_scripts');
+        $siteSetting->footer_custom_scripts = $request->input('footer_custom_scripts');
+
         $siteSetting->update();
 
         // Clear all cached site settings immediately so changes reflect instantly
@@ -711,6 +719,12 @@ class SiteSettingController extends Controller
                 'journey_c3_desc' => "TEXT NULL",
                 'journey_c3_btn_text' => "VARCHAR(255) NULL DEFAULT 'Find Businesses'",
                 'journey_c3_btn_url' => "VARCHAR(255) NULL",
+                'google_search_console_code' => "MEDIUMTEXT NULL",
+                'google_tag_manager_head' => "MEDIUMTEXT NULL",
+                'google_tag_manager_body' => "MEDIUMTEXT NULL",
+                'meta_pixel_code' => "MEDIUMTEXT NULL",
+                'header_custom_scripts' => "MEDIUMTEXT NULL",
+                'footer_custom_scripts' => "MEDIUMTEXT NULL",
             ];
 
             foreach ($columns as $columnName => $columnDef) {

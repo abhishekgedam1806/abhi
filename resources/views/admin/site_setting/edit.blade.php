@@ -117,6 +117,7 @@ $direction = MiscHelper::getLangDirection($lang);
                             <li> <a href="#heroBanner" data-toggle="tab" aria-expanded="false"><i class="fa fa-picture-o"></i> Hero Banner</a> </li>
                             <li> <a href="#journeyCards" data-toggle="tab" aria-expanded="false"><i class="fa fa-compass"></i> What Are You Looking For?</a> </li>
                             <li> <a href="#mailChimp" data-toggle="tab" aria-expanded="false"><i class="fa fa-paper-plane-o"></i> Mail Chimp</a> </li>              
+                            <li> <a href="#seoAnalytics" data-toggle="tab" aria-expanded="false"><i class="fa fa-line-chart"></i> SEO & Tracking Tools (GSC / GTM / Pixel)</a> </li>
                         </ul>
                         {!! Form::model($siteSetting, array('method' => 'put', 'route' => array('update.site.setting'), 'class' => 'form', 'files'=>true)) !!}
                         <div class="tab-content" style="padding-top: 10px;">              
@@ -131,6 +132,7 @@ $direction = MiscHelper::getLangDirection($lang);
                             <div class="tab-pane fade" id="heroBanner"> @include('admin.site_setting.forms.heroBannerSetting_form') </div>
                             <div class="tab-pane fade" id="journeyCards"> @include('admin.site_setting.forms.journeyCardsSetting_form') </div>
                             <div class="tab-pane fade" id="mailChimp"> @include('admin.site_setting.forms.mailChimpSetting_form') </div>
+                            <div class="tab-pane fade" id="seoAnalytics"> @include('admin.site_setting.forms.seoAnalytics_form') </div>
                         </div>
                         <div class="form-actions" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #F1F5F9; background: transparent;">
                             <button type="submit" class="btn btn-primary" style="background: #2563EB; border-color: #2563EB; font-weight: 700; padding: 10px 24px; border-radius: 8px; box-shadow: 0 2px 6px rgba(37,99,235,0.25);">
