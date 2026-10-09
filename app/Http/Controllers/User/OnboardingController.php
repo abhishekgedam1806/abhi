@@ -496,7 +496,7 @@ class OnboardingController extends Controller
         try {
             $this->updateUserFullTextSearch($user);
         } catch (\Exception $e) {}
-        return redirect()->route('job.list');
+        return redirect()->intended(route('job.list'));
     }
 
     /**

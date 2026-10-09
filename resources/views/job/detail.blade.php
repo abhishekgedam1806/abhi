@@ -277,7 +277,30 @@ $company = $job->getCompany();
                             $sourceUrl = $job->getSourceUrl();
                         @endphp
 
-                        @if($hasExternalApply)
+                        @if(!Auth::check())
+                            <!-- Guest / New User: Redirect to Login / Sign Up -->
+                            <a href="{{ route('login') }}" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(37,99,235,0.35); transition: all 0.15s ease; margin-bottom: 8px;">
+                                @if($hasExternalApply)
+                                    <i class="fa fa-external-link"></i>
+                                    <span>{{__('Apply on Official Website')}}</span>
+                                @elseif(!empty($hrEmail))
+                                    <i class="fa fa-envelope"></i>
+                                    <span>{{__('1-Click Email Resume to HR')}}</span>
+                                @else
+                                    <i class="fa fa-paper-plane"></i>
+                                    <span>{{__('Apply for this Job')}}</span>
+                                @endif
+                            </a>
+                            @if(!empty($hrPhone))
+                                <a href="{{ route('login') }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #25D366; color: #FFFFFF; font-size: 14px; font-weight: 800; padding: 11px 18px; border-radius: 10px; text-decoration: none; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.25);">
+                                    <i class="fa fa-whatsapp" style="font-size: 17px;"></i>
+                                    <span>{{__('Apply via WhatsApp')}}</span>
+                                </a>
+                            @endif
+                            <div style="font-size: 11.5px; color: #64748B; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <i class="fa fa-lock text-primary"></i> {{__('Login or Sign up to apply')}}
+                            </div>
+                        @elseif($hasExternalApply)
                             <!-- AI / External Job Flow (Adzuna / Official Board) -->
                             <a href="javascript:void(0);" onclick="handleExternalApply('{{ $job->slug }}', '{{ addslashes($sourceUrl) }}')" class="btn-main-apply" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: linear-gradient(135deg, #2563EB, #1D4ED8); color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px 20px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(37,99,235,0.35); transition: all 0.15s ease; margin-bottom: 8px;">
                                 <i class="fa fa-external-link"></i>
@@ -572,6 +595,10 @@ $company = $job->getCompany();
 
 <script>
 function handleExternalApply(slug, fallbackUrl) {
+    @if(!Auth::check())
+        window.location.href = "{{ route('login') }}";
+        return;
+    @endif
     const url = "{{ url('apply-external') }}/" + slug;
     fetch(url, {
         method: 'POST',
@@ -584,6 +611,10 @@ function handleExternalApply(slug, fallbackUrl) {
     })
     .then(r => r.json())
     .then(data => {
+        if (data.require_login) {
+            window.location.href = data.redirect_url || "{{ route('login') }}";
+            return;
+        }
         const dest = data.redirect_url || fallbackUrl;
         if (dest) {
             window.open(dest, '_blank');
@@ -597,6 +628,10 @@ function handleExternalApply(slug, fallbackUrl) {
 }
 
 function handleWhatsappApply(slug) {
+    @if(!Auth::check())
+        window.location.href = "{{ route('login') }}";
+        return;
+    @endif
     const url = "{{ url('apply-whatsapp') }}/" + slug;
     fetch(url, {
         method: 'POST',
@@ -617,6 +652,10 @@ function handleWhatsappApply(slug) {
 }
 
 function openDirectEmailModal() {
+    @if(!Auth::check())
+        window.location.href = "{{ route('login') }}";
+        return;
+    @endif
     $('#directEmailModal').modal('show');
 }
 

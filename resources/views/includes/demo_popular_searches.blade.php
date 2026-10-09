@@ -69,10 +69,11 @@ $allActiveJobTypes = App\JobType::lang()->active()->orderBy('job_type', 'asc')->
 $metroCityNames = ['Nagpur', 'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad'];
 $featuredCities = \App\City::whereIn('city', $metroCityNames)
     ->orderByRaw("FIELD(city, 'Nagpur', 'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Ahmedabad')")
-    ->get();
+    ->get()
+    ->unique('city');
 
 if ($featuredCities->isEmpty()) {
-    $featuredCities = \App\City::limit(8)->get();
+    $featuredCities = \App\City::limit(8)->get()->unique('city');
 }
 @endphp
 

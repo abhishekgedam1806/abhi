@@ -367,6 +367,11 @@ class JobController extends Controller
             $detailCity,
             $job->slug
         );
+
+        if (!Auth::check()) {
+            session()->put('url.intended', route('job.detail', $job->slug));
+        }
+
         return view('job.detail')
                         ->with('job', $job)
                         ->with('relatedJobs', $relatedJobs)
@@ -574,9 +579,35 @@ class JobController extends Controller
 
         $sourceUrl = $job->getSourceUrl() ?: ($job->getCompany('website') ?: route('job.detail', $job->slug));
 
-        // If authenticated candidate, log the application lead in Super Admin DB
-        if (Auth::check() && !Auth::guard('company')->check()) {
-            $user = Auth::user();
+        // Company account cannot apply
+        if (Auth::guard('company')->check()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('You are currently logged in with a Company account. Only Job Seekers can apply.')
+                ], 403);
+            }
+            flash(__('Only Job Seekers / Candidates can apply for jobs.'))->warning();
+            return redirect()->route('job.detail', $job->slug);
+        }
+
+        // Job Seeker must be logged in to apply
+        if (!Auth::check()) {
+            session()->put('url.intended', route('job.detail', $job->slug));
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'require_login' => true,
+                    'redirect_url' => route('login'),
+                    'message' => __('Please login or register as a Job Seeker to apply.')
+                ], 401);
+            }
+            flash(__('Please login or register as a Job Seeker to apply.'))->info();
+            return redirect()->route('login');
+        }
+
+        // Candidate is authenticated: log application lead in database
+        $user = Auth::user();
             $defaultCv = ProfileCv::where('user_id', $user->id)->where('is_default', 1)->first()
                       ?: ProfileCv::where('user_id', $user->id)->first();
 
@@ -592,7 +623,6 @@ class JobController extends Controller
                 $jobApply->status = 'applied';
                 $jobApply->save();
             }
-        }
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -708,6 +738,17 @@ class JobController extends Controller
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
         if (strlen($cleanPhone) == 10) {
             $cleanPhone = '91' . $cleanPhone;
+        }
+
+        // Job Seeker must be logged in to apply
+        if (!Auth::check()) {
+            session()->put('url.intended', route('job.detail', $job->slug));
+            return response()->json([
+                'success' => false,
+                'require_login' => true,
+                'redirect_url' => route('login'),
+                'message' => __('Please login or register as a Job Seeker to apply.')
+            ], 401);
         }
 
         $user = Auth::user();
