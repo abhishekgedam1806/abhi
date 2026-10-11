@@ -315,6 +315,33 @@
     z-index: 99999;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+
+@media (max-width: 767px) {
+    .adm-stat-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 16px !important;
+    }
+    .adm-stat-card {
+        padding: 12px 14px !important;
+        border-radius: 10px !important;
+    }
+    .adm-stat-num {
+        font-size: 20px !important;
+    }
+    .adm-stat-desc {
+        font-size: 11.5px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    .adm-stat-icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+    }
+}
 </style>
 
 <div class="page-content-wrapper"> 

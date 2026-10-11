@@ -100,9 +100,11 @@
         overflow-x: auto !important;
         overflow-y: visible !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding-bottom: 220px !important;
+        margin-bottom: -170px !important;
         border-radius: 0 !important;
         width: 100% !important;
+        -webkit-overflow-scrolling: touch;
     }
     .dataTables_length {
         padding: 18px 24px 14px 24px !important;
@@ -126,23 +128,39 @@
         box-shadow: none !important;
         cursor: pointer !important;
     }
-    .btn-group {
+    #jobDatatableAjax .btn-group {
         position: relative !important;
+        display: inline-block !important;
     }
-    .dropdown-menu.job-action-menu {
+    #jobDatatableAjax .btn-group.open {
+        z-index: 10050 !important;
+    }
+    #jobDatatableAjax .dropdown-menu.job-action-menu {
+        position: absolute !important;
+        top: 100% !important;
         right: 0 !important;
         left: auto !important;
-        top: 100% !important;
+        bottom: auto !important;
         min-width: 185px !important;
+        max-width: 220px !important;
+        padding: 6px !important;
+        border-radius: 10px !important;
+        border: 1.5px solid #E2E8F0 !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
         z-index: 10050 !important;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
+        background: #FFFFFF !important;
+        margin-top: 4px !important;
+        margin-bottom: 0 !important;
     }
-    .btn-group.dropup .dropdown-menu.job-action-menu {
+    #jobDatatableAjax .btn-group.dropup .dropdown-menu.job-action-menu {
         top: auto !important;
         bottom: 100% !important;
         margin-top: 0 !important;
         margin-bottom: 4px !important;
-        box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.18) !important;
+        box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+    #jobDatatableAjax .btn-group.open .dropdown-menu.job-action-menu {
+        display: block !important;
     }
     #jobDatatableAjax {
         width: 100% !important;
@@ -245,15 +263,6 @@
         color: #FFFFFF !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 12px rgba(27, 79, 216, 0.3) !important;
-    }
-    .dropdown-menu.job-action-menu {
-        min-width: 180px !important;
-        padding: 6px !important;
-        border-radius: 10px !important;
-        border: 1.5px solid #E2E8F0 !important;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
-        z-index: 10050 !important;
-        background: #FFFFFF !important;
     }
     .dropdown-menu.job-action-menu > li > a {
         padding: 8px 12px !important;
@@ -429,50 +438,6 @@
             ]
         });
 
-        // Viewport Fixed Position Listener: Positions dropdown menu floating on top of everything (z-index 999999) perfectly aligned under Action button
-        $(document).on('show.bs.dropdown', '#jobDatatableAjax .btn-group', function () {
-            var $btnGroup = $(this);
-            var $button = $btnGroup.find('.dropdown-toggle');
-            var $menu = $btnGroup.find('.dropdown-menu');
-            if ($button.length === 0 || $menu.length === 0) return;
-
-            setTimeout(function () {
-                var btnRect = $button[0].getBoundingClientRect();
-                var menuWidth = $menu.outerWidth() || 185;
-                var menuHeight = $menu.outerHeight() || 220;
-                var windowHeight = $(window).height();
-
-                var top = btnRect.bottom + 4;
-                var left = btnRect.right - menuWidth;
-
-                if (btnRect.bottom + menuHeight > windowHeight && btnRect.top > menuHeight) {
-                    top = btnRect.top - menuHeight - 4;
-                }
-
-                $menu.css({
-                    'position': 'fixed',
-                    'top': top + 'px',
-                    'left': left + 'px',
-                    'right': 'auto',
-                    'bottom': 'auto',
-                    'z-index': '999999',
-                    'margin': '0'
-                });
-            }, 10);
-        });
-
-        $(document).on('hide.bs.dropdown', '#jobDatatableAjax .btn-group', function () {
-            var $menu = $(this).find('.dropdown-menu');
-            $menu.css({
-                'position': '',
-                'top': '',
-                'left': '',
-                'right': '',
-                'bottom': '',
-                'z-index': '',
-                'margin': ''
-            });
-        });
 
         // Select / Deselect All
         $('#selectAllCheckbox').on('change', function () {

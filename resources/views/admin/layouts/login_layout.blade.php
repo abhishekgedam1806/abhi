@@ -8,7 +8,7 @@
         <meta charset="utf-8" />
         <title>{{ $siteSetting->site_name }} | Admin Portal</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
         <meta content="{{ $siteSetting->site_name }} Admin Portal" name="description" />
         
         <!-- Google Fonts -->
@@ -22,6 +22,7 @@
         <link href="{{ asset('/') }}admin_assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
         <link href="{{ asset('/') }}admin_assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('/') }}admin_assets/custom.css?v={{ time() }}" rel="stylesheet" type="text/css" />
         @php
             $loginFavV = '?v=' . (isset($siteSetting->updated_at) ? strtotime($siteSetting->updated_at) : time());
             $loginFavUrl = !empty($siteSetting->favicon)

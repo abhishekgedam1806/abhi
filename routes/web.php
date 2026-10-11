@@ -188,3 +188,4 @@ Route::post('/whatsapp/preferences/send-otp', 'User\WhatsAppPreferenceController
 Route::post('/whatsapp/preferences/verify-otp', 'User\WhatsAppPreferenceController@verifyOtp')->name('whatsapp.preferences.verify_otp');
 
 
+

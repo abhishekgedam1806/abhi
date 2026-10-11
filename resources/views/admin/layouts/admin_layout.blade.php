@@ -205,17 +205,12 @@
 
                 <!-- END LOGO --> 
 
-                <!-- BEGIN RESPONSIVE MENU TOGGLER --> 
-
-                <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a> 
-
-                <!-- END RESPONSIVE MENU TOGGLER --> 
-
-                <!-- BEGIN TOP NAVIGATION MENU --> 
-
-                @include('admin.shared.top_menu') 
-
-                <!-- END TOP NAVIGATION MENU --> 
+                <!-- BEGIN TOP NAV ACTIONS (Profile, Logout, Hamburger) -->
+                <div class="top-nav-actions">
+                    @include('admin.shared.top_menu') 
+                    <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse" title="Toggle Navigation"> </a>
+                </div>
+                <!-- END TOP NAV ACTIONS -->
 
             </div>
 
@@ -234,6 +229,8 @@
         <!-- BEGIN CONTAINER -->
 
         <div class="page-container"> 
+
+            <div class="admin-mobile-backdrop" id="adminMobileBackdrop"></div>
 
             <!-- BEGIN SIDEBAR -->
 
@@ -380,6 +377,37 @@ $('#flash-overlay-modal').modal();
                 } else {
                     $btnGroup.removeClass('dropup');
                     $btnGroup.find('.fa-angle-up').removeClass('fa-angle-up').addClass('fa-angle-down');
+                }
+            });
+
+            // Mobile Sidebar Drawer & Backdrop Interaction
+            function updateMobileBackdrop() {
+                if ($('.page-sidebar.navbar-collapse').hasClass('in')) {
+                    $('#adminMobileBackdrop').addClass('show');
+                    $('body').addClass('mobile-sidebar-open');
+                } else {
+                    $('#adminMobileBackdrop').removeClass('show');
+                    $('body').removeClass('mobile-sidebar-open');
+                }
+            }
+
+            $(document).on('click', '.responsive-toggler', function() {
+                setTimeout(updateMobileBackdrop, 50);
+            });
+
+            $(document).on('click', '#adminMobileBackdrop, #mobileSidebarCloseBtn', function(e) {
+                e.preventDefault();
+                $('.page-sidebar.navbar-collapse').removeClass('in').addClass('collapse');
+                $('#adminMobileBackdrop').removeClass('show');
+                $('body').removeClass('mobile-sidebar-open');
+            });
+
+            // Auto-close on mobile when clicking nav links that are not dropdown toggles
+            $(document).on('click', '.page-sidebar .page-sidebar-menu a:not(.nav-toggle)', function() {
+                if ($(window).width() <= 991) {
+                    $('.page-sidebar.navbar-collapse').removeClass('in').addClass('collapse');
+                    $('#adminMobileBackdrop').removeClass('show');
+                    $('body').removeClass('mobile-sidebar-open');
                 }
             });
 

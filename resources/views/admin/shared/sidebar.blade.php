@@ -1,6 +1,15 @@
 <!-- BEGIN SIDEBAR -->
 <div class="page-sidebar navbar-collapse collapse">
-    <ul class="page-sidebar-menu page-header-fixed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 10px;">
+    <!-- Mobile Sidebar Header -->
+    <div class="mobile-sidebar-header visible-xs visible-sm">
+        <div class="mobile-sidebar-title">
+            <i class="fa fa-th-large"></i> <span>Navigation Menu</span>
+        </div>
+        <button type="button" class="mobile-sidebar-close" id="mobileSidebarCloseBtn" title="Close Menu">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+    <ul class="page-sidebar-menu page-header-fixed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
         <li class="sidebar-toggler-wrapper hide">
             <div class="sidebar-toggler"> </div>
         </li>
