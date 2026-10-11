@@ -93,16 +93,26 @@
         overflow: visible !important;
         padding: 0 !important;
     }
-    .dataTables_wrapper, .table-scrollable, .table-container {
+    .table-container, .dataTables_wrapper {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        margin: 0 !important;
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100% !important;
+    }
+    .table-scrollable {
         border: none !important;
         background: transparent !important;
         box-shadow: none !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
         margin: 0 !important;
-        padding-bottom: 220px !important;
-        margin-bottom: -170px !important;
-        border-radius: 0 !important;
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
         width: 100% !important;
         -webkit-overflow-scrolling: touch;
     }

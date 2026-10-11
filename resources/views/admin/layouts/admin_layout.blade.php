@@ -97,12 +97,31 @@
         <link rel="icon" type="image/png" href="{{ !empty($siteSetting->favicon) ? asset('sitesetting_images/' . $siteSetting->favicon) : asset('favicon.png') }}{{ $adminFavV }}" />
 
         <style>
-            /* Clean table card layout with dropdown support */
-            .table-scrollable, .table-container {
-                overflow-x: auto !important;
-                padding-bottom: 220px !important;
-                margin-bottom: -170px !important;
+            /* Prevent full-page horizontal scrollbar */
+            html, body {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
+            .page-wrapper, .page-container, .page-content-wrapper, .page-content {
+                overflow-x: hidden !important;
+                max-width: 100% !important;
+            }
+
+            /* Clean table card layout - only single scrollbar on table, never on wrappers */
+            .table-container, .dataTables_wrapper {
+                overflow-x: visible !important;
+                overflow-y: visible !important;
+                padding-bottom: 0 !important;
+                margin-bottom: 0 !important;
                 border: none !important;
+            }
+            .table-scrollable {
+                overflow-x: auto !important;
+                overflow-y: visible !important;
+                padding-bottom: 0 !important;
+                margin-bottom: 0 !important;
+                border: none !important;
+                -webkit-overflow-scrolling: touch;
             }
             .table-scrollable .btn-group, .table-container .btn-group {
                 position: relative !important;
@@ -378,6 +397,11 @@ $('#flash-overlay-modal').modal();
                     $btnGroup.removeClass('dropup');
                     $btnGroup.find('.fa-angle-up').removeClass('fa-angle-up').addClass('fa-angle-down');
                 }
+            });
+
+            $(document).on('hidden.bs.dropdown', '.table-scrollable .btn-group, .table-container .btn-group, .dataTables_wrapper .btn-group', function() {
+                var $btnGroup = $(this);
+                $btnGroup.closest('.table-scrollable').css('overflow-x', 'auto');
             });
 
             // Mobile Sidebar Drawer & Backdrop Interaction

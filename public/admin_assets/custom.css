@@ -26,6 +26,12 @@
 }
 
 /* Base resets & typography */
+html, 
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
 body, 
 .page-container, 
 .page-content-wrapper, 
@@ -33,6 +39,23 @@ body,
   font-family: 'Inter', sans-serif !important;
   background-color: var(--admin-body-bg) !important;
   color: var(--admin-text-main) !important;
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+/* Eliminate nested scrollbars on dataTables */
+.table-container,
+.dataTables_wrapper {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+}
+
+.table-scrollable {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 h1, h2, h3, h4, h5, h6, 
