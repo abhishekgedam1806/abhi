@@ -44,9 +44,27 @@ class JobController extends Controller
 
     public function fetchJobsData(Request $request)
     {
-        $jobs = Job::select([
-                    'jobs.id', 'jobs.company_id', 'jobs.title', 'jobs.description', 'jobs.country_id', 'jobs.state_id', 'jobs.city_id', 'jobs.is_freelance', 'jobs.career_level_id', 'jobs.salary_from', 'jobs.salary_to', 'jobs.hide_salary', 'jobs.functional_area_id', 'jobs.job_type_id', 'jobs.job_shift_id', 'jobs.num_of_positions', 'jobs.gender_id', 'jobs.expiry_date', 'jobs.degree_level_id', 'jobs.job_experience_id', 'jobs.is_active', 'jobs.is_featured', 'jobs.slug', 'jobs.created_at',
-        ]);
+        // Auto-sync any unlinked raw jobs so all AI jobs from pipeline appear in list-jobs
+        $pendingRawJobs = \App\RawJob::whereNull('job_id')->limit(30)->get();
+        if ($pendingRawJobs->isNotEmpty()) {
+            $publisher = app(\App\Services\AI\JobPublisher::class);
+            foreach ($pendingRawJobs as $rawJob) {
+                try {
+                    $publisher->publish($rawJob);
+                } catch (\Exception $e) {
+                    // Skip if invalid
+                }
+            }
+        }
+
+        $jobs = Job::leftJoin('raw_jobs', 'raw_jobs.job_id', '=', 'jobs.id')
+                    ->leftJoin('companies', 'companies.id', '=', 'jobs.company_id')
+                    ->select([
+                        'jobs.id', 'jobs.company_id', 'jobs.title', 'jobs.description', 'jobs.country_id', 'jobs.state_id', 'jobs.city_id', 'jobs.is_freelance', 'jobs.career_level_id', 'jobs.salary_from', 'jobs.salary_to', 'jobs.hide_salary', 'jobs.functional_area_id', 'jobs.job_type_id', 'jobs.job_shift_id', 'jobs.num_of_positions', 'jobs.gender_id', 'jobs.expiry_date', 'jobs.degree_level_id', 'jobs.job_experience_id', 'jobs.is_active', 'jobs.is_featured', 'jobs.slug', 'jobs.created_at',
+                        'raw_jobs.id as raw_job_id',
+                        'raw_jobs.source_name as raw_source_name',
+                        'companies.password as company_password',
+                    ]);
 
         // Sort order based on sort_by filter
         $sortBy = $request->get('sort_by', 'newest');
@@ -87,17 +105,40 @@ class JobController extends Controller
                             if ($request->has('is_featured') && $request->is_featured != -1) {
                                 $query->where('jobs.is_featured', '=', "{$request->get('is_featured')}");
                             }
+                            if ($request->has('job_source') && !empty($request->job_source) && $request->job_source !== 'all') {
+                                $src = $request->get('job_source');
+                                if ($src === 'ai') {
+                                    $query->whereNotNull('raw_jobs.id');
+                                } elseif ($src === 'user') {
+                                    $query->whereNull('raw_jobs.id')
+                                          ->whereNotNull('companies.password')
+                                          ->where('companies.password', '!=', '');
+                                } elseif ($src === 'manual') {
+                                    $query->whereNull('raw_jobs.id')
+                                          ->where(function ($q) {
+                                              $q->whereNull('companies.password')
+                                                ->orWhere('companies.password', '=', '');
+                                          });
+                                }
+                            }
                         })
                         ->addColumn('checkbox', function ($jobs) {
                             return '<input type="checkbox" class="row-checkbox" value="' . $jobs->id . '" style="cursor:pointer;width:17px;height:17px;accent-color:#1B4FD8;" />';
                         })
                         ->addColumn('company_id', function ($jobs) {
                             $companyName = $jobs->getCompany('name') ?: 'Unknown Company';
+                            $extra = '';
+                            if (!empty($jobs->raw_job_id) && !empty($jobs->raw_source_name)) {
+                                $extra = '<div style="font-size:11px;color:#6366F1;margin-top:2px;font-weight:600;"><i class="fa fa-bolt"></i> ' . e($jobs->raw_source_name) . '</div>';
+                            }
                             return '<div style="display:flex;align-items:center;gap:8px;">
                                 <span style="width:30px;height:30px;border-radius:8px;background:#EEF2FF;color:#1B4FD8;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">
                                     <i class="fa fa-building" style="font-size:13px;"></i>
                                 </span>
-                                <span style="font-weight:600;color:#0F172A;font-size:13px;">' . e($companyName) . '</span>
+                                <div>
+                                    <span style="font-weight:600;color:#0F172A;font-size:13px;">' . e($companyName) . '</span>
+                                    ' . $extra . '
+                                </div>
                             </div>';
                         })
                         ->addColumn('title', function ($jobs) {
@@ -107,15 +148,25 @@ class JobController extends Controller
                             
                             $badges = '';
                             if ($isFeatured) {
-                                $badges .= ' <span class="label label-warning" style="font-size:10.5px;padding:2px 7px;"><i class="fa fa-star"></i> Featured</span>';
+                                $badges .= ' <span class="label label-warning" style="font-size:10px;padding:2px 7px;border-radius:4px;"><i class="fa fa-star"></i> Featured</span>';
                             }
                             if ($isActive) {
-                                $badges .= ' <span class="label label-success" style="font-size:10.5px;padding:2px 7px;">Active</span>';
+                                $badges .= ' <span class="label label-success" style="font-size:10px;padding:2px 7px;border-radius:4px;">Active</span>';
                             } else {
-                                $badges .= ' <span class="label label-danger" style="font-size:10.5px;padding:2px 7px;">Inactive</span>';
+                                $badges .= ' <span class="label label-danger" style="font-size:10px;padding:2px 7px;border-radius:4px;">Inactive</span>';
+                            }
+
+                            // Source badge (AI, User / Employer, or Manual)
+                            if (!empty($jobs->raw_job_id)) {
+                                $srcName = !empty($jobs->raw_source_name) ? $jobs->raw_source_name : 'AI Pipeline';
+                                $badges .= ' <span class="label" style="background:#EEF2FF;color:#4338CA;border:1px solid #C7D2FE;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;" title="' . e($srcName) . '"><i class="fa fa-magic"></i> AI Pipeline</span>';
+                            } elseif (!empty($jobs->company_password)) {
+                                $badges .= ' <span class="label" style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;"><i class="fa fa-user"></i> Employer Posted</span>';
+                            } else {
+                                $badges .= ' <span class="label" style="background:#FFF7ED;color:#C2410C;border:1px solid #FFEDD5;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;"><i class="fa fa-pencil"></i> Admin Manual</span>';
                             }
                             
-                            return '<div style="font-weight:600;color:#1E293B;font-size:13.5px;line-height:1.4;">' . $title . '</div><div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap;">' . $badges . '</div>';
+                            return '<div style="font-weight:600;color:#1E293B;font-size:13.5px;line-height:1.4;">' . $title . '</div><div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap;align-items:center;">' . $badges . '</div>';
                         })
                         ->addColumn('city_id', function ($jobs) {
                             $city = $jobs->getCity('city');

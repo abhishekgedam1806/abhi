@@ -272,6 +272,13 @@ class AIJobPipelineController extends Controller
             ]);
             $rawJob->status = 'pending';
             $rawJob->save();
+
+            // Auto-publish to live portal so it instantly appears in /list-jobs and live site
+            try {
+                $this->publisher->publish($rawJob);
+            } catch (\Exception $e) {
+                // If publish throws, it stays in raw_jobs queue
+            }
             $added++;
         }
 
@@ -324,7 +331,14 @@ class AIJobPipelineController extends Controller
         $rawJob->status = 'pending';
         $rawJob->save();
 
-        flash('Job "' . $rawJob->raw_title . '" added to the raw queue. Content Hash generated: ' . substr($contentHash, 0, 12) . '...')->success();
+        // Auto-publish to live portal so it instantly appears in /list-jobs and live site
+        try {
+            $this->publisher->publish($rawJob);
+        } catch (\Exception $e) {
+            // Keep pending if error
+        }
+
+        flash('Job "' . $rawJob->raw_title . '" added and published to the live portal! Content Hash: ' . substr($contentHash, 0, 12) . '...')->success();
         return redirect()->route('admin.ai.pipeline', ['tab' => 'raw']);
     }
 
@@ -647,6 +661,12 @@ class AIJobPipelineController extends Controller
                 $raw->raw_description = $sample['description'];
                 $raw->status = 'pending';
                 $raw->save();
+
+                // Auto-publish to live portal
+                try {
+                    $this->publisher->publish($raw);
+                } catch (\Exception $e) {
+                }
                 $added++;
             }
         }

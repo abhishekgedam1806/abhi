@@ -362,6 +362,17 @@
                             <span style="color: #B45309;">⭐ Show Featured Jobs Only</span>
                         </label>
                         <div style="display: inline-flex; align-items: center; gap: 8px;">
+                            <label for="job_source" style="margin: 0; font-size: 13px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 5px;">
+                                <i class="fa fa-filter text-primary"></i> Source:
+                            </label>
+                            <select name="job_source" id="job_source" class="form-control" style="width: auto; height: 38px; border-radius: 8px; border: 1.5px solid #CBD5E1; font-size: 13px; font-weight: 600; color: #1E293B; background: #F8FAFC; display: inline-block;">
+                                <option value="all" selected>All Sources (AI + User + Manual)</option>
+                                <option value="ai">🤖 AI Pipeline Jobs</option>
+                                <option value="user">👤 Employer / User Posted</option>
+                                <option value="manual">🛠️ Admin / Manual Posted</option>
+                            </select>
+                        </div>
+                        <div style="display: inline-flex; align-items: center; gap: 8px;">
                             <label for="sort_by" style="margin: 0; font-size: 13px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 5px;">
                                 <i class="fa fa-clock-o text-primary"></i> Sort / Date:
                             </label>
@@ -440,6 +451,7 @@
                     d.is_active = $('#is_active').val();
                     d.is_featured = $('#is_featured').val();
                     d.sort_by = $('#sort_by').val();
+                    d.job_source = $('#job_source').val();
                 }
             }, columns: [
                 {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false, className: 'text-center'},
@@ -563,6 +575,9 @@
         $('#sort_by').on('change', function () {
             oTable.draw();
         });
+        $('#job_source').on('change', function () {
+            oTable.draw();
+        });
 
         $('#btnResetFilter').on('click', function () {
             $('#title').val('');
@@ -574,6 +589,7 @@
             $('#is_featured').val('-1');
             $('#filter_featured_toggle').prop('checked', false);
             $('#sort_by').val('newest');
+            $('#job_source').val('all');
             oTable.draw();
         });
     });
