@@ -356,11 +356,22 @@
                 </div>
 
                 <div style="margin-top: 4px; padding-top: 16px; border-top: 1.5px dashed #E2E8F0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
                         <label style="margin: 0; font-size: 13.5px; font-weight: 600; color: #334155; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; background: #FFFBEB; border: 1px solid #FDE68A; padding: 7px 14px; border-radius: 8px;">
                             <input type="checkbox" id="filter_featured_toggle" style="width: 16px; height: 16px; accent-color: #F59E0B; cursor: pointer;">
                             <span style="color: #B45309;">⭐ Show Featured Jobs Only</span>
                         </label>
+                        <div style="display: inline-flex; align-items: center; gap: 8px;">
+                            <label for="sort_by" style="margin: 0; font-size: 13px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 5px;">
+                                <i class="fa fa-clock-o text-primary"></i> Sort / Date:
+                            </label>
+                            <select name="sort_by" id="sort_by" class="form-control" style="width: auto; height: 38px; border-radius: 8px; border: 1.5px solid #CBD5E1; font-size: 13px; font-weight: 600; color: #1E293B; background: #F8FAFC; display: inline-block;">
+                                <option value="newest" selected>✨ Newest First (Recently Added)</option>
+                                <option value="fresh">🟢 Fresh Only (Last 7 Days)</option>
+                                <option value="oldest">⏳ Oldest First</option>
+                                <option value="expiring_soon">⚠️ Expiring Soon</option>
+                            </select>
+                        </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <button type="button" id="btnResetFilter" class="btn btn-default" style="height: 40px; padding: 0 18px; border-radius: 8px; font-weight: 600; color: #475569; background: #F8FAFC; border: 1.5px solid #CBD5E1; transition: all 0.2s ease;">
@@ -388,8 +399,9 @@
                                         </th>
                                         <th style="min-width:130px;">Company</th>
                                         <th style="min-width:190px;">Job Title & Status</th>
-                                        <th style="min-width:160px;">Description</th>
-                                        <th style="min-width:130px;">Location</th>
+                                        <th style="min-width:150px;">Description</th>
+                                        <th style="min-width:110px;">Location</th>
+                                        <th style="min-width:140px;">Posted Date / Time</th>
                                         <th style="width:145px;min-width:145px;text-align:center;">Actions</th>
                                     </tr>
                                 </thead>
@@ -427,6 +439,7 @@
                     d.city_id = $('#city_id').val();
                     d.is_active = $('#is_active').val();
                     d.is_featured = $('#is_featured').val();
+                    d.sort_by = $('#sort_by').val();
                 }
             }, columns: [
                 {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false, className: 'text-center'},
@@ -434,6 +447,7 @@
                 {data: 'title', name: 'title'},
                 {data: 'description', name: 'description'},
                 {data: 'city_id', name: 'city_id'},
+                {data: 'posted_at', name: 'posted_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center'}
             ]
         });
@@ -546,6 +560,9 @@
             $('#is_featured').val($(this).is(':checked') ? 1 : -1);
             oTable.draw();
         });
+        $('#sort_by').on('change', function () {
+            oTable.draw();
+        });
 
         $('#btnResetFilter').on('click', function () {
             $('#title').val('');
@@ -556,6 +573,7 @@
             $('#is_active').val('-1');
             $('#is_featured').val('-1');
             $('#filter_featured_toggle').prop('checked', false);
+            $('#sort_by').val('newest');
             oTable.draw();
         });
     });

@@ -46,7 +46,21 @@ class JobController extends Controller
     {
         $jobs = Job::select([
                     'jobs.id', 'jobs.company_id', 'jobs.title', 'jobs.description', 'jobs.country_id', 'jobs.state_id', 'jobs.city_id', 'jobs.is_freelance', 'jobs.career_level_id', 'jobs.salary_from', 'jobs.salary_to', 'jobs.hide_salary', 'jobs.functional_area_id', 'jobs.job_type_id', 'jobs.job_shift_id', 'jobs.num_of_positions', 'jobs.gender_id', 'jobs.expiry_date', 'jobs.degree_level_id', 'jobs.job_experience_id', 'jobs.is_active', 'jobs.is_featured', 'jobs.slug', 'jobs.created_at',
-        ])->orderBy('jobs.id', 'desc');
+        ]);
+
+        // Sort order based on sort_by filter
+        $sortBy = $request->get('sort_by', 'newest');
+        if ($sortBy === 'oldest') {
+            $jobs->orderBy('jobs.created_at', 'asc');
+        } elseif ($sortBy === 'fresh') {
+            // Fresh jobs added in last 7 days, newest first
+            $jobs->where('jobs.created_at', '>=', \Carbon\Carbon::now()->subDays(7))->orderBy('jobs.created_at', 'desc');
+        } elseif ($sortBy === 'expiring_soon') {
+            $jobs->whereNotNull('jobs.expiry_date')->where('jobs.expiry_date', '>=', \Carbon\Carbon::now())->orderBy('jobs.expiry_date', 'asc');
+        } else {
+            // newest (default)
+            $jobs->orderBy('jobs.created_at', 'desc');
+        }
         return Datatables::of($jobs)
                         ->filter(function ($query) use ($request) {
                             if ($request->has('company_id') && !empty($request->company_id)) {
@@ -120,6 +134,23 @@ class JobController extends Controller
                             $desc = strip_tags($jobs->description);
                             return '<span style="color:#64748B;font-size:12.5px;line-height:1.4;display:inline-block;max-width:240px;">' . e(Str::limit($desc, 65, '...')) . '</span>';
                         })
+                        ->addColumn('posted_at', function ($jobs) {
+                            $dt = $jobs->created_at ? \Carbon\Carbon::parse($jobs->created_at) : null;
+                            if (!$dt) return '<span style="color:#94A3B8;font-size:12px;">—</span>';
+                            $timeAgo = $dt->diffForHumans();
+                            $formatted = $dt->format('d M Y, h:i A');
+                            $isFresh = $dt->greaterThan(\Carbon\Carbon::now()->subDays(3));
+                            $freshBadge = $isFresh ? ' <span style="display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700;background:#DCFCE7;color:#15803D;margin-left:4px;vertical-align:middle;">FRESH</span>' : '';
+                            return '
+                                <div style="white-space:nowrap;">
+                                    <div style="font-weight:700;font-size:12.5px;color:#1E293B;display:flex;align-items:center;">
+                                        <i class="fa fa-clock-o" style="color:#2563EB;font-size:12px;margin-right:4px;"></i>' . e($timeAgo) . $freshBadge . '
+                                    </div>
+                                    <div style="font-size:11px;color:#64748B;margin-top:3px;display:flex;align-items:center;gap:4px;">
+                                        <i class="fa fa-calendar-o" style="font-size:10.5px;color:#94A3B8;"></i> ' . $formatted . '
+                                    </div>
+                                </div>';
+                        })
                         ->addColumn('action', function ($jobs) {
                             /*                             * ************************* */
                             $activeTxt = 'Make Active';
@@ -179,7 +210,7 @@ class JobController extends Controller
 					</div>
 				</div>';
                         })
-                        ->rawColumns(['checkbox', 'company_id', 'title', 'city_id', 'description', 'action'])
+                        ->rawColumns(['checkbox', 'company_id', 'title', 'city_id', 'description', 'posted_at', 'action'])
                         ->setRowId(function($jobs) {
                             return 'jobDtRow' . $jobs->id;
                         })
